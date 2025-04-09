@@ -7,7 +7,7 @@ package commandlineargs
 import (
 	"flag"
 	"fmt"
-	resource "github.com/SongZihuan/BackendServerTemplate"
+	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 )
 
@@ -55,7 +55,7 @@ func initData() {
 
 		NameData:  "", // 默认值为空，具体Name为什么则由config决定
 		NameName:  "name",
-		NameUsage: fmt.Sprintf("Set the name of the running program, the default is %s.", resource.Name),
+		NameUsage: fmt.Sprintf("Set the name of the running program, the default is %s.", global.Name),
 
 		HelpData:  false,
 		HelpName:  "help",

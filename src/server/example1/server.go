@@ -6,6 +6,7 @@ package example1
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
 	"sync"
@@ -76,7 +77,7 @@ func (s *ServerExample1) Run() {
 
 MainCycle:
 	for {
-		fmt.Println("Example1: I am running!")
+		fmt.Printf("Example1: I am running! BuildDate: '%s' Commit: '%s' Version: '%s' Now: '%s'\n", global.BuildTime.Format(time.DateTime), global.GitCommitHash, global.Version, time.Now().Format(time.DateTime))
 
 		select {
 		case <-s.ctx.Listen():

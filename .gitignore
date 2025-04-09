@@ -17,3 +17,11 @@ go-remote.sh
 
 testself
 test_self
+
+output
+
+build_date.txt
+
+commit_data.txt
+tag_data.txt
+tag_commit_data.txt

@@ -5,6 +5,7 @@
 package main
 
 import (
+	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
 	lionv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/lion/v1"
 	"os"
 )

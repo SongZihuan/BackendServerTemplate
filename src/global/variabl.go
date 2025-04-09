@@ -9,7 +9,21 @@ import (
 	"time"
 )
 
-var Version = resource.Version
-var Name = resource.Name
+var (
+	// Version SemanticVersioning License Report 继承自resource
+	Version            = resource.Version
+	SemanticVersioning = resource.SemanticVersioning
+	License            = resource.License
+	Report             = resource.Report
+	BuildTime          = resource.BuildTime
+	GitCommitHash      = resource.GitCommitHash
+	GitTag             = resource.GitTag
+	GitTagCommitHash   = resource.GitTagCommitHash
 
-var Location *time.Location
+	// Name 当config读取配置文件加载时可能会被更改
+	Name = resource.Name
+)
+
+var (
+	Location *time.Location
+)

@@ -26,7 +26,8 @@
 
 ## 编译
 
-使用`go build`进行正常编译即可。
+使用请先在项目根目录执行`go:generate ./...`，随后执行`go build github.com/SongZihuan/BackendServerTemplate/src/cmd/<lionv1/tigerv1>`进行正常编译即可。
+**注意：把`<lionv1/tigerv1>`替换成你具体想编译的包名，最终指令例如：go build github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1**
 
 日后支持：
 

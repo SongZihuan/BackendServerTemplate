@@ -7,7 +7,7 @@ package commandlineargs
 import (
 	"flag"
 	"fmt"
-	resource "github.com/SongZihuan/BackendServerTemplate"
+	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/formatutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"io"
@@ -22,7 +22,7 @@ func (d *CommandLineArgsDataType) PrintUsage() (int, error) {
 }
 
 func (d *CommandLineArgsDataType) FprintVersion(writer io.Writer) (int, error) {
-	version := formatutils.FormatTextToWidth(fmt.Sprintf("Version of %s: %s", osutils.GetArgs0Name(), resource.Version), formatutils.NormalConsoleWidth)
+	version := formatutils.FormatTextToWidth(fmt.Sprintf("Version of %s: %s", osutils.GetArgs0Name(), global.SemanticVersioning), formatutils.NormalConsoleWidth)
 	return fmt.Fprintf(writer, "%s\n", version)
 }
 
@@ -32,7 +32,7 @@ func (d *CommandLineArgsDataType) PrintVersion() (int, error) {
 
 func (d *CommandLineArgsDataType) FprintLicense(writer io.Writer) (int, error) {
 	title := formatutils.FormatTextToWidth(fmt.Sprintf("License of %s:", osutils.GetArgs0Name()), formatutils.NormalConsoleWidth)
-	license := formatutils.FormatTextToWidth(resource.License, formatutils.NormalConsoleWidth)
+	license := formatutils.FormatTextToWidth(global.License, formatutils.NormalConsoleWidth)
 	return fmt.Fprintf(writer, "%s\n%s\n", title, license)
 }
 
@@ -42,7 +42,7 @@ func (d *CommandLineArgsDataType) PrintLicense() (int, error) {
 
 func (d *CommandLineArgsDataType) FprintReport(writer io.Writer) (int, error) {
 	// 不需要title
-	report := formatutils.FormatTextToWidth(resource.Report, formatutils.NormalConsoleWidth)
+	report := formatutils.FormatTextToWidth(global.Report, formatutils.NormalConsoleWidth)
 	return fmt.Fprintf(writer, "%s\n", report)
 }
 

@@ -5,6 +5,7 @@
 package main
 
 import (
+	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
 	tigerv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/tiger/v1"
 	"os"
 )

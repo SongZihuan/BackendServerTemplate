@@ -1,7 +1,6 @@
 package config
 
 import (
-	resource "github.com/SongZihuan/BackendServerTemplate"
 	"github.com/SongZihuan/BackendServerTemplate/src/commandlineargs"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
@@ -57,8 +56,6 @@ func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		global.Name = commandlineargs.Name()
 	} else if d.Name != "" {
 		global.Name = d.Name
-	} else {
-		global.Name = resource.Name
 	}
 
 	d.Name = global.Name
