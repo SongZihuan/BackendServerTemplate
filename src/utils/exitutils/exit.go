@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	exitCodeMin = 0
-	exitCodeMax = 255
+	exitCodeMin                 = 0
+	exitCodeMax                 = 255
+	exitCodeErrorLogMustBeReady = 254
 )
 
 func getExitCode(defaultExitCode int, exitCode ...int) (ec int) {
@@ -46,6 +47,11 @@ func InitFailedErrorForLoggerModule(reason string, exitCode ...int) int {
 }
 
 func InitFailedError(module string, reason string, exitCode ...int) int {
+	if !logger.IsReady() {
+		panic("Logger must be ready!!!")
+		return exitCodeErrorLogMustBeReady
+	}
+
 	if reason == "" {
 		reason = "no reason"
 	}
@@ -59,6 +65,11 @@ func InitFailedError(module string, reason string, exitCode ...int) int {
 }
 
 func RunError(reason string, exitCode ...int) int {
+	if !logger.IsReady() {
+		panic("Logger must be ready!!!")
+		return exitCodeErrorLogMustBeReady
+	}
+
 	if reason == "" {
 		reason = "no reason"
 	}
@@ -74,7 +85,7 @@ func RunError(reason string, exitCode ...int) int {
 func SuccessExit(reason string, exitCode ...int) int {
 	if !logger.IsReady() {
 		panic("Logger must be ready!!!")
-		return -1
+		return exitCodeErrorLogMustBeReady
 	}
 
 	if reason == "" {
@@ -83,7 +94,7 @@ func SuccessExit(reason string, exitCode ...int) int {
 
 	ec := getExitCode(0, exitCode...)
 
-	logger.Errorf("Now we should exit with code %d (reason: %s) .", ec, reason)
+	logger.Warnf("Now we should exit with code %d (reason: %s) .", ec, reason)
 
 	return ec
 }

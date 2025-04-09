@@ -27,6 +27,7 @@
 - 修复无法读取`tag`对应`commit`值的漏洞。
 - 修复`Output Config File`逻辑判断错误
 - 修复设置`SigQuitExit`默认动作的错误
+- 修复了退出日志的日志等级
 
 ### 重构
 
