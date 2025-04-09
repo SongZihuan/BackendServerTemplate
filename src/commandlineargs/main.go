@@ -50,7 +50,7 @@ func ConfigFile() string {
 }
 
 func OutputConfigFile() string {
-	return CommandLineArgsData.ConfigFile()
+	return CommandLineArgsData.OutputConfig()
 }
 
 func SetOutput(writer io.Writer) {

@@ -23,9 +23,9 @@ func (d *SignalConfig) setDefault(c *configInfo) (err configerror.Error) {
 	d.SigHupExit.SetDefaultEnable()
 
 	if c.data.IsRelease() {
-		d.SigIntExit.SetDefaultDisable()
+		d.SigQuitExit.SetDefaultDisable()
 	} else {
-		d.SigIntExit.SetDefaultEnable()
+		d.SigQuitExit.SetDefaultEnable()
 	}
 
 	return nil

@@ -110,6 +110,9 @@ func (d *CommandLineArgsDataType) setFlag() {
 	flag.StringVar(&d.ConfigFileData, d.ConfigFileName, d.ConfigFileData, d.ConfigFileUsage)
 	flag.StringVar(&d.ConfigFileData, d.ConfigFileName[0:1], d.ConfigFileData, d.ConfigFileUsage)
 
+	flag.StringVar(&d.ConfigOutputFileData, d.ConfigOutputFileName, d.ConfigOutputFileData, d.ConfigOutputFileUsage)
+	flag.StringVar(&d.ConfigOutputFileData, d.ConfigOutputFileName[0:1], d.ConfigOutputFileData, d.ConfigOutputFileUsage)
+
 	flag.Usage = func() {
 		_, _ = d.PrintUsage()
 	}

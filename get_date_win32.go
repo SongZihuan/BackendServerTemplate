@@ -8,4 +8,6 @@
 
 //go:generate powershell -ExecutionPolicy RemoteSigned ./get_git.ps1
 
+//go:generate powershell -ExecutionPolicy RemoteSigned ./get_random.ps1
+
 package resource

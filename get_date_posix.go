@@ -8,4 +8,6 @@
 
 //go:generate /bin/bash ./get_git.sh
 
+//go:generate /bin/bash ./get_random.sh
+
 package resource

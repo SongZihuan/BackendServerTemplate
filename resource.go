@@ -3,7 +3,6 @@ package resource
 import (
 	_ "embed"
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/reutils"
 	"strconv"
 	"strings"
 	"time"
@@ -36,6 +35,9 @@ var GitTag string
 
 //go:embed tag_commit_data.txt
 var GitTagCommitHash string
+
+//go:embed random_data.txt
+var randomData string
 
 func init() {
 	initCleanFile()
@@ -76,31 +78,54 @@ func initBuildDate() {
 }
 
 func initVersion() {
-	SemanticVersioning = strings.TrimPrefix(strings.ToLower(version), "v")
-	if SemanticVersioning == "" {
-		SemanticVersioning = strings.TrimPrefix(strings.ToLower(GitTag), "v")
-		if SemanticVersioning == "" {
-			if GitCommitHash != "" {
-				SemanticVersioning = fmt.Sprintf("0.0.0+dev-%d-%s", BuildTime.Unix(), GitCommitHash)
-			} else {
-				SemanticVersioning = fmt.Sprintf("0.0.0+dev-%d", BuildTime.Unix())
-			}
-			Version = "v" + SemanticVersioning
-		} else if reutils.IsSemanticVersion(SemanticVersioning) {
-			if GitCommitHash != "" && GitTagCommitHash != "" && GitCommitHash != GitTagCommitHash && !strings.Contains(SemanticVersioning, "dev") {
-				SemanticVersioning = SemanticVersioning + fmt.Sprintf("+dev-%s", GitTagCommitHash)
-			} else if strings.HasPrefix(SemanticVersioning, "0.") {
-				SemanticVersioning = SemanticVersioning + "-dev"
-			}
-			Version = "v" + SemanticVersioning
-		} else {
-			panic(fmt.Sprintf("%s is not a semantic versioning.", SemanticVersioning))
-		}
-	} else if reutils.IsSemanticVersion(SemanticVersioning) {
+	ver := getDefaultVersion()
+	if ver != "" {
+		SemanticVersioning = ver
 		Version = "v" + SemanticVersioning
-	} else {
-		panic(fmt.Sprintf("%s is not a semantic versioning.", SemanticVersioning))
+		return
 	}
+
+	ver = getGitTagVersion()
+	if ver != "" {
+		SemanticVersioning = ver
+		Version = "v" + SemanticVersioning
+		return
+	}
+
+	ver = getRandomVersion()
+	if ver != "" {
+		SemanticVersioning = ver
+		Version = "v" + SemanticVersioning
+		return
+	}
+
+	panic("Get Version Failed")
+}
+
+func getDefaultVersion() (defVer string) {
+	defVer = strings.TrimPrefix(strings.ToLower(version), "v")
+	if defVer == "" || !utilsIsSemanticVersion(defVer) {
+		return ""
+	}
+	return defVer
+}
+
+func getGitTagVersion() (gitVer string) {
+	gitVer = strings.TrimPrefix(strings.ToLower(GitTag), "v")
+	if GitCommitHash != "" && (GitTagCommitHash == "" || gitVer == "") {
+		return fmt.Sprintf("0.0.0+dev-%d-%s", BuildTime.Unix(), GitCommitHash)
+	} else if GitCommitHash != "" && GitTagCommitHash != "" && gitVer != "" && utilsIsSemanticVersion(gitVer) {
+		if (GitCommitHash != GitTagCommitHash || strings.HasPrefix(gitVer, "0.")) && !strings.Contains(gitVer, "dev") {
+			return gitVer + fmt.Sprintf("+dev-%d-%s", BuildTime.Unix(), GitCommitHash)
+		}
+		return gitVer
+	} else {
+		return ""
+	}
+}
+
+func getRandomVersion() (randVer string) {
+	return fmt.Sprintf("0.0.0+dev-%d-%s", BuildTime.Unix(), randomData)
 }
 
 func utilsClenFileData(data string) (res string) {
@@ -109,27 +134,4 @@ func utilsClenFileData(data string) (res string) {
 	res = strings.Split(res, "\n")[0]
 	res = strings.TrimSpace(res)
 	return res
-}
-
-func utilsClenFileDataMoreLine(data string) (res string) {
-	res = utilsCheckAndRemoveBOM(data)
-	res = strings.Replace(res, "\r", "", -1)
-	return res
-}
-
-func utilsCheckAndRemoveBOM(s string) string {
-	// UTF-8 BOM 的字节序列为 0xEF, 0xBB, 0xBF
-	bom := []byte{0xEF, 0xBB, 0xBF}
-
-	// 将字符串转换为字节切片
-	bytes := []byte(s)
-
-	// 检查前三个字节是否是 BOM
-	if len(bytes) >= 3 && bytes[0] == bom[0] && bytes[1] == bom[1] && bytes[2] == bom[2] {
-		// 如果存在 BOM，则删除它
-		return string(bytes[3:])
-	}
-
-	// 如果不存在 BOM，则返回原始字符串
-	return s
 }

@@ -38,6 +38,6 @@ func (d *CommandLineArgsDataType) ConfigFile() string {
 	return getData(d, d.ConfigFileData)
 }
 
-func (d *CommandLineArgsDataType) OutPutConfig() string {
+func (d *CommandLineArgsDataType) OutputConfig() string {
 	return getData(d, d.ConfigOutputFileData)
 }

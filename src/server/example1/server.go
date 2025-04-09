@@ -77,7 +77,11 @@ func (s *ServerExample1) Run() {
 
 MainCycle:
 	for {
-		fmt.Printf("Example1: I am running! BuildDate: '%s' Commit: '%s' Version: '%s' Now: '%s'\n", global.BuildTime.Format(time.DateTime), global.GitCommitHash, global.Version, time.Now().Format(time.DateTime))
+		//if global.GitTag == "" || global.GitTagCommitHash == "" {
+		//	fmt.Printf("Example1: I am running! BuildDate: '%s' Commit: '%s' Version: '%s' Now: '%s'\n", global.BuildTime.Format(time.DateTime), global.GitCommitHash, global.Version, time.Now().Format(time.DateTime))
+		//} else {
+		fmt.Printf("Example1: I am running! BuildDate: '%s' Commit: '%s' Tag: '%s' Tag Commit: '%s' Version: '%s' Now: '%s'\n", global.BuildTime.Format(time.DateTime), global.GitCommitHash, global.GitTag, global.GitTagCommitHash, global.Version, time.Now().Format(time.DateTime))
+		//}
 
 		select {
 		case <-s.ctx.Listen():
