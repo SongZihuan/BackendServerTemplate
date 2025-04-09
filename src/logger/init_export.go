@@ -13,3 +13,7 @@ import (
 func InitBaseLogger(level loglevel.LoggerLevel, logTag bool, realPanic bool, warnWriter, errWriter io.Writer) error {
 	return internal.InitLogger(level, logTag, realPanic, warnWriter, errWriter)
 }
+
+func CloseLogger() {
+	internal.CloseLogger()
+}

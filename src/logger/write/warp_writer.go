@@ -19,3 +19,11 @@ func ChangeToWriter(w io.Writer) Writer {
 		writer: w,
 	}
 }
+
+func _testWarpWriter() {
+	var a *wrapperWriter
+	var b Writer
+
+	b = a
+	_ = b
+}

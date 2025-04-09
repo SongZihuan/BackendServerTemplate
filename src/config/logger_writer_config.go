@@ -32,7 +32,7 @@ func (d *LoggerWriterConfig) setDefault(c *configInfo) (err configerror.Error) {
 	d.WriteToStd = strings.ToLower(d.WriteToStd)
 
 	if d.WriteToStd == "" {
-		d.WriteToStd = "stdout"
+		d.WriteToStd = "stderr"
 	}
 
 	if d.WriteToDirWithDate != "" && d.WriteWithDatePrefix == "" {
@@ -56,7 +56,7 @@ func (d *LoggerWriterConfig) process(c *configInfo, setter func(w io.Writer) (io
 	case "stdout":
 		writerList = append(writerList, write.ChangeToWriter(os.Stdout))
 	case "stderr":
-		writerList = append(writerList, write.ChangeToWriter(os.Stdout))
+		writerList = append(writerList, write.ChangeToWriter(os.Stderr))
 	}
 
 	if d.WriteToFile != "" {

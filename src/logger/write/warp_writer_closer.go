@@ -14,7 +14,17 @@ func (w *wrapperWriterClose) Write(p []byte) (n int, err error) {
 	return w.writer.Write(p)
 }
 
-func (w *wrapperWriterClose) Close() error {
+func (w *wrapperWriterClose) Close() (err error) {
+	if w.writer != nil {
+		return nil
+	}
+
+	defer func() {
+		if err == nil {
+			w.writer = nil
+		}
+	}()
+
 	return w.writer.Close()
 }
 
@@ -26,4 +36,12 @@ func ChangeToWriteCloser(w io.WriteCloser) WriteCloser {
 	return &wrapperWriterClose{
 		writer: w,
 	}
+}
+
+func _testWarpWriteCloser() {
+	var a *wrapperWriterClose
+	var b WriteCloser
+
+	b = a
+	_ = b
 }

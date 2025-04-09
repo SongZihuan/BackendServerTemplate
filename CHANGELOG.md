@@ -31,6 +31,7 @@
 ### 重构
 
 - 减少`import resource "github.com/SongZihuan/BackendServerTemplate"`的引用。
+- 对日志系统进行跳转：错误日志默认输出到`stderr`。
 
 ## [0.1.0] - 2025-04-03
 
