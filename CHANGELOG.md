@@ -5,7 +5,7 @@
 其格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)，
 且本项目遵循 [语义化版本控制](https://semver.org/spec/v2.0.0.html)。
 
-## [0.2.0] - 2025-04-10
+## [0.2.0] - 2025-04-16
 
 ### 新增功能
 
@@ -21,6 +21,8 @@
     - 若无`commit hash`，则最终版本号为`0.0.0+dev-1744225466`，其中`1744225466`为编译时间戳。
     - 若有`commit hash`，则最终版本号为`0.0.0+1744225466-be8f4ff51e6ed2e01171b38459406dc5dac306ea`，其中`1744225466`为编译时间戳，`be8f4ff51e6ed2e01171b38459406dc5dac306ea`为`commit hash`。
 - `Server.Example1`例子更完善，输出更多信息。
+- 命令行参数`--version`输出更多信息：版本号、编译时间（UTC和Local）、编译的Go版本号、系统、架构。
+- 新增程序案件退出（`exitutils.SuccessExitQuite()`函数），并应用在命令行参数的阻断执行退出中。
 
 ### 修复
 
@@ -28,11 +30,19 @@
 - 修复`Output Config File`逻辑判断错误
 - 修复设置`SigQuitExit`默认动作的错误
 - 修复了退出日志的日志等级
+- 修复了命令行参数`--report`不会阻断服务运行的错误。
+- 修复命令行`Usage`对短参数的前缀使用错误（原：`--c`，现：`-c`）。
+- 删除`log-name`配置项。
 
 ### 重构
 
 - 减少`import resource "github.com/SongZihuan/BackendServerTemplate"`的引用。
 - 对日志系统进行跳转：错误日志默认输出到`stderr`。
+- 在设定情况下，`config`在执行完`setDefault()`函数后，进行配置文件反向输出（若存在输出路径）。
+
+### 文档
+
+- 详细更新了`README`文档。
 
 ## [0.1.0] - 2025-04-03
 
