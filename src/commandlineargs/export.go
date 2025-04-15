@@ -61,6 +61,7 @@ func helpInfoRun() error {
 			_, _ = PrintLF()
 		}
 		_, _ = PrintReport()
+		stopFlag = true
 	}
 
 	if Help() {
