@@ -98,3 +98,14 @@ func SuccessExit(reason string, exitCode ...int) int {
 
 	return ec
 }
+
+func SuccessExitQuite(exitCode ...int) int {
+	if !logger.IsReady() {
+		panic("Logger must be ready!!!")
+		return exitCodeErrorLogMustBeReady
+	}
+
+	ec := getExitCode(0, exitCode...)
+
+	return ec
+}

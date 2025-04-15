@@ -31,7 +31,7 @@ func MainV1() (exitCode int) {
 	err = commandlineargs.InitCommandLineArgsParser(nil)
 	if err != nil {
 		if errors.Is(err, commandlineargs.StopRun) {
-			return exitutils.SuccessExit("server not run")
+			return exitutils.SuccessExitQuite()
 		}
 
 		return exitutils.InitFailedError("Command Line Args Parser", err.Error())

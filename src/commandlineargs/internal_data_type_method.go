@@ -12,6 +12,7 @@ import (
 
 const OptionIdent = "  "
 const OptionPrefix = "--"
+const OptionShortPrefix = "-"
 const UsagePrefixWidth = 10
 
 func (d *CommandLineArgsDataType) ready() {
@@ -97,7 +98,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 			}
 
 			if optionShortName != "" {
-				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionPrefix, formatutils.FormatTextToWidth(optionShortName, formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
+				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionShortPrefix, formatutils.FormatTextToWidth(optionShortName, formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
 			}
 		} else if field.Type.Kind() == reflect.String {
 			var optionData string
@@ -116,9 +117,9 @@ func (d *CommandLineArgsDataType) writeUsage() {
 			}
 
 			if optionShortName != "" && optionData != "" {
-				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s string, default: '%s'", optionShortName, optionData), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
+				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionShortPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s string, default: '%s'", optionShortName, optionData), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
 			} else if optionShortName != "" && optionData == "" {
-				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s string", optionShortName), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
+				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionShortPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s string", optionShortName), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
 			}
 		} else if field.Type.Kind() == reflect.Uint || field.Type.Kind() == reflect.Int {
 			var optionData uint
@@ -137,9 +138,9 @@ func (d *CommandLineArgsDataType) writeUsage() {
 			}
 
 			if optionShortName != "" && optionData != 0 {
-				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s number, default: %d", optionShortName, optionData), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
+				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionShortPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s number, default: %d", optionShortName, optionData), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
 			} else if optionShortName != "" && optionData == 0 {
-				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s number", optionShortName), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
+				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionShortPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s number", optionShortName), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
 			}
 		} else {
 			panic(fmt.Sprintf("the flag type (%s) is not support", field.Type.Name()))

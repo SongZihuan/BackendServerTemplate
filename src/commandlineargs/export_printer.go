@@ -11,6 +11,9 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/formatutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"io"
+	"runtime"
+	"strings"
+	"time"
 )
 
 func (d *CommandLineArgsDataType) FprintUsage(writer io.Writer) (int, error) {
@@ -22,7 +25,18 @@ func (d *CommandLineArgsDataType) PrintUsage() (int, error) {
 }
 
 func (d *CommandLineArgsDataType) FprintVersion(writer io.Writer) (int, error) {
-	version := formatutils.FormatTextToWidth(fmt.Sprintf("Version of %s: %s", osutils.GetArgs0Name(), global.SemanticVersioning), formatutils.NormalConsoleWidth)
+	res := new(strings.Builder)
+	res.WriteString(fmt.Sprintf("Version of %s: %s\n", osutils.GetArgs0Name(), global.Version))
+	res.WriteString(fmt.Sprintf("Build Date (UTC): %s\n", global.BuildTime.In(time.UTC).Format(time.DateTime)))
+	if time.Local != nil && time.Local.String() != time.UTC.String() {
+		zone, _ := time.Now().Local().Zone()
+		res.WriteString(fmt.Sprintf("Build Date (%s): %s\n", zone, global.BuildTime.In(time.Local).Format(time.DateTime)))
+	}
+	res.WriteString(fmt.Sprintf("Compiler: %s\n", runtime.Version()))
+	res.WriteString(fmt.Sprintf("OS: %s\n", runtime.GOOS))
+	res.WriteString(fmt.Sprintf("Arch: %s\n", runtime.GOARCH))
+
+	version := formatutils.FormatTextToWidth(res.String(), formatutils.NormalConsoleWidth)
 	return fmt.Fprintf(writer, "%s\n", version)
 }
 
