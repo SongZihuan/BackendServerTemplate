@@ -37,23 +37,19 @@ func MainV1() (exitCode int) {
 
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: commandlineargs.ConfigFile(),
+		OutputFilePath: commandlineargs.OutputConfigFile(),
 		Provider:       configparser.NewYamlProvider(),
 	})
 	if err != nil {
 		return exitutils.InitFailedError("Config file read and parser", err.Error())
 	}
 
-	if commandlineargs.OutputConfigFile() != "" {
-		err = config.OutputConfig(commandlineargs.OutputConfigFile())
-		if err != nil {
-			return exitutils.InitFailedError("Config file output", err.Error())
-		}
-	}
-
 	sigchan := signalwatcher.NewSignalExitChannel()
 	defer close(sigchan)
 
-	ser, _, err := example1.NewServerExample1(nil)
+	ser, _, err := example1.NewServerExample1(&example1.ServerExample1Option{
+		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
+	})
 	if err != nil {
 		return exitutils.InitFailedError("Server Example1", err.Error())
 	}

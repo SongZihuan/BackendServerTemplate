@@ -9,17 +9,18 @@ import (
 type configInfo struct {
 	data *ConfigData
 
-	ready    bool
-	file     string
-	provider configparser.ConfigParserProvider
+	ready      bool
+	inputFile  string
+	outputFile string
+	provider   configparser.ConfigParserProvider
 }
 
-func newConfig(filePath string, provider configparser.ConfigParserProvider) (*configInfo, configerror.Error) {
-	if filePath == "" {
+func newConfig(inputFilePath string, outputFilePath string, provider configparser.ConfigParserProvider) (*configInfo, configerror.Error) {
+	if inputFilePath == "" {
 		panic("config path is empty")
 	}
 
-	configFilePath, err := filesystemutils.CleanFilePathAbs(filePath)
+	configFilePath, err := filesystemutils.CleanFilePathAbs(inputFilePath)
 	if err != nil {
 		return nil, configerror.NewErrorf("change config file path (%s) to abs error: %s", configFilePath, err.Error())
 	}
@@ -41,9 +42,10 @@ func newConfig(filePath string, provider configparser.ConfigParserProvider) (*co
 	return &configInfo{
 		data: data,
 
-		ready:    false,
-		file:     configFilePath,
-		provider: provider,
+		ready:      false,
+		inputFile:  configFilePath,
+		outputFile: outputFilePath,
+		provider:   provider,
 	}, nil
 }
 
@@ -52,12 +54,12 @@ func (c *configInfo) init() (err configerror.Error) {
 		return configerror.NewErrorf("config is ready")
 	}
 
-	err = c.provider.ReadFile(c.file)
+	err = c.provider.ReadFile(c.inputFile)
 	if err != nil && err.IsError() {
 		return err
 	}
 
-	err = c.provider.ParserFile(c.data)
+	err = c.provider.ParserFile(c.data) // c.Data本身就是指针
 	if err != nil && err.IsError() {
 		return err
 	}
@@ -65,6 +67,13 @@ func (c *configInfo) init() (err configerror.Error) {
 	err = c.data.setDefault(c)
 	if err != nil && err.IsError() {
 		return err
+	}
+
+	if c.outputFile != "" {
+		err = c.provider.WriteFile(c.outputFile, c.data)
+		if err != nil && err.IsError() {
+			return err
+		}
 	}
 
 	err = c.data.check(c)
@@ -112,10 +121,6 @@ func (c *configInfo) Data() *ConfigData {
 	}
 
 	return c.data
-}
-
-func (c *configInfo) ConfigFilePath() string {
-	return c.file
 }
 
 func (c *configInfo) Output(filePath string) configerror.Error {

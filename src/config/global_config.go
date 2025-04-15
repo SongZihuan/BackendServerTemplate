@@ -21,13 +21,18 @@ type GlobalConfig struct {
 	Name     string  `json:"name" yaml:"name"`
 	Mode     RunMode `json:"mode" yaml:"mode"`
 	Timezone string  `json:"time-zone" yaml:"time-zone"`
+
+	// Time UTCDate Timestamp 记录为配置文件读取时间
+	Time      time.Time `json:"-" yaml:"-"`
+	UTCDate   string    `json:"utc-date" yaml:"utc-date"`
+	Timestamp int64     `json:"timestamp" yaml:"timestamp"`
 }
 
 func (d *GlobalConfig) init(filePath string, provider configparser.ConfigParserProvider) configerror.Error {
 	return nil
 }
 
-func (d *GlobalConfig) setDefault() configerror.Error {
+func (d *GlobalConfig) setDefault(c *configInfo) configerror.Error {
 	if d.Mode == "" {
 		d.Mode = RunModeDebug
 	}
@@ -40,10 +45,14 @@ func (d *GlobalConfig) setDefault() configerror.Error {
 		d.Timezone = strings.ToLower(d.Timezone)
 	}
 
+	d.Time = time.Now().In(time.UTC)
+	d.UTCDate = d.Time.Format(time.DateTime)
+	d.Timestamp = d.Time.Unix()
+
 	return nil
 }
 
-func (d *GlobalConfig) check() configerror.Error {
+func (d *GlobalConfig) check(c *configInfo) configerror.Error {
 	if d.Mode != RunModeDebug && d.Mode != RunModeRelease && d.Mode != RunModeTest {
 		return configerror.NewErrorf("bad mode: %s", d.Mode)
 	}

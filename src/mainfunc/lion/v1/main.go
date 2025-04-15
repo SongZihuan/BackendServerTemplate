@@ -39,17 +39,11 @@ func MainV1() (exitCode int) {
 
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: commandlineargs.ConfigFile(),
+		OutputFilePath: commandlineargs.OutputConfigFile(),
 		Provider:       configparser.NewYamlProvider(),
 	})
 	if err != nil {
 		return exitutils.InitFailedError("Config file read and parser", err.Error())
-	}
-
-	if commandlineargs.OutputConfigFile() != "" {
-		err = config.OutputConfig(commandlineargs.OutputConfigFile())
-		if err != nil {
-			return exitutils.InitFailedError("Config file output", err.Error())
-		}
 	}
 
 	sigchan := signalwatcher.NewSignalExitChannel()

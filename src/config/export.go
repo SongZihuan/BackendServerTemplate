@@ -18,6 +18,7 @@ var config *configInfo
 
 type ConfigOption struct {
 	ConfigFilePath string
+	OutputFilePath string
 	Provider       configparser.ConfigParserProvider
 }
 
@@ -60,7 +61,7 @@ func InitConfig(opt *ConfigOption) error {
 		return err
 	}
 
-	_cfg, cfgErr := newConfig(opt.ConfigFilePath, opt.Provider)
+	_cfg, cfgErr := newConfig(opt.ConfigFilePath, opt.OutputFilePath, opt.Provider)
 	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
@@ -79,12 +80,7 @@ func GetData() (*ConfigData, configerror.Error) {
 		panic("config is not ready")
 	}
 
-	data, err := config.GetData()
-	if err != nil && err.IsError() {
-		panic(err.Error())
-	}
-
-	return data, nil
+	return config.GetData()
 }
 
 func Data() *ConfigData {
@@ -92,18 +88,13 @@ func Data() *ConfigData {
 		panic("config is not ready")
 	}
 
-	data, err := config.GetData()
-	if err != nil && err.IsError() {
-		panic(err.Error())
-	}
-
-	return data
+	return config.Data()
 }
 
-func OutputConfig(filePath string) error {
+func Output(filePath string) error {
 	if config == nil {
 		panic("config is not ready")
 	}
 
-	return config.output(filePath)
+	return config.Output(filePath)
 }

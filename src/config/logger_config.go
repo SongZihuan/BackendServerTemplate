@@ -14,7 +14,6 @@ import (
 )
 
 type LoggerConfig struct {
-	LogName  string               `json:"log-name" yaml:"log-name"`
 	LogLevel loglevel.LoggerLevel `json:"log-level" yaml:"log-level"`
 	LogTag   typeutils.StringBool `json:"log-tag" yaml:"log-tag"`
 
@@ -75,11 +74,6 @@ func (d *LoggerConfig) check(c *configInfo) (err configerror.Error) {
 }
 
 func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
-	logName := d.LogName
-	if logName == "" {
-		logName = global.Name
-	}
-
 	err := logger.SetArgs0Name("", global.Name)
 	if err != nil {
 		return configerror.NewErrorf("set log name error: %s", err.Error())

@@ -37,7 +37,7 @@ func (d *ConfigData) init(filePath string, provider configparser.ConfigParserPro
 }
 
 func (d *ConfigData) setDefault(c *configInfo) (err configerror.Error) {
-	cfgErr := d.GlobalConfig.process(c)
+	cfgErr := d.GlobalConfig.setDefault(c)
 	if cfgErr != nil {
 		return cfgErr
 	}
@@ -61,7 +61,7 @@ func (d *ConfigData) setDefault(c *configInfo) (err configerror.Error) {
 }
 
 func (d *ConfigData) check(c *configInfo) (err configerror.Error) {
-	cfgErr := d.GlobalConfig.process(c)
+	cfgErr := d.GlobalConfig.check(c)
 	if cfgErr != nil {
 		return cfgErr
 	}
