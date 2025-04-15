@@ -44,6 +44,14 @@ func (d *CommandLineArgsDataType) PrintVersion() (int, error) {
 	return d.FprintVersion(flag.CommandLine.Output())
 }
 
+func (d *CommandLineArgsDataType) FprintOutputVersion(writer io.Writer) (int, error) {
+	return fmt.Fprintf(writer, "%s", global.SemanticVersioning)
+}
+
+func (d *CommandLineArgsDataType) PrintOutputVersion() (int, error) {
+	return d.FprintOutputVersion(flag.CommandLine.Output())
+}
+
 func (d *CommandLineArgsDataType) FprintLicense(writer io.Writer) (int, error) {
 	title := formatutils.FormatTextToWidth(fmt.Sprintf("License of %s:", osutils.GetArgs0Name()), formatutils.NormalConsoleWidth)
 	license := formatutils.FormatTextToWidth(global.License, formatutils.NormalConsoleWidth)

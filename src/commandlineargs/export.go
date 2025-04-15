@@ -43,6 +43,12 @@ func IsReady() bool {
 func helpInfoRun() error {
 	var stopFlag = false
 
+	if OutputVersion() {
+		_, _ = PrintOutputVersion()
+		stopFlag = true
+		return StopRun
+	}
+
 	if Version() {
 		_, _ = PrintVersion()
 		stopFlag = true

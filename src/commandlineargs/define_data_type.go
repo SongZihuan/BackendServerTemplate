@@ -24,6 +24,11 @@ type CommandLineArgsDataType struct {
 	HelpName  string
 	HelpUsage string
 
+	OutputVersionData      bool
+	OutputVersionName      string
+	OutputVersionShortName string
+	OutputVersionUsage     string
+
 	VersionData  bool
 	VersionName  string
 	VersionUsage string
@@ -65,6 +70,11 @@ func initData() {
 		VersionName:  "version",
 		VersionUsage: fmt.Sprintf("Show version of %s. If this option is set, the backend service will not run.", osutils.GetArgs0Name()),
 
+		OutputVersionData:      false,
+		OutputVersionName:      "output-version",
+		OutputVersionShortName: "",
+		OutputVersionUsage:     fmt.Sprintf("Show version of %s. If this option is set, the backend service will not run.", osutils.GetArgs0Name()),
+
 		LicenseData:  false,
 		LicenseName:  "license",
 		LicenseUsage: fmt.Sprintf("Show license of %s. If this option is set, the backend service will not run.", osutils.GetArgs0Name()),
@@ -100,6 +110,8 @@ func (d *CommandLineArgsDataType) setFlag() {
 
 	flag.BoolVar(&d.VersionData, d.VersionName, d.VersionData, d.VersionUsage)
 	flag.BoolVar(&d.VersionData, d.VersionName[0:1], d.VersionData, d.VersionUsage)
+
+	flag.BoolVar(&d.OutputVersionData, d.OutputVersionName, d.OutputVersionData, d.OutputVersionUsage)
 
 	flag.BoolVar(&d.LicenseData, d.LicenseName, d.LicenseData, d.LicenseUsage)
 	flag.BoolVar(&d.LicenseData, d.LicenseName[0:1], d.LicenseData, d.LicenseUsage)

@@ -21,6 +21,10 @@ func PrintVersion() (int, error) {
 	return CommandLineArgsData.PrintVersion()
 }
 
+func PrintOutputVersion() (int, error) {
+	return CommandLineArgsData.PrintOutputVersion()
+}
+
 func PrintLicense() (int, error) {
 	return CommandLineArgsData.PrintLicense()
 }
@@ -35,6 +39,10 @@ func PrintLF() (int, error) {
 
 func Version() bool {
 	return CommandLineArgsData.Version()
+}
+
+func OutputVersion() bool {
+	return CommandLineArgsData.OutputVersion()
 }
 
 func License() bool {

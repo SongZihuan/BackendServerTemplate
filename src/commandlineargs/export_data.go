@@ -26,6 +26,10 @@ func (d *CommandLineArgsDataType) Version() bool {
 	return getData(d, d.VersionData)
 }
 
+func (d *CommandLineArgsDataType) OutputVersion() bool {
+	return getData(d, d.OutputVersionData)
+}
+
 func (d *CommandLineArgsDataType) License() bool {
 	return getData(d, d.LicenseData)
 }

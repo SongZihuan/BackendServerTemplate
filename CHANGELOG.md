@@ -2,8 +2,14 @@
 
 本项目所有显著变更都将记录在此文件中。
 
-其格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)，
-且本项目遵循 [语义化版本控制](https://semver.org/spec/v2.0.0.html)。
+其格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
+且本项目遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
+
+## [未发行]
+
+### 新增功能
+
+- 新增版本号获取功能（仅输出版本号，不输出其他任何内容，不以字母v或V开头）。
 
 ## [0.2.0] - 2025-04-16
 
@@ -12,6 +18,10 @@
 - 获取构建时时间
 - 获取构建时`Git`信息（若有）：当前`commit hash`、当前最新`tag`（若有）、以及`tag`（若有）对应的`commit hash`（若有）。
 - 清洗通过`go:embed`读取的文件：仅保留第一行（某些文件），删除`BOM`，删除`\r`。
+- 新增程序案件退出（`exitutils.SuccessExitQuite()`函数）。
+
+### 变更
+
 - 修改语义化版本号获取：
   - 从`VERSION`文件获取（第一优先级，可以以`v/V`开头，必须满足语义化版本哈规定）。
   - 从`git`获取最新的`tag`（第二优先级，可以以`v/V`开头，必须满足语义化版本哈规定）。
@@ -22,7 +32,7 @@
     - 若有`commit hash`，则最终版本号为`0.0.0+1744225466-be8f4ff51e6ed2e01171b38459406dc5dac306ea`，其中`1744225466`为编译时间戳，`be8f4ff51e6ed2e01171b38459406dc5dac306ea`为`commit hash`。
 - `Server.Example1`例子更完善，输出更多信息。
 - 命令行参数`--version`输出更多信息：版本号、编译时间（UTC和Local）、编译的Go版本号、系统、架构。
-- 新增程序案件退出（`exitutils.SuccessExitQuite()`函数），并应用在命令行参数的阻断执行退出中。
+- 应用`exitutils.SuccessExitQuite()`函数到命令行参数的阻断执行退出中
 
 ### 修复
 
@@ -32,13 +42,13 @@
 - 修复了退出日志的日志等级
 - 修复了命令行参数`--report`不会阻断服务运行的错误。
 - 修复命令行`Usage`对短参数的前缀使用错误（原：`--c`，现：`-c`）。
-- 删除`log-name`配置项。
 
 ### 重构
 
 - 减少`import resource "github.com/SongZihuan/BackendServerTemplate"`的引用。
 - 对日志系统进行跳转：错误日志默认输出到`stderr`。
 - 在设定情况下，`config`在执行完`setDefault()`函数后，进行配置文件反向输出（若存在输出路径）。
+- 删除`log-name`配置项。
 
 ### 文档
 
