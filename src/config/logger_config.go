@@ -7,7 +7,6 @@ package config
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/typeutils"
@@ -74,12 +73,7 @@ func (d *LoggerConfig) check(c *configInfo) (err configerror.Error) {
 }
 
 func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
-	err := logger.SetArgs0Name("", global.Name)
-	if err != nil {
-		return configerror.NewErrorf("set log name error: %s", err.Error())
-	}
-
-	err = logger.SetLevel(d.LogLevel)
+	err := logger.SetLevel(d.LogLevel)
 	if err != nil {
 		return configerror.NewErrorf("set log level error: %s", err.Error())
 	}

@@ -29,7 +29,7 @@ func MainV1() (exitCode int) {
 		return exitutils.InitFailedErrorForWin32ConsoleModule(err.Error())
 	}
 
-	err = logger.InitBaseLogger(loglevel.LevelDebug, true, true, nil, nil)
+	err = logger.InitBaseLogger(loglevel.LevelDebug, true, nil, nil)
 	if err != nil {
 		return exitutils.InitFailedErrorForLoggerModule(err.Error())
 	}

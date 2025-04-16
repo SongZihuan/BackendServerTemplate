@@ -13,7 +13,5 @@ type Logger struct {
 	logTag     bool
 	warnWriter write.Writer
 	errWriter  write.Writer
-	args0      string
 	args0Name  string
-	realPanic  bool
 }

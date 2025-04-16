@@ -6,18 +6,9 @@ package internal
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/runtimeutils"
 )
-
-func (l *Logger) Executablef(format string, args ...interface{}) string {
-	str := fmt.Sprintf(format, args...)
-	if str == "" {
-		_, _ = fmt.Fprintf(l.warnWriter, "[Executable]: %s\n", l.args0)
-	} else {
-		_, _ = fmt.Fprintf(l.warnWriter, "[Executable %s]: %s\n", l.args0, str)
-	}
-	return l.args0
-}
 
 func (l *Logger) Tagf(format string, args ...interface{}) {
 	l.TagSkipf(1, format, args...)
@@ -30,8 +21,9 @@ func (l *Logger) TagSkipf(skip int, format string, args ...interface{}) {
 
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
-	str := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Tag %s]: %s %s %s:%d\n", l.args0Name, str, funcName, file, line)
+	content := fmt.Sprintf(format, args...)
+	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format("TAG", msg))
 }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
@@ -39,8 +31,8 @@ func (l *Logger) Debugf(format string, args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Debug %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprintf(format, args...)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelDebug, msg))
 }
 
 func (l *Logger) Infof(format string, args ...interface{}) {
@@ -48,8 +40,8 @@ func (l *Logger) Infof(format string, args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Info %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprintf(format, args...)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelInfo, msg))
 }
 
 func (l *Logger) Warnf(format string, args ...interface{}) {
@@ -57,8 +49,8 @@ func (l *Logger) Warnf(format string, args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Warning %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprintf(format, args...)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelWarn, msg))
 }
 
 func (l *Logger) Errorf(format string, args ...interface{}) {
@@ -66,8 +58,8 @@ func (l *Logger) Errorf(format string, args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.errWriter, "[Error %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprintf(format, args...)
+	_, _ = fmt.Fprintf(l.errWriter, "%s", l.format(loglevel.LevelError, msg))
 }
 
 func (l *Logger) Panicf(format string, args ...interface{}) {
@@ -75,12 +67,10 @@ func (l *Logger) Panicf(format string, args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.errWriter, "[Panic %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprintf(format, args...)
+	_, _ = fmt.Fprintf(l.errWriter, "%s", l.format(loglevel.LevelPanic, msg))
 
-	if l.realPanic {
-		panic(str)
-	}
+	panic(msg)
 }
 
 func (l *Logger) Tag(args ...interface{}) {
@@ -94,8 +84,9 @@ func (l *Logger) TagSkip(skip int, args ...interface{}) {
 
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
-	str := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Tag %s]: %s %s %s:%d\n", l.args0Name, str, funcName, file, line)
+	content := fmt.Sprint(args...)
+	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format("TAG", msg))
 }
 
 func (l *Logger) Debug(args ...interface{}) {
@@ -103,8 +94,8 @@ func (l *Logger) Debug(args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Debug %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprint(args...)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelDebug, msg))
 }
 
 func (l *Logger) Info(args ...interface{}) {
@@ -112,8 +103,8 @@ func (l *Logger) Info(args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Info %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprint(args...)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelInfo, msg))
 }
 
 func (l *Logger) Warn(args ...interface{}) {
@@ -121,8 +112,8 @@ func (l *Logger) Warn(args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.warnWriter, "[Warning %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprint(args...)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelWarn, msg))
 }
 
 func (l *Logger) Error(args ...interface{}) {
@@ -130,8 +121,8 @@ func (l *Logger) Error(args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.errWriter, "[Error %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprint(args...)
+	_, _ = fmt.Fprintf(l.errWriter, "%s", l.format(loglevel.LevelError, msg))
 }
 
 func (l *Logger) Panic(args ...interface{}) {
@@ -139,26 +130,25 @@ func (l *Logger) Panic(args ...interface{}) {
 		return
 	}
 
-	str := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.errWriter, "[Panic %s]: %s\n", l.args0Name, str)
+	msg := fmt.Sprint(args...)
+	_, _ = fmt.Fprintf(l.errWriter, "%s", l.format(loglevel.LevelPanic, msg))
 
-	if l.realPanic {
-		panic(str)
-	}
+	panic(msg)
 }
 
 func (l *Logger) TagWrite(msg string) {
 	l.TagSkipWrite(1, msg)
 }
 
-func (l *Logger) TagSkipWrite(skip int, msg string) {
+func (l *Logger) TagSkipWrite(skip int, content string) {
 	if !l.logTag {
 		return
 	}
 
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
-	_, _ = fmt.Fprintf(l.warnWriter, "[Debug %s]: %s %s %s:%d\n", l.args0Name, msg, funcName, file, line)
+	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format("TAG", msg))
 }
 
 func (l *Logger) DebugWrite(msg string) {
@@ -166,7 +156,7 @@ func (l *Logger) DebugWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.warnWriter, "[Debug %s]: %s\n", l.args0Name, msg)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelDebug, msg))
 }
 
 func (l *Logger) InfoWrite(msg string) {
@@ -174,7 +164,7 @@ func (l *Logger) InfoWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.warnWriter, "[Info %s]: %s\n", l.args0Name, msg)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelInfo, msg))
 }
 
 func (l *Logger) WarnWrite(msg string) {
@@ -182,7 +172,7 @@ func (l *Logger) WarnWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.warnWriter, "[Warning %s]: %s\n", l.args0Name, msg)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelWarn, msg))
 }
 
 func (l *Logger) ErrorWrite(msg string) {
@@ -190,7 +180,7 @@ func (l *Logger) ErrorWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.errWriter, "[Error %s]: %s\n", l.args0Name, msg)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelError, msg))
 }
 
 func (l *Logger) PanicWrite(msg string) {
@@ -198,9 +188,7 @@ func (l *Logger) PanicWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.errWriter, "[Panic %s]: %s\n", l.args0Name, msg)
+	_, _ = fmt.Fprintf(l.warnWriter, "%s", l.format(loglevel.LevelPanic, msg))
 
-	if l.realPanic {
-		panic(msg)
-	}
+	panic(msg)
 }

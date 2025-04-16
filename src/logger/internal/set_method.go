@@ -29,22 +29,6 @@ func (l *Logger) SetLogTag(logTag bool) error {
 	return nil
 }
 
-func (l *Logger) SetArgs0Name(args0 string, args0Name string) error {
-	if args0 == "" && args0Name == "" {
-		return fmt.Errorf("args0 can not be empty")
-	}
-
-	if args0 != "" {
-		l.args0 = args0
-	}
-
-	if args0Name != "" {
-		l.args0Name = args0Name
-	}
-
-	return nil
-}
-
 func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
 	if w == nil {
 		w = wrapwriter.WrapToWriter(os.Stdout)

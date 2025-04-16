@@ -41,7 +41,6 @@ var randomData string
 
 func init() {
 	initCleanFile()
-	initName()
 	initBuildDate()
 	initVersion()
 }
@@ -56,12 +55,6 @@ func initCleanFile() {
 	GitCommitHash = utilsClenFileData(GitCommitHash)
 	GitTag = utilsClenFileData(GitTag)
 	GitTagCommitHash = utilsClenFileData(GitTagCommitHash)
-}
-
-func initName() {
-	if Name == "" {
-		Name = "Backend-Server"
-	}
 }
 
 func initBuildDate() {

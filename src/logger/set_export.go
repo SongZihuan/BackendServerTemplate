@@ -25,13 +25,6 @@ func SetLogTag(logTag bool) error {
 	return internal.GlobalLogger.SetLogTag(logTag)
 }
 
-func SetArgs0Name(args0 string, args0Name string) error {
-	if !internal.IsReady() {
-		return fmt.Errorf("logger not ready")
-	}
-	return internal.GlobalLogger.SetArgs0Name(args0, args0Name)
-}
-
 func SetWarnWriter(w io.Writer) (io.Writer, error) {
 	if !internal.IsReady() {
 		return nil, fmt.Errorf("logger not ready")

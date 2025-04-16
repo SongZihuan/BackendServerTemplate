@@ -8,12 +8,11 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"io"
 	"os"
 )
 
-func InitLogger(level loglevel.LoggerLevel, logTag bool, realPanic bool, warnWriter, errWriter io.Writer) error {
+func InitLogger(level loglevel.LoggerLevel, logTag bool, warnWriter, errWriter io.Writer) error {
 	logLevel, ok := levelMap[level]
 	if !ok {
 		return fmt.Errorf("invalid log level: %s", level)
@@ -33,9 +32,6 @@ func InitLogger(level loglevel.LoggerLevel, logTag bool, realPanic bool, warnWri
 		logTag:     logTag,
 		warnWriter: warnWriter,
 		errWriter:  errWriter,
-		args0:      osutils.GetArgs0(),
-		args0Name:  osutils.GetArgs0Name(),
-		realPanic:  realPanic,
 	}
 
 	GlobalLogger = logger

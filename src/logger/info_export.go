@@ -24,13 +24,6 @@ func IsLogTag() bool {
 	return internal.GlobalLogger.IsLogTag()
 }
 
-func GetArgs0Name() (string, string) {
-	if !internal.IsReady() {
-		return "", ""
-	}
-	return internal.GlobalLogger.GetArgs0Name()
-}
-
 func GetWarnWriter() io.Writer {
 	if !internal.IsReady() {
 		return nil

@@ -8,13 +8,6 @@ func IsReady() bool {
 	return internal.IsReady()
 }
 
-func Executablef(format string, args ...interface{}) string {
-	if !internal.IsReady() {
-		return ""
-	}
-	return internal.GlobalLogger.Executablef(format, args...)
-}
-
 func Tagf(format string, args ...interface{}) {
 	if !internal.IsReady() {
 		return

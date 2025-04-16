@@ -13,10 +13,12 @@ var _args0 = ""
 
 func init() {
 	var err error
-	if len(os.Args) > 0 {
-		_args0, err = os.Executable()
-		if err != nil {
+	_args0, err = os.Executable()
+	if err != nil {
+		if len(os.Args) > 0 {
 			_args0 = os.Args[0]
+		} else {
+			panic(err)
 		}
 	}
 

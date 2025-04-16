@@ -19,10 +19,6 @@ func (l *Logger) IsLogTag() bool {
 	return l.logTag
 }
 
-func (l *Logger) GetArgs0Name() (string, string) {
-	return l.args0, l.args0Name
-}
-
 func (l *Logger) GetWarnWriter() io.Writer {
 	return l.warnWriter
 }
