@@ -3,6 +3,7 @@ package commandlineargs
 import (
 	"fmt"
 	"io"
+	"os"
 )
 
 var StopRun = fmt.Errorf("stop run and exit with success")
@@ -36,45 +37,41 @@ func InitCommandLineArgsParser(output io.Writer) (err error) {
 	return nil
 }
 
-func IsReady() bool {
-	return CommandLineArgsData.isReady() && isReady
-}
-
 func helpInfoRun() error {
 	var stopFlag = false
 
-	if OutputVersion() {
-		_, _ = PrintOutputVersion()
+	if commandLineArgsData.OutputVersion() {
+		_, _ = commandLineArgsData.PrintOutputVersion()
 		stopFlag = true
 		return StopRun
 	}
 
-	if Version() {
-		_, _ = PrintVersion()
+	if commandLineArgsData.Version() {
+		_, _ = commandLineArgsData.PrintVersion()
 		stopFlag = true
 	}
 
-	if License() {
+	if commandLineArgsData.License() {
 		if stopFlag {
-			_, _ = PrintLF()
+			_, _ = commandLineArgsData.PrintLF()
 		}
-		_, _ = PrintLicense()
+		_, _ = commandLineArgsData.PrintLicense()
 		stopFlag = true
 	}
 
-	if Report() {
+	if commandLineArgsData.Report() {
 		if stopFlag {
-			_, _ = PrintLF()
+			_, _ = commandLineArgsData.PrintLF()
 		}
-		_, _ = PrintReport()
+		_, _ = commandLineArgsData.PrintReport()
 		stopFlag = true
 	}
 
-	if Help() {
+	if commandLineArgsData.Help() {
 		if stopFlag {
-			_, _ = PrintLF()
+			_, _ = commandLineArgsData.PrintLF()
 		}
-		_, _ = PrintUsage()
+		_, _ = commandLineArgsData.PrintUsage()
 		stopFlag = true
 	}
 
@@ -83,4 +80,28 @@ func helpInfoRun() error {
 	}
 
 	return nil
+}
+
+func IsReady() bool {
+	return commandLineArgsData.isReady() && isReady
+}
+
+func Name() string {
+	return commandLineArgsData.Name()
+}
+
+func ConfigFile() string {
+	return commandLineArgsData.ConfigFile()
+}
+
+func OutputConfigFile() string {
+	return commandLineArgsData.OutputConfig()
+}
+
+func SetOutput(writer io.Writer) {
+	if writer == nil {
+		writer = os.Stdout
+	}
+
+	commandLineArgsData.SetOutput(writer)
 }

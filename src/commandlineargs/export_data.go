@@ -6,9 +6,9 @@ package commandlineargs
 
 import "github.com/SongZihuan/BackendServerTemplate/src/logger"
 
-var CommandLineArgsData CommandLineArgsDataType
+var commandLineArgsData commandLineArgsDataType
 
-func (d *CommandLineArgsDataType) Name() string {
+func (d *commandLineArgsDataType) Name() string {
 	if !d.isReady() {
 		logger.Panic("flag not ready")
 	}
@@ -16,7 +16,7 @@ func (d *CommandLineArgsDataType) Name() string {
 	return d.NameData
 }
 
-func (d *CommandLineArgsDataType) Help() bool {
+func (d *commandLineArgsDataType) Help() bool {
 	if !d.isReady() {
 		logger.Panic("flag not ready")
 	}
@@ -24,26 +24,26 @@ func (d *CommandLineArgsDataType) Help() bool {
 	return d.HelpData
 }
 
-func (d *CommandLineArgsDataType) Version() bool {
+func (d *commandLineArgsDataType) Version() bool {
 	return getData(d, d.VersionData)
 }
 
-func (d *CommandLineArgsDataType) OutputVersion() bool {
+func (d *commandLineArgsDataType) OutputVersion() bool {
 	return getData(d, d.OutputVersionData)
 }
 
-func (d *CommandLineArgsDataType) License() bool {
+func (d *commandLineArgsDataType) License() bool {
 	return getData(d, d.LicenseData)
 }
 
-func (d *CommandLineArgsDataType) Report() bool {
+func (d *commandLineArgsDataType) Report() bool {
 	return getData(d, d.ReportData)
 }
 
-func (d *CommandLineArgsDataType) ConfigFile() string {
+func (d *commandLineArgsDataType) ConfigFile() string {
 	return getData(d, d.ConfigFileData)
 }
 
-func (d *CommandLineArgsDataType) OutputConfig() string {
+func (d *commandLineArgsDataType) OutputConfig() string {
 	return getData(d, d.ConfigOutputFileData)
 }

@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func (d *CommandLineArgsDataType) SetOutput(writer io.Writer) {
+func (d *commandLineArgsDataType) SetOutput(writer io.Writer) {
 	if writer == nil {
 		writer = os.Stdout
 	}

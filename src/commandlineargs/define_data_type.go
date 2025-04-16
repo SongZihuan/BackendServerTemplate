@@ -11,7 +11,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 )
 
-type CommandLineArgsDataType struct {
+type commandLineArgsDataType struct {
 	flagReady  bool
 	flagSet    bool
 	flagParser bool
@@ -53,7 +53,7 @@ type CommandLineArgsDataType struct {
 }
 
 func initData() {
-	CommandLineArgsData = CommandLineArgsDataType{
+	commandLineArgsData = commandLineArgsDataType{
 		flagReady:  false,
 		flagSet:    false,
 		flagParser: false,
@@ -94,10 +94,10 @@ func initData() {
 		Usage: "",
 	}
 
-	CommandLineArgsData.ready()
+	commandLineArgsData.ready()
 }
 
-func (d *CommandLineArgsDataType) setFlag() {
+func (d *commandLineArgsDataType) setFlag() {
 	if d.isFlagSet() {
 		return
 	}

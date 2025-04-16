@@ -16,15 +16,15 @@ import (
 	"time"
 )
 
-func (d *CommandLineArgsDataType) FprintUsage(writer io.Writer) (int, error) {
+func (d *commandLineArgsDataType) FprintUsage(writer io.Writer) (int, error) {
 	return fmt.Fprintf(writer, "%s\n", d.Usage)
 }
 
-func (d *CommandLineArgsDataType) PrintUsage() (int, error) {
+func (d *commandLineArgsDataType) PrintUsage() (int, error) {
 	return d.FprintUsage(flag.CommandLine.Output())
 }
 
-func (d *CommandLineArgsDataType) FprintVersion(writer io.Writer) (int, error) {
+func (d *commandLineArgsDataType) FprintVersion(writer io.Writer) (int, error) {
 	res := new(strings.Builder)
 	res.WriteString(fmt.Sprintf("Version of %s: %s\n", osutils.GetArgs0Name(), global.Version))
 	res.WriteString(fmt.Sprintf("Build Date (UTC): %s\n", global.BuildTime.In(time.UTC).Format(time.DateTime)))
@@ -40,42 +40,42 @@ func (d *CommandLineArgsDataType) FprintVersion(writer io.Writer) (int, error) {
 	return fmt.Fprintf(writer, "%s\n", version)
 }
 
-func (d *CommandLineArgsDataType) PrintVersion() (int, error) {
+func (d *commandLineArgsDataType) PrintVersion() (int, error) {
 	return d.FprintVersion(flag.CommandLine.Output())
 }
 
-func (d *CommandLineArgsDataType) FprintOutputVersion(writer io.Writer) (int, error) {
+func (d *commandLineArgsDataType) FprintOutputVersion(writer io.Writer) (int, error) {
 	return fmt.Fprintf(writer, "%s", global.SemanticVersioning)
 }
 
-func (d *CommandLineArgsDataType) PrintOutputVersion() (int, error) {
+func (d *commandLineArgsDataType) PrintOutputVersion() (int, error) {
 	return d.FprintOutputVersion(flag.CommandLine.Output())
 }
 
-func (d *CommandLineArgsDataType) FprintLicense(writer io.Writer) (int, error) {
+func (d *commandLineArgsDataType) FprintLicense(writer io.Writer) (int, error) {
 	title := formatutils.FormatTextToWidth(fmt.Sprintf("License of %s:", osutils.GetArgs0Name()), formatutils.NormalConsoleWidth)
 	license := formatutils.FormatTextToWidth(global.License, formatutils.NormalConsoleWidth)
 	return fmt.Fprintf(writer, "%s\n%s\n", title, license)
 }
 
-func (d *CommandLineArgsDataType) PrintLicense() (int, error) {
+func (d *commandLineArgsDataType) PrintLicense() (int, error) {
 	return d.FprintLicense(flag.CommandLine.Output())
 }
 
-func (d *CommandLineArgsDataType) FprintReport(writer io.Writer) (int, error) {
+func (d *commandLineArgsDataType) FprintReport(writer io.Writer) (int, error) {
 	// 不需要title
 	report := formatutils.FormatTextToWidth(global.Report, formatutils.NormalConsoleWidth)
 	return fmt.Fprintf(writer, "%s\n", report)
 }
 
-func (d *CommandLineArgsDataType) PrintReport() (int, error) {
+func (d *commandLineArgsDataType) PrintReport() (int, error) {
 	return d.FprintReport(flag.CommandLine.Output())
 }
 
-func (d *CommandLineArgsDataType) FprintLF(writer io.Writer) (int, error) {
+func (d *commandLineArgsDataType) FprintLF(writer io.Writer) (int, error) {
 	return fmt.Fprintf(writer, "\n")
 }
 
-func (d *CommandLineArgsDataType) PrintLF() (int, error) {
+func (d *commandLineArgsDataType) PrintLF() (int, error) {
 	return d.FprintLF(flag.CommandLine.Output())
 }

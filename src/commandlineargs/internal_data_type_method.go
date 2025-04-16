@@ -16,7 +16,7 @@ const OptionPrefix = "--"
 const OptionShortPrefix = "-"
 const UsagePrefixWidth = 10
 
-func (d *CommandLineArgsDataType) ready() {
+func (d *commandLineArgsDataType) ready() {
 	if d.isReady() {
 		return
 	}
@@ -27,7 +27,7 @@ func (d *CommandLineArgsDataType) ready() {
 	d.flagReady = true
 }
 
-func (d *CommandLineArgsDataType) writeUsage() {
+func (d *commandLineArgsDataType) writeUsage() {
 	if len(d.Usage) != 0 {
 		return
 	}
@@ -168,7 +168,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 	d.Usage = strings.TrimRight(result.String(), "\n")
 }
 
-func (d *CommandLineArgsDataType) parser() {
+func (d *commandLineArgsDataType) parser() {
 	if d.flagParser {
 		return
 	}
@@ -181,19 +181,19 @@ func (d *CommandLineArgsDataType) parser() {
 	d.flagParser = true
 }
 
-func (d *CommandLineArgsDataType) isReady() bool {
+func (d *commandLineArgsDataType) isReady() bool {
 	return d.isFlagSet() && d.isFlagParser() && d.flagReady
 }
 
-func (d *CommandLineArgsDataType) isFlagSet() bool {
+func (d *commandLineArgsDataType) isFlagSet() bool {
 	return d.flagSet
 }
 
-func (d *CommandLineArgsDataType) isFlagParser() bool {
+func (d *commandLineArgsDataType) isFlagParser() bool {
 	return d.flagParser
 }
 
-func getData[T any](d *CommandLineArgsDataType, data T) T { // 泛型函数无法作为 “方法” 只能作为函数
+func getData[T any](d *commandLineArgsDataType, data T) T { // 泛型函数无法作为 “方法” 只能作为函数
 	if !d.isReady() {
 		logger.Panic("flag not ready")
 	}
