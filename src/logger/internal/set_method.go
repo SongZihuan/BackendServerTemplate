@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
 	"os"
 )
 
@@ -46,7 +47,7 @@ func (l *Logger) SetArgs0Name(args0 string, args0Name string) error {
 
 func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
 	if w == nil {
-		w = write.ChangeToWriter(os.Stdout)
+		w = wrapwriter.WrapToWriter(os.Stdout)
 	}
 
 	last := l.warnWriter
@@ -56,7 +57,7 @@ func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
 
 func (l *Logger) SetErrWriter(w write.Writer) (write.Writer, error) {
 	if w == nil {
-		w = write.ChangeToWriter(os.Stderr)
+		w = wrapwriter.WrapToWriter(os.Stderr)
 	}
 
 	last := l.errWriter

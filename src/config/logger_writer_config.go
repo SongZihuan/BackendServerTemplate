@@ -12,6 +12,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/combiningwriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/datefilewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/filewriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
 	"io"
 	"os"
 	"strings"
@@ -54,9 +55,9 @@ func (d *LoggerWriterConfig) process(c *configInfo, setter func(w io.Writer) (io
 
 	switch d.WriteToStd {
 	case "stdout":
-		writerList = append(writerList, write.ChangeToWriter(os.Stdout))
+		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stdout))
 	case "stderr":
-		writerList = append(writerList, write.ChangeToWriter(os.Stderr))
+		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stderr))
 	}
 
 	if d.WriteToFile != "" {

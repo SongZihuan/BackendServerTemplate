@@ -7,7 +7,7 @@ package internal
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"io"
 	"os"
@@ -20,11 +20,11 @@ func InitLogger(level loglevel.LoggerLevel, logTag bool, realPanic bool, warnWri
 	}
 
 	if warnWriter == nil {
-		warnWriter = write.ChangeToWriter(os.Stdout)
+		warnWriter = wrapwriter.WrapToWriter(os.Stdout)
 	}
 
 	if errWriter == nil {
-		errWriter = write.ChangeToWriter(os.Stderr)
+		errWriter = wrapwriter.WrapToWriter(os.Stderr)
 	}
 
 	logger := &Logger{

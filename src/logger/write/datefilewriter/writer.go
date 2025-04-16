@@ -30,7 +30,7 @@ func (f *DateFileWriter) Write(p []byte) (n int, err error) {
 	if suffix != f.filenameSuffix {
 		_ = f.closeFile()
 		err := f.openFile(suffix)
-		if err == nil {
+		if err != nil {
 			return 0, err
 		}
 	}
@@ -59,23 +59,20 @@ func (f *DateFileWriter) closeFile() error {
 }
 
 func (f *DateFileWriter) openFile(newSuffix string) error {
-	defer func() {
-		f.filenameSuffix = newSuffix
-	}()
-
 	if f.file != nil {
 		return fmt.Errorf("last file has not been closse")
 	}
 
-	filename := fmt.Sprintf("%s-%s", f.filenamePrefix, newSuffix)
+	filename := fmt.Sprintf("%s.%s.log", f.filenamePrefix, newSuffix)
 	filePath := path.Join(f.dirPath, filename)
 
-	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 
 	f.file = file
+	f.filenameSuffix = newSuffix
 
 	return nil
 }
@@ -109,6 +106,7 @@ func NewDateFileWriter(dirpath string, filenamePrefix string) (*DateFileWriter, 
 		return nil, err
 	}
 
+	res.dirPath = dirpath
 	res.filenamePrefix = filenamePrefix
 	res.close = false
 
@@ -116,4 +114,12 @@ func NewDateFileWriter(dirpath string, filenamePrefix string) (*DateFileWriter, 
 	_ = writer
 
 	return res, nil
+}
+
+func _testDateFileWriter() {
+	var a write.WriteCloser
+	var b *DateFileWriter
+
+	a = b
+	_ = a
 }
