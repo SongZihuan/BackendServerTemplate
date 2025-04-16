@@ -5,6 +5,7 @@
 package exitutils
 
 import (
+	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"log"
 )
@@ -15,11 +16,17 @@ const (
 	exitCodeErrorLogMustBeReady = 254
 )
 
-func getExitCode(defaultExitCode int, exitCode ...int) (ec int) {
+type ExitCode int
+
+func (e ExitCode) Error() string {
+	return fmt.Sprintf("Exit with code %d", e)
+}
+
+func getExitCode(defaultExitCode int, exitCode ...int) (ec ExitCode) {
 	if len(exitCode) == 1 {
-		ec = exitCode[0]
+		ec = ExitCode(exitCode[0])
 	} else {
-		ec = defaultExitCode
+		ec = ExitCode(defaultExitCode)
 	}
 
 	if ec < exitCodeMin {
@@ -33,7 +40,7 @@ func getExitCode(defaultExitCode int, exitCode ...int) (ec int) {
 	return ec
 }
 
-func InitFailedErrorForWin32ConsoleModule(reason string, exitCode ...int) int {
+func InitFailedErrorForWin32ConsoleModule(reason string, exitCode ...int) ExitCode {
 	if reason == "" {
 		reason = "no reason"
 	}
@@ -46,7 +53,7 @@ func InitFailedErrorForWin32ConsoleModule(reason string, exitCode ...int) int {
 	return ec
 }
 
-func InitFailedErrorForLoggerModule(reason string, exitCode ...int) int {
+func InitFailedErrorForLoggerModule(reason string, exitCode ...int) ExitCode {
 	if reason == "" {
 		reason = "no reason"
 	}
@@ -59,7 +66,7 @@ func InitFailedErrorForLoggerModule(reason string, exitCode ...int) int {
 	return ec
 }
 
-func InitFailedError(module string, reason string, exitCode ...int) int {
+func InitFailedError(module string, reason string, exitCode ...int) ExitCode {
 	if !logger.IsReady() {
 		return exitCodeErrorLogMustBeReady
 	}
@@ -76,7 +83,14 @@ func InitFailedError(module string, reason string, exitCode ...int) int {
 	return ec
 }
 
-func RunError(reason string, exitCode ...int) int {
+func RunErrorQuite(exitCode ...int) ExitCode {
+	if !logger.IsReady() {
+		return exitCodeErrorLogMustBeReady
+	}
+	return getExitCode(1, exitCode...)
+}
+
+func RunError(reason string, exitCode ...int) ExitCode {
 	if !logger.IsReady() {
 		return exitCodeErrorLogMustBeReady
 	}
@@ -93,7 +107,7 @@ func RunError(reason string, exitCode ...int) int {
 	return ec
 }
 
-func SuccessExit(reason string, exitCode ...int) int {
+func SuccessExit(reason string, exitCode ...int) ExitCode {
 	if !logger.IsReady() {
 		return exitCodeErrorLogMustBeReady
 	}
@@ -109,7 +123,7 @@ func SuccessExit(reason string, exitCode ...int) int {
 	return ec
 }
 
-func SuccessExitQuite(exitCode ...int) int {
+func SuccessExitQuite(exitCode ...int) ExitCode {
 	if !logger.IsReady() {
 		return exitCodeErrorLogMustBeReady
 	}

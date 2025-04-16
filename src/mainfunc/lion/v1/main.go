@@ -21,7 +21,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 )
 
-func MainV1() (exitCode int) {
+func MainV1() (exitCode exitutils.ExitCode) {
 	var err error
 
 	err = consoleutils.SetConsoleCPSafe(consoleutils.CodePageUTF8)

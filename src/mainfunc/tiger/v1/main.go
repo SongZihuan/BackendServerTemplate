@@ -19,7 +19,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 )
 
-func MainV1() (exitCode int) {
+func MainV1() (exitCode exitutils.ExitCode) {
 	var err error
 
 	err = consoleutils.SetConsoleCPSafe(consoleutils.CodePageUTF8)
@@ -66,7 +66,7 @@ func MainV1() (exitCode int) {
 		return exitutils.InitFailedError("Server Example1", err.Error())
 	}
 
-	logger.Infof("Start to run server controller")
+	logger.Infof("Start to run server example 1")
 	go ser.Run()
 
 	var stopErr error

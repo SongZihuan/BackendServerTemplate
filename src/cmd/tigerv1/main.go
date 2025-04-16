@@ -11,5 +11,5 @@ import (
 )
 
 func main() {
-	os.Exit(tigerv1.MainV1())
+	os.Exit(int(tigerv1.MainV1()))
 }

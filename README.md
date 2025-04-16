@@ -19,6 +19,7 @@
 
 * `lionv1` 是使用控制单元的多服务演示程序。
 * `tigerv1` 是直接运行服务的单服务演示程序。
+* `catv1` 是服务安装演示程序。
 
 入口程序不直接包含太多的实际代码，真正的`main`函数位于`src\mainfunc`下。
 程序的返回值代表程序的`Exit Code`。
@@ -165,11 +166,50 @@ server:  # 系统执行服务所需要的参数
   * 最后优先级：使用随机版本号，版本号为`0.0.0+dev-时间戳-随机值`，随机值在执行`go generate`时生成（位于文件`random_data.txt`中），`go build`后固定。
 * `Version` 版本号：`SemanticVersioning`前添加`v`的字符串。
 
+## 后台服务
+
+虽然`lionv1`和`tigerv1`也可以作为后台服务，但是我使用了`catv1`进行了更高层次的抽象，使得在`Windows`和`Linux`上可以安装服务程序。
+
+### 安装
+
+```shell
+$ catv1 install <命令行参数列表>
+```
+
+使用此命令可以在`Windows`中或`Linux`中注册一个服务，服务名称为：`<resource.Name>-cat-v1`。
+
+注意：安装后可执行程序`catv1`仍需保留在原来位置，不可移动。
+
+### 卸载
+
+```shell
+$ catv1 uninstall
+```
+
+### 启动
+
+```shell
+$ catv1 start
+```
+
+启动不需要指定命令行参数，命令行参数在`install`时即确定。
+
+### 停止
+
+```shell
+$ catv1 stop
+```
+
+### 重启
+
+```shell
+$ catv1 restart
+```
+
 ## 日后升级计划
 
 1. 单元测试
 2. GitHub Action
-3. 对`Windows`服务的支持。
 
 ## 协议
 

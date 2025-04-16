@@ -6,10 +6,10 @@ package main
 
 import (
 	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
-	lionv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/lion/v1"
+	catv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/cat/v1"
 	"os"
 )
 
 func main() {
-	os.Exit(int(lionv1.MainV1()))
+	os.Exit(int(catv1.MainV1()))
 }
