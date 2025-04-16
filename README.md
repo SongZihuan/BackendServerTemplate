@@ -169,7 +169,7 @@ server:  # 系统执行服务所需要的参数
 
 1. 单元测试
 2. GitHub Action
-3. 将部分`panic`转换为`logger.Panic`。
+3. 对`Windows`服务的支持。
 
 ## 协议
 

@@ -4,11 +4,13 @@
 
 package commandlineargs
 
+import "github.com/SongZihuan/BackendServerTemplate/src/logger"
+
 var CommandLineArgsData CommandLineArgsDataType
 
 func (d *CommandLineArgsDataType) Name() string {
 	if !d.isReady() {
-		panic("flag not ready")
+		logger.Panic("flag not ready")
 	}
 
 	return d.NameData
@@ -16,7 +18,7 @@ func (d *CommandLineArgsDataType) Name() string {
 
 func (d *CommandLineArgsDataType) Help() bool {
 	if !d.isReady() {
-		panic("flag not ready")
+		logger.Panic("flag not ready")
 	}
 
 	return d.HelpData

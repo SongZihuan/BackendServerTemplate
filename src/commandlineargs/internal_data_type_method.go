@@ -3,6 +3,7 @@ package commandlineargs
 import (
 	"flag"
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/formatutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/reflectutils"
@@ -54,7 +55,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 			var ok bool
 			optionName, ok = val.FieldByName(option + "Name").Interface().(string)
 			if !ok {
-				panic("can not get option name")
+				logger.Panic("can not get option name")
 			}
 		}
 
@@ -62,7 +63,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 			var ok bool
 			optionShortName, ok = val.FieldByName(option + "ShortName").Interface().(string)
 			if !ok {
-				panic("can not get option short name")
+				logger.Panic("can not get option short name")
 			}
 		} else if len(optionName) > 1 {
 			optionShortName = optionName[:1]
@@ -72,7 +73,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 			var ok bool
 			optionUsage, ok = val.FieldByName(option + "Usage").Interface().(string)
 			if !ok {
-				panic("can not get option usage")
+				logger.Panic("can not get option usage")
 			}
 		}
 
@@ -85,12 +86,12 @@ func (d *CommandLineArgsDataType) writeUsage() {
 				var ok bool
 				optionData, ok = val.FieldByName(option + "Data").Interface().(bool)
 				if !ok {
-					panic("can not get option data")
+					logger.Panic("can not get option data")
 				}
 			}
 
 			if optionData == true {
-				panic("bool option can not be true")
+				logger.Panic("bool option can not be true")
 			}
 
 			if optionName != "" {
@@ -106,7 +107,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 				var ok bool
 				optionData, ok = val.FieldByName(option + "Data").Interface().(string)
 				if !ok {
-					panic("can not get option data")
+					logger.Panic("can not get option data")
 				}
 			}
 
@@ -127,7 +128,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 				var ok bool
 				optionData, ok = val.FieldByName(option + "Data").Interface().(uint)
 				if !ok {
-					panic("can not get option data")
+					logger.Panic("can not get option data")
 				}
 			}
 
@@ -143,7 +144,7 @@ func (d *CommandLineArgsDataType) writeUsage() {
 				title2 = fmt.Sprintf("%s%s%s", OptionIdent, OptionShortPrefix, formatutils.FormatTextToWidth(fmt.Sprintf("%s number", optionShortName), formatutils.NormalConsoleWidth-len(OptionIdent)-len(OptionPrefix)))
 			}
 		} else {
-			panic(fmt.Sprintf("the flag type (%s) is not support", field.Type.Name()))
+			logger.Panic(fmt.Sprintf("the flag type (%s) is not support", field.Type.Name()))
 		}
 
 		if title1 == "" && title2 == "" {
@@ -173,7 +174,7 @@ func (d *CommandLineArgsDataType) parser() {
 	}
 
 	if !d.isFlagSet() {
-		panic("flag not set")
+		logger.Panic("flag not set")
 	}
 
 	flag.Parse()
@@ -194,7 +195,7 @@ func (d *CommandLineArgsDataType) isFlagParser() bool {
 
 func getData[T any](d *CommandLineArgsDataType, data T) T { // 泛型函数无法作为 “方法” 只能作为函数
 	if !d.isReady() {
-		panic("flag not ready")
+		logger.Panic("flag not ready")
 	}
 
 	return data

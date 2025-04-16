@@ -32,6 +32,7 @@ func MainV1() (exitCode int) {
 		return exitutils.InitFailedErrorForLoggerModule(err.Error())
 	}
 	defer logger.CloseLogger()
+	defer logger.Recover()
 
 	err = commandlineargs.InitCommandLineArgsParser(nil)
 	if err != nil {

@@ -6,8 +6,11 @@ package internal
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logpanic"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/runtimeutils"
+	"time"
 )
 
 func (l *Logger) Tagf(format string, args ...interface{}) {
@@ -23,7 +26,8 @@ func (l *Logger) TagSkipf(skip int, format string, args ...interface{}) {
 
 	content := fmt.Sprintf(format, args...)
 	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman("TAG", msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman("TAG", msg, now))
 }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
@@ -32,8 +36,9 @@ func (l *Logger) Debugf(format string, args ...interface{}) {
 	}
 
 	msg := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelDebug, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelDebug, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelDebug, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelDebug, msg, now))
 }
 
 func (l *Logger) Infof(format string, args ...interface{}) {
@@ -42,8 +47,9 @@ func (l *Logger) Infof(format string, args ...interface{}) {
 	}
 
 	msg := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelInfo, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelInfo, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelInfo, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelInfo, msg, now))
 }
 
 func (l *Logger) Warnf(format string, args ...interface{}) {
@@ -52,8 +58,9 @@ func (l *Logger) Warnf(format string, args ...interface{}) {
 	}
 
 	msg := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelWarn, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelWarn, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelWarn, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelWarn, msg, now))
 }
 
 func (l *Logger) Errorf(format string, args ...interface{}) {
@@ -62,8 +69,9 @@ func (l *Logger) Errorf(format string, args ...interface{}) {
 	}
 
 	msg := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelError, msg))
-	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelError, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelError, msg, now))
+	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelError, msg, now))
 }
 
 func (l *Logger) Panicf(format string, args ...interface{}) {
@@ -72,10 +80,11 @@ func (l *Logger) Panicf(format string, args ...interface{}) {
 	}
 
 	msg := fmt.Sprintf(format, args...)
-	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelPanic, msg))
-	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelPanic, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelPanic, msg, now))
+	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelPanic, msg, now))
 
-	panic(msg)
+	logpanic.Panic(now, msg)
 }
 
 func (l *Logger) Tag(args ...interface{}) {
@@ -90,8 +99,9 @@ func (l *Logger) TagSkip(skip int, args ...interface{}) {
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
 	content := fmt.Sprint(args...)
+	now := time.Now().In(global.Location)
 	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman("TAG", msg))
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman("TAG", msg, now))
 }
 
 func (l *Logger) Debug(args ...interface{}) {
@@ -100,8 +110,9 @@ func (l *Logger) Debug(args ...interface{}) {
 	}
 
 	msg := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelDebug, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelDebug, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelDebug, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelDebug, msg, now))
 }
 
 func (l *Logger) Info(args ...interface{}) {
@@ -110,8 +121,9 @@ func (l *Logger) Info(args ...interface{}) {
 	}
 
 	msg := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelInfo, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelInfo, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelInfo, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelInfo, msg, now))
 }
 
 func (l *Logger) Warn(args ...interface{}) {
@@ -120,8 +132,9 @@ func (l *Logger) Warn(args ...interface{}) {
 	}
 
 	msg := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelWarn, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelWarn, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelWarn, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelWarn, msg, now))
 }
 
 func (l *Logger) Error(args ...interface{}) {
@@ -130,8 +143,9 @@ func (l *Logger) Error(args ...interface{}) {
 	}
 
 	msg := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelError, msg))
-	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelError, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelError, msg, now))
+	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelError, msg, now))
 }
 
 func (l *Logger) Panic(args ...interface{}) {
@@ -140,10 +154,11 @@ func (l *Logger) Panic(args ...interface{}) {
 	}
 
 	msg := fmt.Sprint(args...)
-	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelPanic, msg))
-	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelPanic, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanErrWriter, "%s", l.formatHuman(loglevel.LevelPanic, msg, now))
+	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelPanic, msg, now))
 
-	panic(msg)
+	logpanic.Panic(now, msg)
 }
 
 func (l *Logger) TagWrite(msg string) {
@@ -158,7 +173,8 @@ func (l *Logger) TagSkipWrite(skip int, content string) {
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
 	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman("TAG", msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman("TAG", msg, now))
 }
 
 func (l *Logger) DebugWrite(msg string) {
@@ -166,8 +182,9 @@ func (l *Logger) DebugWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelDebug, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelDebug, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelDebug, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelDebug, msg, now))
 }
 
 func (l *Logger) InfoWrite(msg string) {
@@ -175,8 +192,9 @@ func (l *Logger) InfoWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelInfo, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelInfo, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelInfo, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelInfo, msg, now))
 }
 
 func (l *Logger) WarnWrite(msg string) {
@@ -184,8 +202,9 @@ func (l *Logger) WarnWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelWarn, msg))
-	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelWarn, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelWarn, msg, now))
+	_, _ = fmt.Fprintf(l.machineWarnWriter, "%s", l.formatMachine(loglevel.LevelWarn, msg, now))
 }
 
 func (l *Logger) ErrorWrite(msg string) {
@@ -193,8 +212,9 @@ func (l *Logger) ErrorWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelError, msg))
-	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelError, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelError, msg, now))
+	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelError, msg, now))
 }
 
 func (l *Logger) PanicWrite(msg string) {
@@ -202,8 +222,34 @@ func (l *Logger) PanicWrite(msg string) {
 		return
 	}
 
-	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelPanic, msg))
-	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelPanic, msg))
+	now := time.Now().In(global.Location)
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelPanic, msg, now))
+	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelPanic, msg, now))
 
-	panic(msg)
+	logpanic.Panic(now, msg)
+}
+
+func (l *Logger) Recover() {
+	err := recover()
+	if err == nil {
+		return
+	}
+
+	msg := ""
+	now := time.Now().In(global.Location)
+
+	if _, ok := err.(*logpanic.PanicData); ok {
+		return
+	}
+
+	if str, ok := err.(fmt.Stringer); ok {
+		msg = str.String()
+	} else if _err, ok := err.(error); ok {
+		msg = _err.Error()
+	} else {
+		msg = fmt.Sprintf("%v", err)
+	}
+
+	_, _ = fmt.Fprintf(l.humanWarnWriter, "%s", l.formatHuman(loglevel.LevelPanic, msg, now))
+	_, _ = fmt.Fprintf(l.machineErrWriter, "%s", l.formatMachine(loglevel.LevelPanic, msg, now))
 }

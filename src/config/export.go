@@ -77,7 +77,7 @@ func InitConfig(opt *ConfigOption) error {
 
 func GetData() (*ConfigData, configerror.Error) {
 	if config == nil {
-		panic("config is not ready")
+		logger.Panic("config is not ready")
 	}
 
 	return config.GetData()
@@ -85,7 +85,7 @@ func GetData() (*ConfigData, configerror.Error) {
 
 func Data() *ConfigData {
 	if config == nil {
-		panic("config is not ready")
+		logger.Panic("config is not ready")
 	}
 
 	return config.Data()
@@ -93,7 +93,7 @@ func Data() *ConfigData {
 
 func Output(filePath string) error {
 	if config == nil {
-		panic("config is not ready")
+		logger.Panic("config is not ready")
 	}
 
 	return config.Output(filePath)

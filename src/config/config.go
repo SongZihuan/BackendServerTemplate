@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/filesystemutils"
 )
 
@@ -17,7 +18,7 @@ type configInfo struct {
 
 func newConfig(inputFilePath string, outputFilePath string, provider configparser.ConfigParserProvider) (*configInfo, configerror.Error) {
 	if inputFilePath == "" {
-		panic("config path is empty")
+		logger.Panic("config path is empty")
 	}
 
 	configFilePath, err := filesystemutils.CleanFilePathAbs(inputFilePath)
@@ -117,7 +118,7 @@ func (c *configInfo) GetData() (*ConfigData, configerror.Error) {
 
 func (c *configInfo) Data() *ConfigData {
 	if !c.ready {
-		panic("config is not ready")
+		logger.Panic("config is not ready")
 	}
 
 	return c.data

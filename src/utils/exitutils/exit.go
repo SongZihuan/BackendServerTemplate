@@ -61,7 +61,6 @@ func InitFailedErrorForLoggerModule(reason string, exitCode ...int) int {
 
 func InitFailedError(module string, reason string, exitCode ...int) int {
 	if !logger.IsReady() {
-		panic("Logger must be ready!!!")
 		return exitCodeErrorLogMustBeReady
 	}
 
@@ -79,7 +78,6 @@ func InitFailedError(module string, reason string, exitCode ...int) int {
 
 func RunError(reason string, exitCode ...int) int {
 	if !logger.IsReady() {
-		panic("Logger must be ready!!!")
 		return exitCodeErrorLogMustBeReady
 	}
 
@@ -97,7 +95,6 @@ func RunError(reason string, exitCode ...int) int {
 
 func SuccessExit(reason string, exitCode ...int) int {
 	if !logger.IsReady() {
-		panic("Logger must be ready!!!")
 		return exitCodeErrorLogMustBeReady
 	}
 
@@ -114,7 +111,6 @@ func SuccessExit(reason string, exitCode ...int) int {
 
 func SuccessExitQuite(exitCode ...int) int {
 	if !logger.IsReady() {
-		panic("Logger must be ready!!!")
 		return exitCodeErrorLogMustBeReady
 	}
 

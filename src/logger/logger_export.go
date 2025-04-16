@@ -133,3 +133,10 @@ func PanicWrite(msg string) {
 	}
 	internal.GlobalLogger.PanicWrite(msg)
 }
+
+func Recover() {
+	if !internal.IsReady() {
+		return
+	}
+	internal.GlobalLogger.Recover()
+}

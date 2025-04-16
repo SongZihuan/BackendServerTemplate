@@ -29,18 +29,19 @@ type FormatMachineJson struct {
 	Msg           string `json:"msg"`
 }
 
-func (l *Logger) formatMachine(_level loglevel.LoggerLevel, msg string) string {
+func (l *Logger) formatMachine(_level loglevel.LoggerLevel, msg string, now time.Time) string {
 	var res = new(FormatMachineJson)
 
 	level := string(_level)
 
-	now := time.Now().In(global.Location)
 	zone := global.Location.String()
 	if strings.ToLower(zone) == "local" {
 		zone, _ = now.Zone()
 	}
 	date := now.Format(time.DateTime)
+
 	msg = strings.Replace(msg, "\"", "'", -1)
+
 	level = strings.ToUpper(level)
 
 	res.Date = date
@@ -72,18 +73,19 @@ func (l *Logger) formatMachine(_level loglevel.LoggerLevel, msg string) string {
 	return string(data) + "\n"
 }
 
-func (l *Logger) formatHuman(_level loglevel.LoggerLevel, msg string) string {
+func (l *Logger) formatHuman(_level loglevel.LoggerLevel, msg string, now time.Time) string {
 	var res = new(strings.Builder)
 
 	level := string(_level)
 
-	now := time.Now().In(global.Location)
 	zone := global.Location.String()
 	if strings.ToLower(zone) == "local" {
 		zone, _ = now.Zone()
 	}
 	date := now.Format(time.DateTime)
+
 	msg = strings.Replace(msg, "\"", "'", -1)
+
 	level = strings.ToUpper(level)
 
 	res.WriteString(fmt.Sprintf("%s %s | %s | unix-timestamp=\"%ds\" | app=\"%s\" | version=\"%s\"", date, zone, level, now.Unix(), global.Name, global.Version))
