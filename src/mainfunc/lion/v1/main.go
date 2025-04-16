@@ -9,6 +9,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/commandlineargs"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
+	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/controller"
@@ -16,11 +17,17 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example2"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/signalwatcher"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 )
 
 func MainV1() (exitCode int) {
 	var err error
+
+	err = consoleutils.SetConsoleCPSafe(consoleutils.CodePageUTF8)
+	if err != nil {
+		return exitutils.InitFailedErrorForWin32ConsoleModule(err.Error())
+	}
 
 	err = logger.InitBaseLogger(loglevel.LevelDebug, true, true, nil, nil)
 	if err != nil {
@@ -47,7 +54,11 @@ func MainV1() (exitCode int) {
 	}
 
 	sigchan := signalwatcher.NewSignalExitChannel()
-	defer close(sigchan)
+
+	consolechan, consolewaitexitchan, err := consolewatcher.NewWin32ConsoleExitChannel()
+	if err != nil {
+		return exitutils.InitFailedError("Win32 console channel", err.Error())
+	}
 
 	ctrl, err := controller.NewController(&controller.ControllerOption{
 		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
@@ -79,24 +90,33 @@ func MainV1() (exitCode int) {
 	logger.Infof("Start to run server controller")
 	go ctrl.Run()
 
+	var stopErr error
 	select {
-	case <-sigchan:
-		logger.Infof("stop by signal")
+	case sig := <-sigchan:
+		logger.Warnf("stop by signal (%s)", sig.String())
 		err = nil
+		stopErr = nil
+	case event := <-consolechan:
+		logger.Infof("stop by console event (%s)", event.String())
+		err = nil
+		stopErr = nil
 	case <-ctrl.GetCtx().Listen():
 		err = ctrl.GetCtx().Error()
 		if err == nil || errors.Is(err, servercontext.StopAllTask) {
-			err = nil
 			logger.Infof("stop by controller")
+			err = nil
+			stopErr = nil
 		} else {
-			logger.Errorf("stop by controller with error")
+			logger.Errorf("stop by controller with error: %s", err.Error())
+			stopErr = err
 		}
 	}
 
 	ctrl.Stop()
+	close(consolewaitexitchan)
 
-	if err != nil {
-		return exitutils.RunError(err.Error())
+	if stopErr != nil {
+		return exitutils.RunError(stopErr.Error())
 	}
 
 	return exitutils.SuccessExit("all tasks are completed and the main go routine exits")

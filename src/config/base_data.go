@@ -7,9 +7,10 @@ import (
 
 type ConfigData struct {
 	GlobalConfig `json:",inline" yaml:",inline"`
-	Logger       LoggerConfig `json:"logger" yaml:"logger"`
-	Signal       SignalConfig `json:"signal" yaml:"signal"`
-	Server       ServerConfig `json:"server" yaml:"server"`
+	Logger       LoggerConfig       `json:"logger" yaml:"logger"`
+	Signal       SignalConfig       `json:"signal" yaml:"signal"`
+	Win32Console Win32ConsoleConfig `json:"win32-console" yaml:"win32-console"`
+	Server       ServerConfig       `json:"server" yaml:"server"`
 }
 
 func (d *ConfigData) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
@@ -24,6 +25,11 @@ func (d *ConfigData) init(filePath string, provider configparser.ConfigParserPro
 	}
 
 	cfgErr = d.Signal.init(filePath, provider)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.Win32Console.init(filePath, provider)
 	if cfgErr != nil {
 		return cfgErr
 	}
@@ -52,6 +58,11 @@ func (d *ConfigData) setDefault(c *configInfo) (err configerror.Error) {
 		return cfgErr
 	}
 
+	cfgErr = d.Win32Console.setDefault(c)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
 	cfgErr = d.Server.setDefault(c)
 	if cfgErr != nil {
 		return cfgErr
@@ -76,6 +87,11 @@ func (d *ConfigData) check(c *configInfo) (err configerror.Error) {
 		return cfgErr
 	}
 
+	cfgErr = d.Win32Console.check(c)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
 	cfgErr = d.Server.check(c)
 	if cfgErr != nil {
 		return cfgErr
@@ -96,6 +112,11 @@ func (d *ConfigData) process(c *configInfo) (err configerror.Error) {
 	}
 
 	cfgErr = d.Signal.process(c)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.Win32Console.process(c)
 	if cfgErr != nil {
 		return cfgErr
 	}

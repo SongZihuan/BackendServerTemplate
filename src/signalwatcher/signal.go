@@ -13,24 +13,51 @@ import (
 
 func NewSignalExitChannel() chan os.Signal {
 	var exitChannel = make(chan os.Signal)
-	var signalList = make([]os.Signal, 0, 4)
+
+	if !config.Data().Signal.Use {
+		return exitChannel
+	}
+
+	var sigChannel = make(chan os.Signal)
+
+	var signalList = []os.Signal{
+		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP, syscall.SIGQUIT,
+	}
+	var signalExitMap = make(map[os.Signal]bool, 4)
 
 	if config.Data().Signal.SigIntExit.IsEnable(true) {
-		signalList = append(signalList, syscall.SIGINT)
+		signalExitMap[syscall.SIGINT] = true
+	} else {
+		signalExitMap[syscall.SIGINT] = true
 	}
 
 	if config.Data().Signal.SigTermExit.IsEnable(true) {
-		signalList = append(signalList, syscall.SIGTERM)
+		signalExitMap[syscall.SIGTERM] = true
+	} else {
+		signalExitMap[syscall.SIGTERM] = true
 	}
 
 	if config.Data().Signal.SigHupExit.IsEnable(true) {
-		signalList = append(signalList, syscall.SIGHUP)
+		signalExitMap[syscall.SIGHUP] = true
+	} else {
+		signalExitMap[syscall.SIGHUP] = true
 	}
 
 	if config.Data().Signal.SigQuitExit.IsEnable(false) {
-		signalList = append(signalList, syscall.SIGQUIT)
+		signalExitMap[syscall.SIGQUIT] = true
+	} else {
+		signalExitMap[syscall.SIGQUIT] = true
 	}
 
-	signal.Notify(exitChannel, signalList...)
+	go func() {
+		signal.Notify(sigChannel, signalList...)
+
+		for sig := range sigChannel {
+			if yes, ok := signalExitMap[sig]; ok && yes {
+				exitChannel <- sig
+			}
+		}
+	}()
+
 	return exitChannel
 }

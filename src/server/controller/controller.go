@@ -232,8 +232,9 @@ func (s *Controller) Stop() {
 
 		select {
 		case <-time.After(s.stopWaitTime):
-			logger.Errorf("stop timeout (%s)", strconvutils.TimeDurationToString(s.stopWaitTime))
+			logger.Errorf("%s - 退出清理超时... (%s)", s.name, strconvutils.TimeDurationToString(s.stopWaitTime))
 		case <-wgchan:
+			// pass
 		}
 	}
 }

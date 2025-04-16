@@ -6,8 +6,10 @@ package example2
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/strconvutils"
 	"sync"
 	"time"
 )
@@ -100,7 +102,9 @@ func (s *ServerExample2) Stop() {
 
 		select {
 		case <-time.After(s.stopWaitTime):
+			logger.Errorf("%s - 退出清理超时... (%s)", s.name, strconvutils.TimeDurationToString(s.stopWaitTime))
 		case <-wgchan:
+			// pass
 		}
 	}
 }

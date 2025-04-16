@@ -33,6 +33,19 @@ func getExitCode(defaultExitCode int, exitCode ...int) (ec int) {
 	return ec
 }
 
+func InitFailedErrorForWin32ConsoleModule(reason string, exitCode ...int) int {
+	if reason == "" {
+		reason = "no reason"
+	}
+
+	ec := getExitCode(1, exitCode...)
+
+	log.Printf("The module `Win32 Console` init failed (reason: `%s`) .", reason)
+	log.Printf("Now we should exit with code %d.", ec)
+
+	return ec
+}
+
 func InitFailedErrorForLoggerModule(reason string, exitCode ...int) int {
 	if reason == "" {
 		reason = "no reason"

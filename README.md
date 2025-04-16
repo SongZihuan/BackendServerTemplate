@@ -123,10 +123,17 @@ logger:
         write-with-date-prefix: ""
 
 signal: # 信号除了机制（管理接收程序退出信号）。sigkill 等信号是不可捕获的，是强制退出的，因此此处无法控制这类信号。虽然windows本身不具有Linux这种信号机制，但是Go在信号方面做了一层模拟，使得控制它ctrl+c可以转换为相应信号。
-    sigint-exit: enable  # 收到 sigint 信号后退出
-    sigterm-exit: enable  # 收到 sigterm 信号后退出
-    sighup-exit: enable  # 收到 sighup 信号后退出
-    sigquit-exit: enable  # 收到 sigquit 信号后退出
+    use-on: not-win32  # 启动模式：any表示全平台、only-win32表示仅windows平台、not-win32表示除windows以外所有平台，never表示任何平台均不启用。
+    sigint-exit: enable  # 收到 sigint 信号后退出 （Windows中可一半呢由ctrl+c触发）
+    sigterm-exit: enable  # 收到 sigterm 信号后退出 （Windows中一般由系统欻）
+    sighup-exit: enable  # 收到 sighup 信号后退出 
+    sigquit-exit: enable  # 收到 sigquit 信号后退出（Windows中一般也ctrl+break触发）
+
+win32-console:  # 控制台管理，比起处理信号量，在Windows平台使用控制台API更接近原生且合理。
+    use-on: only-win32  # 启动方式：any或only-win32表示仅在windows平台启用。never/not-win32表示任何平台均不启用。
+    ctrl-c-exit: enable  # 接收到ctrl+c是否退出
+    ctrl-break-exit: enable  # 接收到ctrl+break是否退出
+    console-close-recovery: disable  # 当用户关闭控制台后，是否启用一个新的临时的控制台输出日志（通常不建议，因为关闭控制台即意味着程序退出，只有5000ms的时间给程序进行清理操作。同时程序一般清理时间不会太久，可能在新控制台启用前就已经完成程序退出的所有准备）
 
 server:  # 系统执行服务所需要的参数
     stop-wait-time: 10s  # 服务退出时，等待清理结束的最长时间。
@@ -148,9 +155,9 @@ server:  # 系统执行服务所需要的参数
 
 ## 日后升级计划
 
-1. Windows的`Console`机制的利用。
-2. 单元测试
-3. GitHub Action
+1. 单元测试
+2. GitHub Action
+3. 将部分`panic`转换为`logger.Panic`。
 
 ## 协议
 
