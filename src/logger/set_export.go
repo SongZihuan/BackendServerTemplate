@@ -25,16 +25,30 @@ func SetLogTag(logTag bool) error {
 	return internal.GlobalLogger.SetLogTag(logTag)
 }
 
-func SetWarnWriter(w io.Writer) (io.Writer, error) {
+func SetHumanWarnWriter(w io.Writer) (io.Writer, error) {
 	if !internal.IsReady() {
 		return nil, fmt.Errorf("logger not ready")
 	}
-	return internal.GlobalLogger.SetWarnWriter(w)
+	return internal.GlobalLogger.SetHumanWarnWriter(w)
 }
 
-func SetErrWriter(w io.Writer) (io.Writer, error) {
+func SetHumanErrWriter(w io.Writer) (io.Writer, error) {
 	if !internal.IsReady() {
 		return nil, fmt.Errorf("logger not ready")
 	}
-	return internal.GlobalLogger.SetErrWriter(w)
+	return internal.GlobalLogger.SetHumanErrWriter(w)
+}
+
+func SetMachineWarnWriter(w io.Writer) (io.Writer, error) {
+	if !internal.IsReady() {
+		return nil, fmt.Errorf("logger not ready")
+	}
+	return internal.GlobalLogger.SetMachineWarnWriter(w)
+}
+
+func SetMachineErrWriter(w io.Writer) (io.Writer, error) {
+	if !internal.IsReady() {
+		return nil, fmt.Errorf("logger not ready")
+	}
+	return internal.GlobalLogger.SetMachineErrWriter(w)
 }

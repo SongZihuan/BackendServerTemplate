@@ -8,10 +8,12 @@ import (
 var GlobalLogger *Logger = nil
 
 type Logger struct {
-	level      loglevel.LoggerLevel
-	logLevel   loggerLevel
-	logTag     bool
-	warnWriter write.Writer
-	errWriter  write.Writer
-	args0Name  string
+	level             loglevel.LoggerLevel
+	logLevel          loggerLevel
+	logTag            bool
+	humanWarnWriter   write.Writer
+	humanErrWriter    write.Writer
+	machineWarnWriter write.Writer
+	machineErrWriter  write.Writer
+	args0Name         string
 }

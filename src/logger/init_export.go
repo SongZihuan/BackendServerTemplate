@@ -10,8 +10,8 @@ import (
 	"io"
 )
 
-func InitBaseLogger(level loglevel.LoggerLevel, logTag bool, warnWriter, errWriter io.Writer) error {
-	return internal.InitLogger(level, logTag, warnWriter, errWriter)
+func InitBaseLogger(level loglevel.LoggerLevel, logTag bool, humanWarnWriter, humanErrWriter, machineWarnWriter, machineErWriter io.Writer) error {
+	return internal.InitLogger(level, logTag, humanWarnWriter, humanErrWriter, machineWarnWriter, machineErWriter)
 }
 
 func CloseLogger() {

@@ -7,31 +7,42 @@ package internal
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
 	"io"
 	"os"
 )
 
-func InitLogger(level loglevel.LoggerLevel, logTag bool, warnWriter, errWriter io.Writer) error {
+func InitLogger(level loglevel.LoggerLevel, logTag bool, humanWarnWriter, humanErrWriter io.Writer, machineWarnWriter, machineErrWriter io.Writer) error {
 	logLevel, ok := levelMap[level]
 	if !ok {
 		return fmt.Errorf("invalid log level: %s", level)
 	}
 
-	if warnWriter == nil {
-		warnWriter = wrapwriter.WrapToWriter(os.Stdout)
+	if humanWarnWriter == nil {
+		humanWarnWriter = wrapwriter.WrapToWriter(os.Stdout)
 	}
 
-	if errWriter == nil {
-		errWriter = wrapwriter.WrapToWriter(os.Stderr)
+	if humanErrWriter == nil {
+		humanErrWriter = wrapwriter.WrapToWriter(os.Stderr)
+	}
+
+	if machineWarnWriter == nil {
+		machineWarnWriter = nonewriter.NewNoneWriter()
+	}
+
+	if machineErrWriter == nil {
+		machineErrWriter = nonewriter.NewNoneWriter()
 	}
 
 	logger := &Logger{
-		level:      level,
-		logLevel:   logLevel,
-		logTag:     logTag,
-		warnWriter: warnWriter,
-		errWriter:  errWriter,
+		level:             level,
+		logLevel:          logLevel,
+		logTag:            logTag,
+		humanWarnWriter:   humanWarnWriter,
+		humanErrWriter:    humanErrWriter,
+		machineWarnWriter: machineWarnWriter,
+		machineErrWriter:  machineErrWriter,
 	}
 
 	GlobalLogger = logger
@@ -43,5 +54,8 @@ func IsReady() bool {
 }
 
 func CloseLogger() {
-
+	_ = GlobalLogger.CloseHumanWarnWriter()
+	_ = GlobalLogger.CloseHumanErrWriter()
+	_ = GlobalLogger.CloseMachineWarnWriter()
+	_ = GlobalLogger.CloseMachineErrWriter()
 }

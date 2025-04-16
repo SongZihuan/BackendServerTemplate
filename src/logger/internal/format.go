@@ -5,6 +5,7 @@
 package internal
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
@@ -14,7 +15,64 @@ import (
 	"time"
 )
 
-func (l *Logger) format(_level loglevel.LoggerLevel, msg string) string {
+type FormatMachineJson struct {
+	Date          string `json:"date"`
+	Zone          string `json:"zone"`
+	Timestamp     int64  `json:"timestamp"`
+	Level         string `json:"level"`
+	Name          string `json:"name"`
+	Version       string `json:"version"`
+	Uid           string `json:"uid"`
+	Gid           string `json:"gid"`
+	User          string `json:"user"`
+	WorkDirectory string `json:"work-directory"`
+	Msg           string `json:"msg"`
+}
+
+func (l *Logger) formatMachine(_level loglevel.LoggerLevel, msg string) string {
+	var res = new(FormatMachineJson)
+
+	level := string(_level)
+
+	now := time.Now().In(global.Location)
+	zone := global.Location.String()
+	if strings.ToLower(zone) == "local" {
+		zone, _ = now.Zone()
+	}
+	date := now.Format(time.DateTime)
+	msg = strings.Replace(msg, "\"", "'", -1)
+	level = strings.ToUpper(level)
+
+	res.Date = date
+	res.Zone = zone
+	res.Level = level
+	res.Timestamp = now.Unix()
+	res.Name = global.Name
+	res.Version = global.Version
+
+	u := getUser()
+	if u != nil {
+		res.Uid = u.Uid
+		res.Gid = u.Gid
+		res.User = u.Name
+	}
+
+	wd := getWorkDir()
+	if wd != "" {
+		res.WorkDirectory = wd
+	}
+
+	res.Msg = msg
+
+	data, err := json.Marshal(res)
+	if err != nil {
+		return fmt.Sprintf("{\"errmgs\":\"%s\"}", err.Error())
+	}
+
+	return string(data) + "\n"
+}
+
+func (l *Logger) formatHuman(_level loglevel.LoggerLevel, msg string) string {
 	var res = new(strings.Builder)
 
 	level := string(_level)

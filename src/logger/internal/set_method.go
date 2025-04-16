@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
 	"os"
 )
@@ -29,32 +30,52 @@ func (l *Logger) SetLogTag(logTag bool) error {
 	return nil
 }
 
-func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
+func (l *Logger) SetHumanWarnWriter(w write.Writer) (write.Writer, error) {
 	if w == nil {
 		w = wrapwriter.WrapToWriter(os.Stdout)
 	}
 
-	last := l.warnWriter
-	l.warnWriter = w
+	last := l.humanWarnWriter
+	l.humanWarnWriter = w
 	return last, nil
 }
 
-func (l *Logger) SetErrWriter(w write.Writer) (write.Writer, error) {
+func (l *Logger) SetHumanErrWriter(w write.Writer) (write.Writer, error) {
 	if w == nil {
 		w = wrapwriter.WrapToWriter(os.Stderr)
 	}
 
-	last := l.errWriter
-	l.errWriter = w
+	last := l.humanErrWriter
+	l.humanErrWriter = w
 	return last, nil
 }
 
-func (l *Logger) CloseWarnWriter() error {
-	if l.warnWriter == nil {
+func (l *Logger) SetMachineWarnWriter(w write.Writer) (write.Writer, error) {
+	if w == nil {
+		w = nonewriter.NewNoneWriter()
+	}
+
+	last := l.machineWarnWriter
+	l.machineWarnWriter = w
+	return last, nil
+}
+
+func (l *Logger) SetMachineErrWriter(w write.Writer) (write.Writer, error) {
+	if w == nil {
+		w = nonewriter.NewNoneWriter()
+	}
+
+	last := l.machineErrWriter
+	l.machineErrWriter = w
+	return last, nil
+}
+
+func (l *Logger) CloseHumanWarnWriter() error {
+	if l.humanWarnWriter == nil {
 		return fmt.Errorf("warn writer not set")
 	}
 
-	w, ok := l.warnWriter.(write.WriteCloser)
+	w, ok := l.humanWarnWriter.(write.WriteCloser)
 	if !ok {
 		return nil
 	}
@@ -62,12 +83,38 @@ func (l *Logger) CloseWarnWriter() error {
 	return w.ExitClose()
 }
 
-func (l *Logger) CloseErrWriter() error {
-	if l.errWriter == nil {
+func (l *Logger) CloseHumanErrWriter() error {
+	if l.humanErrWriter == nil {
 		return fmt.Errorf("error writer not set")
 	}
 
-	w, ok := l.errWriter.(write.WriteCloser)
+	w, ok := l.humanErrWriter.(write.WriteCloser)
+	if !ok {
+		return nil
+	}
+
+	return w.ExitClose()
+}
+
+func (l *Logger) CloseMachineWarnWriter() error {
+	if l.machineWarnWriter == nil {
+		return fmt.Errorf("warn writer not set")
+	}
+
+	w, ok := l.machineWarnWriter.(write.WriteCloser)
+	if !ok {
+		return nil
+	}
+
+	return w.ExitClose()
+}
+
+func (l *Logger) CloseMachineErrWriter() error {
+	if l.machineErrWriter == nil {
+		return fmt.Errorf("error writer not set")
+	}
+
+	w, ok := l.machineErrWriter.(write.WriteCloser)
 	if !ok {
 		return nil
 	}

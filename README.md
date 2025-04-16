@@ -110,17 +110,29 @@ logger:
     log-level: debug  # 日志记录等级：debug（输出debug和以上的） < info （输出info和以上的）< warn < error < panic < none（什么都不输出）
     log-tag: enable  # 是否输出tag调试日志。
     
-    warn-writer:  # debug、tag、info、warn日志的输出器
+    human-warn-writer:  # 人类可读的 debug、tag、info、warn 日志的输出器
         write-to-std: stdout  # 输出到标准输出或标准错误输出（为空则不启用）
         write-to-file: ""  # 输出到固定文件（append）模式
         write-to-dir-with-date: ""  # 输出到指定目录，并按日期分割，此处为输出路径
         write-with-date-prefix: ""  # 配合 write-to-dir-with-date ，表示文件的输出前缀
         
-    error-writer:  # error、panic日志的输出器，含义同上
+    human-error-writer:  # 人类可读的 error、panic 日志的输出器，含义同上
         write-to-std: stdout
         write-to-file: ""
         write-to-dir-with-date: ""
         write-with-date-prefix: ""
+
+    machine-warn-writer:  # 机器可读的 debug、tag、info、warn 日志的输出器，含义同上
+      write-to-std: stdout
+      write-to-file: ""
+      write-to-dir-with-date: ""
+      write-with-date-prefix: ""
+      
+    machine-error-writer:  # 机器可读的 error、panic 日志的输出器，含义同上
+      write-to-std: stdout
+      write-to-file: ""
+      write-to-dir-with-date: ""
+      write-with-date-prefix: ""
 
 signal: # 信号除了机制（管理接收程序退出信号）。sigkill 等信号是不可捕获的，是强制退出的，因此此处无法控制这类信号。虽然windows本身不具有Linux这种信号机制，但是Go在信号方面做了一层模拟，使得控制它ctrl+c可以转换为相应信号。
     use-on: not-win32  # 启动模式：any表示全平台、only-win32表示仅windows平台、not-win32表示除windows以外所有平台，never表示任何平台均不启用。

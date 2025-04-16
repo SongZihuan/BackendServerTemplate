@@ -12,6 +12,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/combiningwriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/datefilewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/filewriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
 	"io"
 	"os"
@@ -32,10 +33,6 @@ func (d *LoggerWriterConfig) init(filePath string, provider configparser.ConfigP
 func (d *LoggerWriterConfig) setDefault(c *configInfo) (err configerror.Error) {
 	d.WriteToStd = strings.ToLower(d.WriteToStd)
 
-	if d.WriteToStd == "" {
-		d.WriteToStd = "stderr"
-	}
-
 	if d.WriteToDirWithDate != "" && d.WriteWithDatePrefix == "" {
 		d.WriteWithDatePrefix = global.Name
 	}
@@ -44,8 +41,8 @@ func (d *LoggerWriterConfig) setDefault(c *configInfo) (err configerror.Error) {
 }
 
 func (d *LoggerWriterConfig) check(c *configInfo) (err configerror.Error) {
-	if d.WriteToStd != "stdout" && d.WriteToStd != "stderr" && d.WriteToStd != "no" {
-		return configerror.NewErrorf("bad write-to-std")
+	if d.WriteToStd != "stdout" && d.WriteToStd != "stderr" && d.WriteToStd != "no" && d.WriteToStd != "stdout+stderr" && d.WriteToStd != "stderr+stdout" && d.WriteToStd != "" {
+		return configerror.NewErrorf("bad write-to-std: %s", d.WriteToStd)
 	}
 	return nil
 }
@@ -58,6 +55,12 @@ func (d *LoggerWriterConfig) process(c *configInfo, setter func(w io.Writer) (io
 		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stdout))
 	case "stderr":
 		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stderr))
+	case "stderr+stdout", "stdout+stderr":
+		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stdout), wrapwriter.WrapToWriter(os.Stderr))
+	case "", "no":
+		// pass
+	default:
+		return configerror.NewErrorf("bad write-to-std: %s", d.WriteToStd)
 	}
 
 	if d.WriteToFile != "" {
@@ -79,7 +82,10 @@ func (d *LoggerWriterConfig) process(c *configInfo, setter func(w io.Writer) (io
 	}
 
 	if len(writerList) == 0 {
-		return nil
+		_, err := setter(nonewriter.NewNoneWriter())
+		if err != nil {
+			return configerror.NewErrorf("set new writer error: %s", err.Error())
+		}
 	} else if len(writerList) == 1 {
 		_, err := setter(writerList[0])
 		if err != nil {

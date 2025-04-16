@@ -7,7 +7,6 @@ package logger
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/internal"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"io"
 )
 
 func GetLevel() loglevel.LoggerLevel {
@@ -22,58 +21,4 @@ func IsLogTag() bool {
 		return false
 	}
 	return internal.GlobalLogger.IsLogTag()
-}
-
-func GetWarnWriter() io.Writer {
-	if !internal.IsReady() {
-		return nil
-	}
-	return internal.GlobalLogger.GetWarnWriter()
-}
-
-func GetErrWriter() io.Writer {
-	if !internal.IsReady() {
-		return nil
-	}
-	return internal.GlobalLogger.GetErrWriter()
-}
-
-func IsWarnWriterTerm() bool {
-	if !internal.IsReady() {
-		return false
-	}
-
-	return internal.GlobalLogger.IsWarnWriterTerm()
-}
-
-func IsErrWriterTerm() bool {
-	if !internal.IsReady() {
-		return false
-	}
-
-	return internal.GlobalLogger.IsErrWriterTerm()
-}
-
-func IsTermDump() bool {
-	if !internal.IsReady() {
-		return false
-	}
-
-	return internal.GlobalLogger.IsTermDump()
-}
-
-func IsWarnWriterTermNoDump() bool {
-	if !internal.IsReady() {
-		return false
-	}
-
-	return internal.GlobalLogger.IsWarnWriterTermNoDump()
-}
-
-func IsErrWriterTermNoDump() bool {
-	if !internal.IsReady() {
-		return false
-	}
-
-	return internal.GlobalLogger.IsErrWriterTermNoDump()
 }

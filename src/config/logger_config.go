@@ -16,17 +16,29 @@ type LoggerConfig struct {
 	LogLevel loglevel.LoggerLevel `json:"log-level" yaml:"log-level"`
 	LogTag   typeutils.StringBool `json:"log-tag" yaml:"log-tag"`
 
-	WarnWriter LoggerWriterConfig `json:"warn-writer" yaml:"warn-writer"`
-	ErrWriter  LoggerWriterConfig `json:"error-writer" yaml:"error-writer"`
+	HumanWarnWriter   LoggerWriterConfig `json:"human-warn-writer" yaml:"human-warn-writer"`
+	HumanErrWriter    LoggerWriterConfig `json:"human-error-writer" yaml:"human-error-writer"`
+	MachineWarnWriter LoggerWriterConfig `json:"machine-warn-writer" yaml:"machine-warn-writer"`
+	MachineErrWriter  LoggerWriterConfig `json:"machine-error-writer" yaml:"machine-error-writer"`
 }
 
 func (d *LoggerConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
-	cfgErr := d.WarnWriter.init(filePath, provider)
+	cfgErr := d.HumanWarnWriter.init(filePath, provider)
 	if cfgErr != nil {
 		return cfgErr
 	}
 
-	cfgErr = d.ErrWriter.init(filePath, provider)
+	cfgErr = d.HumanErrWriter.init(filePath, provider)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineWarnWriter.init(filePath, provider)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineErrWriter.init(filePath, provider)
 	if cfgErr != nil {
 		return cfgErr
 	}
@@ -45,12 +57,22 @@ func (d *LoggerConfig) setDefault(c *configInfo) (err configerror.Error) {
 		}
 	}
 
-	cfgErr := d.WarnWriter.setDefault(c)
+	cfgErr := d.HumanWarnWriter.setDefault(c)
 	if cfgErr != nil {
 		return cfgErr
 	}
 
-	cfgErr = d.ErrWriter.setDefault(c)
+	cfgErr = d.HumanErrWriter.setDefault(c)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineWarnWriter.setDefault(c)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineErrWriter.setDefault(c)
 	if cfgErr != nil {
 		return cfgErr
 	}
@@ -59,12 +81,22 @@ func (d *LoggerConfig) setDefault(c *configInfo) (err configerror.Error) {
 }
 
 func (d *LoggerConfig) check(c *configInfo) (err configerror.Error) {
-	cfgErr := d.WarnWriter.check(c)
+	cfgErr := d.HumanWarnWriter.check(c)
 	if cfgErr != nil {
 		return cfgErr
 	}
 
-	cfgErr = d.ErrWriter.check(c)
+	cfgErr = d.HumanErrWriter.check(c)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineWarnWriter.check(c)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineErrWriter.check(c)
 	if cfgErr != nil {
 		return cfgErr
 	}
@@ -83,12 +115,22 @@ func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		return configerror.NewErrorf("set log tag error: %s", err.Error())
 	}
 
-	cfgErr = d.WarnWriter.process(c, logger.SetWarnWriter)
+	cfgErr = d.HumanWarnWriter.process(c, logger.SetHumanWarnWriter)
 	if cfgErr != nil {
 		return cfgErr
 	}
 
-	cfgErr = d.ErrWriter.process(c, logger.SetErrWriter)
+	cfgErr = d.HumanErrWriter.process(c, logger.SetHumanErrWriter)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineWarnWriter.process(c, logger.SetMachineWarnWriter)
+	if cfgErr != nil {
+		return cfgErr
+	}
+
+	cfgErr = d.MachineErrWriter.process(c, logger.SetMachineErrWriter)
 	if cfgErr != nil {
 		return cfgErr
 	}

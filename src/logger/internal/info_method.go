@@ -7,7 +7,6 @@ package internal
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/mattn/go-isatty"
-	"io"
 	"os"
 )
 
@@ -19,16 +18,8 @@ func (l *Logger) IsLogTag() bool {
 	return l.logTag
 }
 
-func (l *Logger) GetWarnWriter() io.Writer {
-	return l.warnWriter
-}
-
-func (l *Logger) GetErrWriter() io.Writer {
-	return l.errWriter
-}
-
 func (l *Logger) IsWarnWriterTerm() bool {
-	w, ok := l.warnWriter.(*os.File)
+	w, ok := l.humanWarnWriter.(*os.File)
 	if !ok {
 		return false
 	} else if !isatty.IsTerminal(w.Fd()) && !isatty.IsCygwinTerminal(w.Fd()) { // 非终端
@@ -38,7 +29,7 @@ func (l *Logger) IsWarnWriterTerm() bool {
 }
 
 func (l *Logger) IsErrWriterTerm() bool {
-	w, ok := l.errWriter.(*os.File)
+	w, ok := l.humanErrWriter.(*os.File)
 	if !ok {
 		return false
 	} else if !isatty.IsTerminal(w.Fd()) && !isatty.IsCygwinTerminal(w.Fd()) { // 非终端
