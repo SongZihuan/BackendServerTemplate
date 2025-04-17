@@ -1,0 +1,5 @@
+name: TestService
+display-name: Test Service
+describe: 一个简单的Go测试服务
+argument-from: install
+env-from: no

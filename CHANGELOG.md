@@ -5,7 +5,7 @@
 其格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 且本项目遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
-## [未发行]
+## [0.3.0] - 2025-04-17
 
 ### 新增
 
@@ -45,7 +45,7 @@
     - 若有`commit hash`，则最终版本号为`0.0.0+1744225466-be8f4ff51e6ed2e01171b38459406dc5dac306ea`，其中`1744225466`为编译时间戳，`be8f4ff51e6ed2e01171b38459406dc5dac306ea`为`commit hash`。
 - `Server.Example1`例子更完善，输出更多信息。
 - 命令行参数`--version`输出更多信息：版本号、编译时间（UTC和Local）、编译的Go版本号、系统、架构。
-- 应用`exitutils.SuccessExitQuite()`函数到命令行参数的阻断执行退出中
+- 应用`exitutils.SuccessExitQuite()`函数到命令行参数的阻断执行退出中。
 
 ### 修复
 

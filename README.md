@@ -90,7 +90,9 @@ $ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='
 
 **终止运行参数：当命令行出现这些参数时，将只执行参数对应的功能，执行完成后不会继续运行后续服务。**
 
-### 配置文件
+### 运行时配置文件
+
+**注意：此配置文件为运行时配置文件，即编译后的运行时阶段才从指定文件路径中读取。与后面提及的服务注册所用的`SERVICE.yaml`编译时配置文件不同。**
 
 ```yaml
 # 等同于命令行参数的 --name ，但优先级高于命令行参数。
@@ -170,13 +172,52 @@ server:  # 系统执行服务所需要的参数
 
 虽然`lionv1`和`tigerv1`也可以作为后台服务，但是我使用了`catv1`进行了更高层次的抽象，使得在`Windows`和`Linux`上可以安装服务程序。
 
+后台服务采用Go的第三方库`github.com/kardianos/service`实现，主要目的是实现`Windows`上的服务注册。
+但是理论上来说，`MacOS`和`Linux`（`systemd`）也能使用。
+不过，在`Linux`上注册服务，可能自己编辑`systemd`配置文件，或者使用宝塔等辅助面板会更为灵活。
+
+### 配置
+
+服务的相关配置文件位于根目录的`SERVICE.yaml`中，具体如下：
+
+```yaml
+name: TestService  # 服务名称（大小写字母或数字）
+display-name: Test Service  # 服务的显示名称（人类可读形式），若为空则和 name 一致
+describe: 一个简单的Go测试服务  # 服务的秒数
+
+# 参数来源
+#  no      无运行时参数（默认行为）
+#  install 在安装时指定参数，例如：catv1 install a b c，其中 a b c 作为参数
+#  config  在本配置文件中的 argument-list 列表指定运行时参数
+argument-from: install
+# argument-from 为 config 时启用
+argument-list: []
+# 环境变量来源
+#  no      无运行时环境变量（默认行为）
+#  install 在安装时，根据 env-get-list 获取安装时的真实环境变量
+#  config  在本配置文件中的 env-set-list 中指定环境变量
+
+env-from: no
+# env-from 为 install 时启用
+env-get-list: 
+  - a  # 安装程序（catv1 install）运行时，获取环境变量 a，并作为服务运行时的环境变量（例如安装时 a 的值为 b ，服务运行时也将得到环境变量 a 的值为 b）
+  - c
+# env-from 为 config 时启用
+env-set-list: 
+  a: b  # 例如：映射环境变量 a 的值为 b
+  c: d
+
+```
+
+**注意：本配置文件是编译时配置文件，在编译后配置文件包含在二进制文件中，此时可移除和修改文件系统上的配置文件而不影响编译好的程序。**
+
 ### 安装
 
 ```shell
 $ catv1 install <命令行参数列表>
 ```
 
-使用此命令可以在`Windows`中或`Linux`中注册一个服务，服务名称为：`<resource.Name>-cat-v1`。
+使用此命令可以在`Windows`中或`Linux`中注册一个服务.
 
 注意：安装后可执行程序`catv1`仍需保留在原来位置，不可移动。
 
@@ -184,6 +225,12 @@ $ catv1 install <命令行参数列表>
 
 ```shell
 $ catv1 uninstall
+```
+
+或者
+
+```shell
+$ catv1 remove
 ```
 
 ### 启动

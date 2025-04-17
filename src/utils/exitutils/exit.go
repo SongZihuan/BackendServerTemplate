@@ -123,6 +123,13 @@ func SuccessExit(reason string, exitCode ...int) ExitCode {
 	return ec
 }
 
+func SuccessExitSimple(reason string, exitCode ...int) ExitCode {
+	if reason != "" {
+		fmt.Println(reason)
+	}
+	return getExitCode(0, exitCode...)
+}
+
 func SuccessExitQuite(exitCode ...int) ExitCode {
 	if !logger.IsReady() {
 		return exitCodeErrorLogMustBeReady

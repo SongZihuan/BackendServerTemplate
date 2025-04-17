@@ -5,7 +5,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
@@ -33,92 +32,11 @@ func MainV1() (exitCode exitutils.ExitCode) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        fmt.Sprintf("%s-cat-v1", global.Name),
-		DisplayName: fmt.Sprintf("%s cat v1", global.Name),
-		Description: "简单的Go模板程序",
-	}
-
-	// 解析命令行参数
-	if len(os.Args) > 1 {
-		cmd := os.Args[1]
-		switch strings.ToLower(cmd) {
-		case "install":
-			if len(os.Args) > 2 {
-				svcConfig.Arguments = os.Args[2:]
-			}
-
-			prg := NewProgram()
-			s, err := service.New(prg, svcConfig)
-			if err != nil {
-				return exitutils.InitFailedError("Service New", err.Error())
-			}
-
-			// 安装服务
-			err = s.Install()
-			if err != nil {
-				return exitutils.InitFailedError("Service Install", err.Error())
-			}
-
-			return exitutils.SuccessExit("Service Install Success")
-		case "remove", "uninstall":
-			prg := NewProgram()
-			s, err := service.New(prg, svcConfig)
-			if err != nil {
-				return exitutils.InitFailedError("Service New", err.Error())
-			}
-
-			// 卸载服务
-			err = s.Uninstall()
-			if err != nil {
-				return exitutils.InitFailedError("Service Install", err.Error())
-			}
-
-			return exitutils.SuccessExit("Service Install Success")
-		case "start":
-			prg := NewProgram()
-			s, err := service.New(prg, svcConfig)
-			if err != nil {
-				return exitutils.InitFailedError("Service New", err.Error())
-			}
-
-			// 启动服务
-			err = s.Start()
-			if err != nil {
-				return exitutils.InitFailedError("Service Start", err.Error())
-			}
-
-			return exitutils.SuccessExit("Service Start Success")
-		case "stop":
-			prg := NewProgram()
-			s, err := service.New(prg, svcConfig)
-			if err != nil {
-				return exitutils.InitFailedError("Service New", err.Error())
-			}
-
-			// 停止服务
-			err = s.Stop()
-			if err != nil {
-				return exitutils.InitFailedError("Service Stop", err.Error())
-			}
-
-			return exitutils.SuccessExit("Service Stop Success")
-		case "restart":
-			prg := NewProgram()
-			s, err := service.New(prg, svcConfig)
-			if err != nil {
-				return exitutils.InitFailedError("Service New", err.Error())
-			}
-
-			// 停止服务
-			err = s.Restart()
-			if err != nil {
-				return exitutils.InitFailedError("Service Restart", err.Error())
-			}
-
-			return exitutils.SuccessExit("Service Restart Success")
-		default:
-			// pass
-		}
+		Name:        global.ServiceConfig.Name,
+		DisplayName: global.ServiceConfig.DisplayName,
+		Description: global.ServiceConfig.Describe,
+		Arguments:   global.ServiceConfig.ArgumentList,
+		EnvVars:     global.ServiceConfig.EnvSetList,
 	}
 
 	prg := NewProgram()
@@ -127,7 +45,56 @@ func MainV1() (exitCode exitutils.ExitCode) {
 		return exitutils.InitFailedError("Service New", err.Error())
 	}
 
-	_ = s.Run()
+	// 解析命令行参数
+	if len(os.Args) > 1 {
+		cmd := os.Args[1]
+		switch strings.ToLower(cmd) {
+		case global.Args1Install:
+			// 安装服务
+			err = s.Install()
+			if err != nil {
+				return exitutils.InitFailedError("Service Install", err.Error())
+			}
 
+			return exitutils.SuccessExitSimple("Service Install Success")
+		case global.Args1Uninstall1, global.Args1Uninstall2:
+			// 卸载服务
+			err = s.Uninstall()
+			if err != nil {
+				return exitutils.InitFailedError("Service Remove", err.Error())
+			}
+
+			return exitutils.SuccessExitSimple("Service Remove Success")
+		case global.Args1Start:
+			// 启动服务
+			err = s.Start()
+			if err != nil {
+				return exitutils.InitFailedError("Service Start", err.Error())
+			}
+
+			return exitutils.SuccessExitSimple("Service Start Success")
+		case global.Args1Stop:
+			// 停止服务
+			err = s.Stop()
+			if err != nil {
+				return exitutils.InitFailedError("Service Stop", err.Error())
+			}
+
+			return exitutils.SuccessExitSimple("Service Stop Success")
+		case global.Args1Restart:
+			// 重启服务
+			err = s.Restart()
+			if err != nil {
+				return exitutils.InitFailedError("Service Restart", err.Error())
+			}
+
+			return exitutils.SuccessExitSimple("Service Restart Success")
+		default:
+			// 正常运行服务
+			// pass
+		}
+	}
+
+	_ = s.Run()
 	return prg.ExitCode()
 }

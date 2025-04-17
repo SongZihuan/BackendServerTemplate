@@ -43,6 +43,7 @@ func init() {
 	initCleanFile()
 	initBuildDate()
 	initVersion()
+	initServiceConfig()
 }
 
 func initCleanFile() {
