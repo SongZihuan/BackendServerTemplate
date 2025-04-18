@@ -18,7 +18,7 @@ func BindStdToConsole() error {
 	return nil
 }
 
-func SetConsoleCtrlHandler(handler func(event uint) uintptr, add bool) error {
+func SetConsoleCtrlHandler(handler func(event uint) bool, add bool) error {
 	return nil
 }
 
@@ -34,18 +34,18 @@ func HasConsoleWindow() bool {
 	return GetConsoleWindow() != 0
 }
 
-func SetConsoleInputCP(codePage int) error {
+func SetConsoleInputCP(codePage uint) error {
 	return nil
 }
 
-func SetConsoleOutputCP(codePage int) error {
+func SetConsoleOutputCP(codePage uint) error {
 	return nil
 }
 
-func SetConsoleCP(codePage int) error {
+func SetConsoleCP(codePage uint) error {
 	return nil
 }
 
-func SetConsoleCPSafe(codePage int) error {
+func SetConsoleCPSafe(codePage uint) error {
 	return nil
 }

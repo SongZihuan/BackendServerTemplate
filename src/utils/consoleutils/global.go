@@ -4,6 +4,11 @@
 
 package consoleutils
 
+const (
+	CodePageUTF8 uint = 65001
+	CodePageGBK  uint = 936
+)
+
 type Event interface {
 	String() string
 	ConsoleEvent()

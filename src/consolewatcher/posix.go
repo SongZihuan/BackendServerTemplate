@@ -6,6 +6,8 @@
 
 package consolewatcher
 
+import "github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
+
 func NewWin32ConsoleExitChannel() (chan consoleutils.Event, chan any, error) {
 	var exitChannel = make(chan consoleutils.Event)
 	var waitExitChannel = make(chan any)
