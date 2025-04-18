@@ -5,6 +5,16 @@
 其格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 且本项目遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+### 新增
+
+- 新增单元测试（以后关于测试的代码变化将记录于 “测试” 小节中）。
+
+### 测试
+
+- 新增`resource`包的测试。
+
 ## [0.3.0] - 2025-04-17
 
 ### 新增

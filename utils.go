@@ -18,9 +18,19 @@ func utilsIsSemanticVersion(version string) bool {
 	return semVerRegex.MatchString(version)
 }
 
+func utilsClenFileData(data string) (res string) {
+	res = utilsCheckAndRemoveBOM(data)
+	res = strings.Replace(res, "\r", "", -1)
+	res = strings.Split(res, "\n")[0]
+	res = strings.TrimSpace(res)
+	return res
+}
+
 func utilsClenFileDataMoreLine(data string) (res string) {
 	res = utilsCheckAndRemoveBOM(data)
 	res = strings.Replace(res, "\r", "", -1)
+	res = strings.TrimRight(res, "\n")
+	res = strings.TrimSpace(res)
 	return res
 }
 

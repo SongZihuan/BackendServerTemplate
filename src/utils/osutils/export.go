@@ -10,6 +10,7 @@ import (
 )
 
 var _args0 = ""
+var _args0Name = ""
 
 func init() {
 	var err error
@@ -23,7 +24,13 @@ func init() {
 	}
 
 	if _args0 == "" {
-		panic("args was empty")
+		panic("args 0 was empty")
+	}
+
+	_args0Name = filepath.Base(_args0)
+
+	if _args0Name == "" {
+		panic("args 0 was empty")
 	}
 }
 
@@ -32,5 +39,5 @@ func GetArgs0() string {
 }
 
 func GetArgs0Name() string {
-	return filepath.Base(_args0)
+	return filepath.Base(_args0Name)
 }

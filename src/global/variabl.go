@@ -6,7 +6,6 @@ package global
 
 import (
 	resource "github.com/SongZihuan/BackendServerTemplate"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"time"
 )
 
@@ -28,15 +27,5 @@ var (
 
 // Location 以下变量需要在配置文件加载完毕后才可调用
 var (
-	Location *time.Location = time.UTC
+	Location = time.UTC
 )
-
-func init() {
-	initName()
-}
-
-func initName() {
-	if Name == "" {
-		Name = osutils.GetArgs0Name()
-	}
-}

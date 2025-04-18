@@ -3,6 +3,8 @@ package resource
 import (
 	_ "embed"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -40,7 +42,10 @@ var GitTagCommitHash string
 var randomData string
 
 func init() {
-	initCleanFile()
+	initCleanFile() // 最先执行
+
+	// 其他操作
+	initName()
 	initBuildDate()
 	initVersion()
 	initServiceConfig()
@@ -56,6 +61,33 @@ func initCleanFile() {
 	GitCommitHash = utilsClenFileData(GitCommitHash)
 	GitTag = utilsClenFileData(GitTag)
 	GitTagCommitHash = utilsClenFileData(GitTagCommitHash)
+}
+
+func initName() {
+	if Name != "" {
+		return
+	}
+
+	_args0, err := os.Executable()
+	if err != nil {
+		if len(os.Args) > 0 {
+			_args0 = os.Args[0]
+		} else {
+			panic(fmt.Sprintf("name was empty: %s", err.Error()))
+		}
+	}
+
+	if _args0 == "" {
+		panic("name was empty")
+	}
+
+	_args0Name := filepath.Base(_args0)
+
+	if _args0Name == "" {
+		panic("name was empty")
+	}
+
+	Name = _args0Name
 }
 
 func initBuildDate() {
@@ -120,12 +152,4 @@ func getGitTagVersion() (gitVer string) {
 
 func getRandomVersion() (randVer string) {
 	return fmt.Sprintf("0.0.0+dev-%d-%s", BuildTime.Unix(), randomData)
-}
-
-func utilsClenFileData(data string) (res string) {
-	res = utilsCheckAndRemoveBOM(data)
-	res = strings.Replace(res, "\r", "", -1)
-	res = strings.Split(res, "\n")[0]
-	res = strings.TrimSpace(res)
-	return res
 }
