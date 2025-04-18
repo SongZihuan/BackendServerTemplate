@@ -1,0 +1,107 @@
+name: Publish Go Code
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - '*'   # 匹配所有标签
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+    branches:
+      - main
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.4' # 根据需要指定Go版本
+
+      - name: Test
+        run: |
+          go test ./...
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.4' # 根据需要指定Go版本
+
+      - name: Build
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_lionv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
+          GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_tigerv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/tigerv1
+          GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_catv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/catv1
+
+      - name: List build directory
+        run: |
+          ls -l "${{ github.workspace }}/output"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux_amd64_executable_files
+          path: "${{ github.workspace }}/output/"
+          if-no-files-found: error
+
+  create_release:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions: write-all
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取所有历史记录以便能够创建标签
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux_amd64_executable_files
+          path: ${{ github.workspace }}/output
+
+      - name: List directory
+        run: ls -l ${{ github.workspace }}/output
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ github.workspace }}/output/linux_amd64_lionv1,${{ github.workspace }}/output/linux_amd64_tigerv1,${{ github.workspace }}/output/linux_amd64_catv1"
+          artifactErrorsFailBuild: true
+          allowUpdates: false
+          body: |
+            新版本 ${{  github.ref  }} 发布啦！
+            快来体验吧！
+          generateReleaseNotes: true
+          makeLatest: "legacy"
+          tag: "${{  github.ref  }} "
+
+      - name: Output the URL of the new release
+        run: echo "The release is available at ${{ steps.create_release.outputs.html_url }}"
+    outputs:
+      tag: "${{  github.ref  }}"
+      release: "${{ steps.create_release.outputs.html_url }}"
