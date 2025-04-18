@@ -57,7 +57,7 @@ $ go build github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
 
 若用于开发环境，可以按如下方式编译：
 ```shell
-$ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=1' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
+$ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
 ```
 
 其中：
@@ -70,9 +70,6 @@ $ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='
    * `-w` 表示去掉`DWARF`调试信息，可以减少二进制文件大小，同时增加反编译的难度。
    * `-extldflags "-static"` 是传递给外部链接器的参数。
      * `-static` 表示外部链接器生成静态链接文件（实际上我几乎从真正看过这个参数的作用，因为`go`本身就会优先以静态形式链接库文件，这个参数可能和`cgo`搭配更合适）。
- * `-gcflags='-O4 -inline=1'` 是传递给编译器的参数。
-   * `-O4` 启用最大优化。
-   * `-inline=1` 内联的积极程度。支持-1、0、1、2、3。数值越大约积极，-1为禁止内联，0为默认模式。内联越积极，可以提高一定性能，但可能让二进制文件膨胀变大。
 
 ## 运行
 执行编译好地可执行文件即可。
