@@ -50,13 +50,19 @@ jobs:
           go-version: '1.23.4' # 根据需要指定Go版本
 
       - name: Download module
-        run: GOOS=windows GOARCH=amd64 go mod tidy
+        run: |
+          set GOOS=windows
+          set GOARCH=amd64
+          go mod tidy
 
       - name: Go generate
         run: GOOS=windows GOARCH=amd64 go generate ./...
 
       - name: Test
-        run: GOOS=windows GOARCH=amd64 go test ./...
+        run:  |
+          set GOOS=windows
+          set GOARCH=amd64
+          go test ./...
 
   build-ubuntu:
     runs-on: ubuntu-latest
@@ -116,22 +122,34 @@ jobs:
           go-version: '1.23.4' # 根据需要指定Go版本
 
       - name: Download module
-        run: GOOS=windows GOARCH=amd64 go mod tidy
+        run:  |
+          set GOOS=windows
+          set GOARCH=amd64
+          go mod tidy
 
       - name: Go generate
-        run: GOOS=windows GOARCH=amd64 go generate ./...
+        run:  |
+          set GOOS=windows
+          set GOARCH=amd64
+          go generate ./...
 
       - name: Build lionv1
         run: |
-          GOOS=windows GOARCH=amd64 go build -o "${{ github.workspace }}/output/windows_amd64_lionv1.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
+          set GOOS=windows
+          set GOARCH=amd64
+          go build -o "${{ github.workspace }}/output/windows_amd64_lionv1.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
 
       - name: Build tigerv1
-        run: |
-          GOOS=windows GOARCH=amd64 go build -o "${{ github.workspace }}/output/windows_amd64_tigerv1.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/tigerv1
+        run:  |
+          set GOOS=windows
+          set GOARCH=amd64
+          go build -o "${{ github.workspace }}/output/windows_amd64_tigerv1.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/tigerv1
 
       - name: Build catv1
-        run: |
-          GOOS=windows GOARCH=amd64 go build -o "${{ github.workspace }}/output/windows_amd64_catv1.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/catv1
+        run:  |
+          set GOOS=windows
+          set GOARCH=amd64
+          go build -o "${{ github.workspace }}/output/windows_amd64_catv1.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/catv1
 
       - name: List build directory
         run: |
