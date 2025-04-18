@@ -123,6 +123,7 @@ jobs:
           generateReleaseNotes: true
           makeLatest: "legacy"
           tag: "${{  github.ref  }} "
+          name: "版本 ${{  steps.extract_tag.outputs.tag  }} 发布！"
 
       - name: Output the URL of the new release
         run: echo "The release is available at ${{ steps.create_release.outputs.html_url }}"
