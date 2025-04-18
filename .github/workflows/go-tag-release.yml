@@ -56,7 +56,10 @@ jobs:
           go mod tidy
 
       - name: Go generate
-        run: GOOS=windows GOARCH=amd64 go generate ./...
+        run: |
+          set GOOS=windows
+          set GOARCH=amd64
+          go generate ./...
 
       - name: Test
         run:  |
