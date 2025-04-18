@@ -12,11 +12,6 @@ import (
 	"syscall"
 )
 
-const (
-	CodePageUTF8 uint = 65001
-	CodePageGBK  uint = 936
-)
-
 var (
 	kernel32 = syscall.NewLazyDLL("kernel32.dll")
 
