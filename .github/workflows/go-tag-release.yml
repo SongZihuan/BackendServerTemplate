@@ -31,6 +31,7 @@ jobs:
 
       - name: Test
         run: |
+          GOOS=linux GOARCH=amd64 go mod tidy
           GOOS=linux GOARCH=amd64 go generate ./...
           GOOS=linux GOARCH=amd64 go test ./...
 
@@ -50,6 +51,7 @@ jobs:
 
       - name: Build
         run: |
+          GOOS=linux GOARCH=amd64 go mod tidy
           GOOS=linux GOARCH=amd64 go generate ./...
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_lionv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_tigerv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/tigerv1
