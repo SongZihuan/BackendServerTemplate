@@ -253,7 +253,6 @@ $ catv1 restart
 ## 日后升级计划
 
 1. 单元测试
-2. GitHub Action
 
 ## 协议
 

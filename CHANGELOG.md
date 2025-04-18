@@ -5,11 +5,46 @@
 其格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 且本项目遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
-## [未发布]
+## [0.4.4] - 2025-04-17
+
+### 新增
+
+- 添加 GitHub 的 Issue 和 Pull Request 模板。
+- Github Action 添加对 Windows的编译支持。
+
+### 变更
+
+- 修改 Github Action 的一项流水线的名字。
+- PR合并不再触发 Github Action。
+
+### 修复
+
+- 修复 Windows 在 Github Action 中的环境变量问题。
+
+## [0.4.3] - 2025-04-17
+
+### 修复
+
+- 修复 GitHub Action 生成 Release 时的标题问题（标题中版本号原为`refs/tags/v1.0.0`，现在修改为仅包含`v1.0.0`）。
+
+## [0.4.2] - 2025-04-17
+
+### 修复
+
+- 修复 GitHub Action 获取版本号标签的问题（标签原为`refs/tags/v1.0.0`，现在修改为仅包含`v1.0.0`）。
+
+## [0.4.1] - 2025-04-17
+
+### 修复
+
+- 修复编译问题（删除不受支持的 `gcflag` 参数）。
+
+## [0.4.0] - 2025-04-17
 
 ### 新增
 
 - 新增单元测试（以后关于测试的代码变化将记录于 “测试” 小节中）。
+- 添加 GitHub Action 配置。
 
 ### 测试
 
