@@ -1,0 +1,26 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: 项目支持
+    url: https://github.com/SongZihuan/BackendServerTemplate/issues
+    about: 如果你需要本开发框架/模板的技术支持，可以访问项目支持。
+  - name: 作者官网
+    url: https://song-zh.com
+    about: 若你需要了解作者，可以访问上述网站。
+  - name: 网站留言
+    url: https://song-zh.com/message
+    about: 若你需要与作者取得直接联系，可以使用上述网站留言。
+  - name: 邮件联系
+    url: mailto://contact@song-zh.com
+    about: 若你需要与作者取得直接联系，可以使用上述邮件。
+
+templates:
+  - name: 错误修复
+    description: 遇到了错误并进行修复。
+    filename: 1-bug.md
+  - name: 添加了新特性或功能
+    description: 添加了新的特性或功能。
+    filename: 2-feature.md
+  - name: 其他
+    description: 其他提交，
+    filename: 3-other.md

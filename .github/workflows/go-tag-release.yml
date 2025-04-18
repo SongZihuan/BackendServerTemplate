@@ -1,4 +1,4 @@
-name: Publish Go Code
+name: Check And Publish Golang Project
 
 on:
   push:
@@ -86,7 +86,6 @@ jobs:
     needs:
       - build
     if: startsWith(github.ref, 'refs/tags/')
-    permissions: write-all
 
     steps:
       - name: Checkout code
