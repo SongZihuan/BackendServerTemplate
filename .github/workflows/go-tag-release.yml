@@ -94,6 +94,13 @@ jobs:
         with:
           fetch-depth: 0 # 获取所有历史记录以便能够创建标签
 
+      - name: Extract tag name
+        id: extract_tag
+        run: |
+          # 提取标签名
+          TAG_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/tags\///')
+          echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
+
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
@@ -111,7 +118,7 @@ jobs:
           artifactErrorsFailBuild: true
           allowUpdates: false
           body: |
-            新版本 ${{  github.ref  }} 发布啦！
+            新版本 ${{  steps.extract_tag.outputs.tag  }} 发布啦！
             快来体验吧！
           generateReleaseNotes: true
           makeLatest: "legacy"
@@ -120,5 +127,5 @@ jobs:
       - name: Output the URL of the new release
         run: echo "The release is available at ${{ steps.create_release.outputs.html_url }}"
     outputs:
-      tag: "${{  github.ref  }}"
+      tag: "${{  steps.extract_tag.outputs.tag  }}"
       release: "${{ steps.create_release.outputs.html_url }}"
