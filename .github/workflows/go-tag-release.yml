@@ -29,11 +29,14 @@ jobs:
         with:
           go-version: '1.23.4' # 根据需要指定Go版本
 
+      - name: Download module
+        run: GOOS=linux GOARCH=amd64 go mod tidy
+
+      - name: Go generate
+        run: GOOS=linux GOARCH=amd64 go generate ./...
+
       - name: Test
-        run: |
-          GOOS=linux GOARCH=amd64 go mod tidy
-          GOOS=linux GOARCH=amd64 go generate ./...
-          GOOS=linux GOARCH=amd64 go test ./...
+        run: GOOS=linux GOARCH=amd64 go test ./...
 
   build:
     runs-on: ubuntu-latest
@@ -49,13 +52,25 @@ jobs:
         with:
           go-version: '1.23.4' # 根据需要指定Go版本
 
-      - name: Build
+      - name: Download module
+        run: GOOS=linux GOARCH=amd64 go mod tidy
+
+      - name: Go generate
+        run: GOOS=linux GOARCH=amd64 go generate ./...
+
+      - name: Build lionv1
         run: |
-          GOOS=linux GOARCH=amd64 go mod tidy
-          GOOS=linux GOARCH=amd64 go generate ./...
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_lionv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
+
+      - name: Build tigerv1
+        run: |
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_tigerv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/tigerv1
+
+
+      - name: Build catv1
+        run: |
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_catv1" -trimpath -ldflags='-s -w -extldflags "-static"' -gcflags='-O4 -inline=2' github.com/SongZihuan/BackendServerTemplate/src/cmd/catv1
+
 
       - name: List build directory
         run: |
