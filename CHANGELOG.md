@@ -16,6 +16,7 @@
 ### 修复
 
 - 修复`strconvutils.ReadTimeDuration`中把`uint`转换程`int`可能带来的风险问题，并新增`ReadTimeDurationPositive`函数。
+- 完善`README.md`文档关于版本号的描述。
 
 ## [0.5.0] - 2025-04-19
 
