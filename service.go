@@ -57,6 +57,8 @@ func initServiceConfig() {
 		ServiceConfig.DisplayName = ServiceConfig.Name
 	}
 
+	ServiceConfig.Describe = utilsClenFileData(ServiceConfig.Describe)
+
 	switch ServiceConfig.ArgumentFrom {
 	case FromInstall:
 		if len(os.Args) > 2 && os.Args[1] == Args1Install {
