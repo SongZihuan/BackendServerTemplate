@@ -1,3 +1,7 @@
+# Copyright 2025 BackendServerTemplate Authors. All rights reserved.
+# Use of this source code is governed by a MIT-style
+# license that can be found in the LICENSE file.
+
 if (Test-Path -Path ".\.git" -PathType Container) {
     $last_commit = git rev-parse HEAD 2>$null
     $last_tag = git describe --tags --abbrev=0 2>$null
