@@ -33,7 +33,7 @@ func (d *ServerConfig) check(c *configInfo) (err configerror.Error) {
 }
 
 func (d *ServerConfig) process(c *configInfo) (cfgErr configerror.Error) {
-	d.StopWaitTimeDuration = strconvutils.ReadTimeDuration(d.StopWaitTime)
+	d.StopWaitTimeDuration = strconvutils.ReadTimeDurationPositive(d.StopWaitTime)
 	if d.StopWaitTimeDuration < 10*time.Second {
 		_ = configerror.NewWarningf("stop-wait-time (value: %s) is less than the recommended value of 10s", strconvutils.TimeDurationToString(d.StopWaitTimeDuration))
 	}
