@@ -19,11 +19,11 @@ templates:
     description: 遇到了错误并进行修复。
     filename: 1-bug.md
     template: 1-bug.md
-  - name: 添加了新特性或功能
+  - name: 添加了新特性或功能。
     description: 添加了新的特性或功能。
     filename: 2-feature.md
     template: 2-feature.md
   - name: 其他
-    description: 其他提交，
+    description: 其他提交。
     filename: 3-other.md
     template: 3-other.md
