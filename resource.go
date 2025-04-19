@@ -139,10 +139,10 @@ func getDefaultVersion() (defVer string) {
 func getGitTagVersion() (gitVer string) {
 	gitVer = strings.TrimPrefix(strings.ToLower(GitTag), "v")
 	if GitCommitHash != "" && (GitTagCommitHash == "" || gitVer == "") {
-		return fmt.Sprintf("0.0.0+dev-%d-%s", BuildTime.Unix(), GitCommitHash)
+		return fmt.Sprintf("0.0.0+dev.%d.%s", BuildTime.Unix(), GitCommitHash)
 	} else if GitCommitHash != "" && GitTagCommitHash != "" && gitVer != "" && utilsIsSemanticVersion(gitVer) {
 		if (GitCommitHash != GitTagCommitHash || strings.HasPrefix(gitVer, "0.")) && !strings.Contains(gitVer, "dev") {
-			return gitVer + fmt.Sprintf("+dev-%d-%s", BuildTime.Unix(), GitCommitHash)
+			return gitVer + fmt.Sprintf("+dev.%d.%s", BuildTime.Unix(), GitCommitHash)
 		}
 		return gitVer
 	} else {
@@ -151,5 +151,5 @@ func getGitTagVersion() (gitVer string) {
 }
 
 func getRandomVersion() (randVer string) {
-	return fmt.Sprintf("0.0.0+dev-%d-%s", BuildTime.Unix(), randomData)
+	return fmt.Sprintf("0.0.0+dev.%d.%s", BuildTime.Unix(), randomData)
 }
