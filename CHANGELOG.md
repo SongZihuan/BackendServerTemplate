@@ -5,6 +5,23 @@
 其格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 且本项目遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
+**注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E5%8F%98%E6%9B%B4%E6%97%A5%E5%BF%97)冲突，则以后者为准**
+
+## [0.5.0] - 2025-04-19
+
+### 新增
+
+- 新增`SECURITY.md`、`CONTRIBUTORS.md`和`CONTRIBUTING.md`。
+- 为一些文档添加了`Wiki`引用。
+
+### 变更
+
+- 简单修改了一下`README.md`。
+- 提供了参考性的`MIT LICENSE`翻译。
+- 为部分文件添加遗漏的版权声明。
+- 服务描述限制为一行。
+- 语义化版本号中的构建信息部分，使用`.`作为分隔符（原使用`-`作为分隔符）。
+
 ## [0.4.6] - 2025-04-19
 
 ### 新增

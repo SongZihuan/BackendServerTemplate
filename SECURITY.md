@@ -2,6 +2,8 @@
 
 我们非常重视本项目的安全性。如果您发现了任何潜在的安全漏洞，请按照以下步骤报告。
 
+**注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5)冲突，则以后者为准**
+
 ## 如何报告漏洞
 
 ### 严重漏洞问题

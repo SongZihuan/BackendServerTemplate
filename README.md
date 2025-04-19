@@ -2,6 +2,8 @@
 
 使用 `Golang` 实现的后端服务模板程序。
 
+**注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B)冲突，则以后者为准**
+
 ## 介绍
 
 本模板程序旨在实现一个 `Golang` 的后端服务，可以是 `Http` 也可以是其他。为了完成这个目的，我设计了一部分基础套件。

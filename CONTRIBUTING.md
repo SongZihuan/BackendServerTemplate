@@ -2,6 +2,8 @@
 
 首先，感谢您考虑为本项目做出贡献！我们非常欢迎并珍视来自社区的每一份贡献。无论是代码提交、文档更新还是问题报告，您的参与都是对我们最大的支持。
 
+**注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E8%B4%A1%E7%8C%AE%E6%8C%87%E5%8D%97)冲突，则以后者为准**
+
 ## 如何做出贡献
 
 ### 修复Bug
