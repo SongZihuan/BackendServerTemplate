@@ -13,6 +13,10 @@
 
 - 添加对`Github Dependabot` 的支持。
 
+### 修复
+
+- 修复`strconvutils.ReadTimeDuration`中把`uint`转换程`int`可能带来的风险问题，并新增`ReadTimeDurationPositive`函数。
+
 ## [0.5.0] - 2025-04-19
 
 ### 新增
