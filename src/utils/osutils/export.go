@@ -7,10 +7,12 @@ package osutils
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var _args0 = ""
 var _args0Name = ""
+var _args0NamePosix = ""
 
 func init() {
 	var err error
@@ -24,13 +26,19 @@ func init() {
 	}
 
 	if _args0 == "" {
-		panic("args 0 was empty")
+		panic("_args0 was empty")
 	}
 
 	_args0Name = filepath.Base(_args0)
 
 	if _args0Name == "" {
-		panic("args 0 was empty")
+		panic("_args0Name was empty")
+	}
+
+	_args0NamePosix = strings.TrimSuffix(_args0Name, ".exe")
+
+	if _args0NamePosix == "" {
+		panic("_args0NamePosix was empty")
 	}
 }
 

@@ -6,48 +6,35 @@ package v1
 
 import (
 	"errors"
-	"github.com/SongZihuan/BackendServerTemplate/src/commandlineargs"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/controller"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example2"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/signalwatcher"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/spf13/cobra"
 )
 
-func MainV1() (exitCode exitutils.ExitCode) {
+var InputConfigFilePath string = "config.yaml"
+var OutputConfigFilePath string = ""
+
+func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = consoleutils.SetConsoleCPSafe(consoleutils.CodePageUTF8)
+	err = globalmain.PreRun()
 	if err != nil {
-		return exitutils.InitFailedErrorForWin32ConsoleModule(err.Error())
+		return err
 	}
-
-	err = logger.InitBaseLogger(loglevel.LevelDebug, true, nil, nil, nil, nil)
-	if err != nil {
-		return exitutils.InitFailedErrorForLoggerModule(err.Error())
-	}
-	defer logger.CloseLogger()
-	defer logger.Recover()
-
-	err = commandlineargs.InitCommandLineArgsParser(nil)
-	if err != nil {
-		if errors.Is(err, commandlineargs.StopRun) {
-			return exitutils.SuccessExitQuite()
-		}
-
-		return exitutils.InitFailedError("Command Line Args Parser", err.Error())
-	}
+	defer globalmain.PostRun()
 
 	err = config.InitConfig(&config.ConfigOption{
-		ConfigFilePath: commandlineargs.ConfigFile(),
-		OutputFilePath: commandlineargs.OutputConfigFile(),
+		ConfigFilePath: InputConfigFilePath,
+		OutputFilePath: OutputConfigFilePath,
 		Provider:       configparser.NewYamlProvider(),
 	})
 	if err != nil {

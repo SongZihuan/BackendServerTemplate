@@ -46,9 +46,9 @@ func init() {
 
 	// 其他操作
 	initName()
+	initLicense()
 	initBuildDate()
 	initVersion()
-	initServiceConfig()
 }
 
 func initCleanFile() {
@@ -87,7 +87,19 @@ func initName() {
 		panic("name was empty")
 	}
 
-	Name = _args0Name
+	_args0NamePosix := strings.TrimSuffix(_args0Name, ".exe")
+
+	if _args0NamePosix == "" {
+		panic("name was empty")
+	}
+
+	Name = _args0NamePosix
+}
+
+func initLicense() {
+	License = strings.Split(License, "--- 下述为中文翻译，仅供参考，以上述英文协议原文为准。 ---")[0]
+	License = strings.TrimRight(License, "\n")
+	License = strings.TrimSpace(License)
 }
 
 func initBuildDate() {

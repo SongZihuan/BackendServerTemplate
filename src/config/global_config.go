@@ -5,10 +5,11 @@
 package config
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/commandlineargs"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
 	"strings"
 	"time"
 )
@@ -65,13 +66,10 @@ func (d *GlobalConfig) check(c *configInfo) configerror.Error {
 }
 
 func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
-	if commandlineargs.Name() != "" {
-		global.Name = commandlineargs.Name()
-	} else if d.Name != "" {
-		global.Name = d.Name
+	name := cleanstringutils.GetStringOneLine(d.Name)
+	if (!root.NameChanged() || global.Name == "") && name != "" {
+		global.Name = name
 	}
-
-	d.Name = global.Name
 
 	var location *time.Location
 	if strings.ToLower(d.Timezone) == "utc" {

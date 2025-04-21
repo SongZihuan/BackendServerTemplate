@@ -7,7 +7,7 @@
 
 **注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E5%8F%98%E6%9B%B4%E6%97%A5%E5%BF%97)冲突，则以后者为准**
 
-## [未发布]
+## [0.6.0] - 2025-04-21
 
 ### 新增
 
@@ -17,6 +17,10 @@
 
 - 修复`strconvutils.ReadTimeDuration`中把`uint`转换程`int`可能带来的风险问题，并新增`ReadTimeDurationPositive`函数。
 - 完善`README.md`文档关于版本号的描述。
+
+### 重构
+
+- 优化了命令行匹配系统，使其能够支持更复杂的命令行（子命令、标志、参数）。
 
 ## [0.5.0] - 2025-04-19
 

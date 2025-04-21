@@ -20,7 +20,7 @@ var (
 	GitTag             = resource.GitTag
 	GitTagCommitHash   = resource.GitTagCommitHash
 
-	// Name 继承自resource（程序init完成后即可调用）
+	// Name 继承自resource
 	// 注意：命令行参数或配置文件加载时可能会被更改
 	Name = resource.Name
 )

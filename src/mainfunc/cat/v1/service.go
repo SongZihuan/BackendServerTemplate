@@ -6,7 +6,6 @@ package v1
 
 import (
 	"errors"
-	"github.com/SongZihuan/BackendServerTemplate/src/commandlineargs"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
@@ -20,6 +19,9 @@ import (
 	"github.com/kardianos/service"
 	"os"
 )
+
+var InputConfigFilePath string = "config.yaml"
+var OutputConfigFilePath string = ""
 
 type Program struct {
 	sigchan             chan os.Signal
@@ -35,20 +37,11 @@ func NewProgram() *Program {
 }
 
 func (p *Program) Start(s service.Service) error {
-	err := commandlineargs.InitCommandLineArgsParser(nil)
-	if err != nil {
-		if errors.Is(err, commandlineargs.StopRun) {
-			p.exitCode = exitutils.SuccessExitQuite()
-			return err
-		}
-
-		p.exitCode = exitutils.InitFailedError("Command Line Args Parser", err.Error())
-		return err
-	}
+	var err error
 
 	err = config.InitConfig(&config.ConfigOption{
-		ConfigFilePath: commandlineargs.ConfigFile(),
-		OutputFilePath: commandlineargs.OutputConfigFile(),
+		ConfigFilePath: InputConfigFilePath,
+		OutputFilePath: OutputConfigFilePath,
 		Provider:       configparser.NewYamlProvider(),
 	})
 	if err != nil {
