@@ -53,14 +53,13 @@ func RestartProgram(restartFlag string) error {
 		return err
 	}
 
-	logger.Warnf("the program restart")
+	logger.Warnf("the program restart...")
 
 	if err := consoleutils.FreeConsole(); err != nil {
-		logger.Infof("free console error: %s", err.Error())
 		return err
 	}
 
-	logger.Infof("restart ready...")
+	logger.Warnf("restart ready")
 
 	close(RestartChan)
 	return nil

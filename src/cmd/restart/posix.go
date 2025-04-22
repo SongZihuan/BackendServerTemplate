@@ -7,6 +7,7 @@
 package restart
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/sliceutils"
 	"os"
@@ -20,7 +21,7 @@ const RestartReadyTime = 5 * time.Second
 const RestartExitTime = 5 * time.Second
 const RestartWaitTime = RestartReadyTime + RestartExitTime + (3 * time.Second)
 
-func RestartProgram(restartFlag string, beforeReturnHook func()) error {
+func RestartProgram(restartFlag string) error {
 	select {
 	case _, ok := <-RestartChan:
 		if ok == false {
@@ -55,9 +56,8 @@ func RestartProgram(restartFlag string, beforeReturnHook func()) error {
 		return err
 	}
 
-	if beforeReturnHook != nil {
-		beforeReturnHook()
-	}
+	logger.Warnf("the program restart...")
+	logger.Warnf("restart ready")
 
 	close(RestartChan)
 	return nil
