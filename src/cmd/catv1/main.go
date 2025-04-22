@@ -33,7 +33,7 @@ func main() {
 		catv1.MainV1)
 
 	cmd.Flags().StringVarP(&catv1.InputConfigFilePath, "config", "c", catv1.InputConfigFilePath, "the file path of the configuration file")
-	cmd.Flags().StringVarP(&catv1.OutputConfigFilePath, "output-config", "o", catv1.InputConfigFilePath, "the file path of the output configuration file")
+	cmd.Flags().StringVarP(&catv1.OutputConfigFilePath, "output-config", "o", catv1.OutputConfigFilePath, "the file path of the output configuration file")
 
 	install := &cobra.Command{
 		Use:           args1Install,

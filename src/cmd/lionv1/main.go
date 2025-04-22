@@ -22,7 +22,7 @@ func main() {
 		lionv1.MainV1)
 
 	cmd.Flags().StringVarP(&lionv1.InputConfigFilePath, "config", "c", lionv1.InputConfigFilePath, "the file path of the configuration file")
-	cmd.Flags().StringVarP(&lionv1.OutputConfigFilePath, "output-config", "o", lionv1.InputConfigFilePath, "the file path of the output configuration file")
+	cmd.Flags().StringVarP(&lionv1.OutputConfigFilePath, "output-config", "o", lionv1.OutputConfigFilePath, "the file path of the output configuration file")
 
 	exitutils.ExitQuite(cmd.Execute())
 }

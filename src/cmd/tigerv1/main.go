@@ -22,7 +22,7 @@ func main() {
 		tigerv1.MainV1)
 
 	cmd.Flags().StringVarP(&tigerv1.InputConfigFilePath, "config", "c", tigerv1.InputConfigFilePath, "the file path of the configuration file")
-	cmd.Flags().StringVarP(&tigerv1.OutputConfigFilePath, "output-config", "o", tigerv1.InputConfigFilePath, "the file path of the output configuration file")
+	cmd.Flags().StringVarP(&tigerv1.OutputConfigFilePath, "output-config", "o", tigerv1.OutputConfigFilePath, "the file path of the output configuration file")
 
 	exitutils.ExitQuite(cmd.Execute())
 }
