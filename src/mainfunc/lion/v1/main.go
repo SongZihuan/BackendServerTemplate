@@ -56,7 +56,9 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		return exitutils.InitFailedError("Server Controller", err.Error())
 	}
 
-	ser1, _, err := example1.NewServerExample1(nil)
+	ser1, _, err := example1.NewServerExample1(&example1.ServerExample1Option{
+		LockThread: true,
+	})
 	if err != nil {
 		return exitutils.InitFailedError("Server Example1", err.Error())
 	}

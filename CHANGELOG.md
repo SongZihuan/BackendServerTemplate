@@ -7,6 +7,12 @@
 
 **注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E5%8F%98%E6%9B%B4%E6%97%A5%E5%BF%97)冲突，则以后者为准**
 
+## [未发布]
+
+### 新增
+
+- 添加线程独占任务功能。
+
 ## [0.9.0] - 2025-04-23
 
 ### 修复

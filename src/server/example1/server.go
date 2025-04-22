@@ -10,21 +10,25 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/goutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/strconvutils"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
 type ServerExample1 struct {
-	running      bool
+	running      atomic.Bool
 	ctx          *servercontext.ServerContext
 	name         string
 	wg           *sync.WaitGroup
 	stopWaitTime time.Duration
+	lockThread   bool
 }
 
 type ServerExample1Option struct {
 	StopWaitTime time.Duration
+	LockThread   bool
 }
 
 func NewServerExample1(opt *ServerExample1Option) (*ServerExample1, *servercontext.ServerContext, error) {
@@ -33,6 +37,7 @@ func NewServerExample1(opt *ServerExample1Option) (*ServerExample1, *serverconte
 	if opt == nil {
 		opt = &ServerExample1Option{
 			StopWaitTime: 10 * time.Second,
+			LockThread:   false,
 		}
 	} else {
 		if opt.StopWaitTime == 0 {
@@ -42,11 +47,14 @@ func NewServerExample1(opt *ServerExample1Option) (*ServerExample1, *serverconte
 
 	server := &ServerExample1{
 		ctx:          ctx,
-		running:      false,
 		name:         "example1",
 		wg:           new(sync.WaitGroup),
 		stopWaitTime: opt.StopWaitTime,
+		lockThread:   opt.LockThread,
 	}
+
+	server.running.Store(false)
+
 	err := server.init()
 	if err != nil {
 		return nil, nil, err
@@ -68,9 +76,24 @@ func (s *ServerExample1) GetCtx() *servercontext.ServerContext {
 }
 
 func (s *ServerExample1) Run() {
-	s.running = true
+	if s.running.Swap(true) {
+		return
+	}
 	defer func() {
-		s.running = false
+		s.running.Store(false)
+	}()
+
+	if s.lockThread {
+		err := goutils.LockOSThread()
+		if err != nil {
+			s.ctx.RunError(err)
+			return
+		}
+	}
+	defer func() {
+		if s.lockThread {
+			_ = goutils.UnlockOSThread()
+		}
 	}()
 
 	s.wg = new(sync.WaitGroup)
@@ -115,7 +138,7 @@ func (s *ServerExample1) Stop() {
 }
 
 func (s *ServerExample1) IsRunning() bool {
-	return s.running
+	return s.running.Load()
 }
 
 func _test() {

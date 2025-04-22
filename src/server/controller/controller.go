@@ -10,6 +10,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/goutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/strconvutils"
 	"reflect"
 	"sync"
@@ -25,10 +26,12 @@ type Controller struct {
 	name         string
 	stopWaitTime time.Duration
 	wg           *sync.WaitGroup
+	lockThread   bool
 }
 
 type ControllerOption struct {
 	StopWaitTime time.Duration
+	LockThread   bool
 }
 
 func NewController(opt *ControllerOption) (*Controller, error) {
@@ -37,9 +40,10 @@ func NewController(opt *ControllerOption) (*Controller, error) {
 	if opt == nil {
 		opt = &ControllerOption{
 			StopWaitTime: 10 * time.Second,
+			LockThread:   false,
 		}
 	} else {
-		if opt.StopWaitTime == 0 {
+		if opt.StopWaitTime <= 0 {
 			opt.StopWaitTime = 10 * time.Second
 		}
 	}
@@ -51,12 +55,13 @@ func NewController(opt *ControllerOption) (*Controller, error) {
 		name:         serverinterface.ControllerName,
 		wg:           new(sync.WaitGroup),
 		stopWaitTime: opt.StopWaitTime,
+		lockThread:   opt.LockThread,
 	}
 
-	{
-		controller.server[controller.name] = controller
-		controller.context[controller.name] = ctx
-	}
+	controller.running.Store(false)
+
+	controller.server[controller.name] = controller
+	controller.context[controller.name] = ctx
 
 	return controller, nil
 }
@@ -121,6 +126,19 @@ func (s *Controller) Run() {
 	}
 	defer func() {
 		s.running.Store(false)
+	}()
+
+	if s.lockThread {
+		err := goutils.LockOSThread()
+		if err != nil {
+			s.ctx.RunError(err)
+			return
+		}
+	}
+	defer func() {
+		if s.lockThread {
+			_ = goutils.UnlockOSThread()
+		}
 	}()
 
 	s.wg = new(sync.WaitGroup)
