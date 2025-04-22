@@ -79,15 +79,42 @@ $ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' github.com
 
 ### 运行参数
 
-* `-h`、`--help` 输出帮助文档（`Usage`）。**（终止运行参数）。**
-* `-v`、`--version` 输出版本号。**（终止运行参数）。**
-* `-l`、`--license` 输出软件协议。**（终止运行参数）。**
-* `-r`、`--report` 输出程序反馈、报告方式文档。**（终止运行参数）。**
-* `-n`、`--name` 设置项目名称（需要一个字符串参数）
-* `-c`、`--config` 配置文件位置（可提供一个字符串参数作为路径指向配置文件，默认值为：`config.yaml`）。
-* `-o`、`--output-config` 反向输出配置文件（默认不输出，若提供一个路径则会输出到该路径所指处）。未知配置项不会输出，未设定配置项则以默认值（若有）输出。**前提：配置文件被正确导入和识别。**
+接下来所列出来的指令，是`lionv1`、`tigerv1`和`catv1`所共有的子命令和标志。
 
-**终止运行参数：当命令行出现这些参数时，将只执行参数对应的功能，执行完成后不会继续运行后续服务。**
+下列为公共子命令，以`lionv1`为例子：
+
+* `lionv1` 无子命令时，表示直接运行该程序。
+  * 注意：直接调用`catv1`运行代码是具有未知性的，应该使用`catv1 start`。
+* `lionv1 help` 查看`lionv1`的帮助文档。
+  * `lionv1 help <subcommand>` 查看子命令的帮助文档，例如：`lionv1 help version`。
+* `lionv1 version` 输出详细的版本号。
+* `lionv1 license` 输出授权协议（位于项目根目录的`LICENSE`）。
+* `lionv1 report` 输出程序反馈、报告方式文档。
+* `lionv1 check` 检查并输出配置文件的检查接管。
+* `completion` 与`shell`和`powershell`实现自动补全有关。
+
+下列为公共标志，以`lionv1`为例子：
+
+* `lionv1 -n xxx`，`lionv1 --name xxx` 设置程序运行的名称，需要一个参数 **（全局参数，任何子命令均具有此参数）**。
+* `lionv1 -h`，`lionv1 --help` 查看帮助文档 **（全局参数，任何子命令均具有此参数）**。
+* `lionv1 -c xxx`，`lionv1 --config xxx` 配置文件位置（可提供一个字符串参数作为路径指向配置文件，默认值为：`config.yaml`）。
+* `lionv1 -o xxx`、`lionv1 --output-config xxx` 反向输出配置文件（默认不输出，若提供一个路径则会输出到该路径所指处）。未知配置项不会输出，未设定配置项则以默认值（若有）输出。**前提：配置文件被正确导入和识别。**
+
+以下标志为`tigerv1`和`lionv1`共有，`catv1`没有的：
+
+* `lionv1 --console-mode no`，`lionv1 --console-mode normal` 是否有`Windows`控制台，`no`表示没有（例如stdout重定向了、后台进程无对应的`Console`），`normal`表示有。
+* `lionv1 --auto-reload` 自动重载（监测配置文件，若其变化则重启服务系统）。该功能应该仅仅用在开发时。若在`Windows`平台启用，则其要求具有对应的`Console`（`--console-mode`的值为`normal`）。
+
+以下为`check`子命令的标志：
+
+* `lionv1 check -c xxx`，`lionv1 check --config xxx` 配置文件位置（可提供一个字符串参数作为路径指向配置文件，默认值为：`config.yaml`）。
+* `lionv1 check -o xxx`、`lionv1 check --output-config xxx` 反向输出配置文件（默认不输出，若提供一个路径则会输出到该路径所指处）。未知配置项不会输出，未设定配置项则以默认值（若有）输出。**前提：配置文件被正确导入和识别。**
+
+以下为`version`子命令的标志：
+
+* `lionv1 version -s` `lionv1 version --short` 仅输出短的版本号。
+
+特定于`catv1`的子命令（如：`install`、`start`等）可参考：[后端服务](#后台服务)
 
 ### 运行时配置文件
 
