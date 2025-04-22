@@ -22,7 +22,8 @@ var (
 
 	// Name 继承自resource
 	// 注意：命令行参数或配置文件加载时可能会被更改
-	Name = resource.Name
+	Name            = resource.Name
+	NameFlagChanged = false
 )
 
 // Location 以下变量需要在配置文件加载完毕后才可调用

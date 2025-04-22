@@ -6,11 +6,13 @@ package main
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/subcmd"
-	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
+	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	catv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/cat/v1"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
 )
@@ -24,18 +26,48 @@ const (
 	args1Restart    = "restart"
 )
 
+var name string = global.Name
+var inputConfigFilePath string = "config.yaml"
+
 func main() {
-	defer logger.Recover()
+	err := globalmain.PreRun()
+	if err != nil {
+		exitutils.Exit(err)
+	}
+	defer globalmain.PostRun()
 
-	cmd := root.GetRootCMD("System service registration tool",
-		"Register this software as a system service, mainly used in Windows.",
-		nil,
-		false,
-		catv1.MainV1)
+	cmd := &cobra.Command{
+		Use:           global.Name,
+		Short:         "System service registration tool",
+		Long:          "Register this software as a system service, mainly used in Windows",
+		SilenceUsage:  false,
+		SilenceErrors: false,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
 
-	subcmd.AddSubCMDOfRoot(cmd)
-	cmd.Flags().StringVarP(&catv1.InputConfigFilePath, "config", "c", catv1.InputConfigFilePath, "the file path of the configuration file")
-	cmd.Flags().StringVarP(&catv1.OutputConfigFilePath, "output-config", "o", catv1.OutputConfigFilePath, "the file path of the output configuration file")
+			if name = cleanstringutils.GetStringOneLine(name); cmd.Flags().Changed("name") && name != "" {
+				global.Name = name
+				global.NameFlagChanged = true
+			} else {
+				global.NameFlagChanged = false
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = true
+			cmd.SilenceErrors = true
+			return catv1.MainV1(cmd, args, inputConfigFilePath)
+		},
+		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVarP(&inputConfigFilePath, "config", "c", inputConfigFilePath, "the file path of the configuration file")
 
 	install := &cobra.Command{
 		Use:           args1Install,
@@ -51,12 +83,6 @@ func main() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-
-			err := globalmain.PreRun(false)
-			if err != nil {
-				return err
-			}
-
 			return catv1.MainV1Install(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
@@ -65,6 +91,7 @@ func main() {
 			return nil
 		},
 	}
+	install.FParseErrWhitelist.UnknownFlags = true
 
 	uninstall := &cobra.Command{
 		Use:           args1Uninstall1,
@@ -81,12 +108,6 @@ func main() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-
-			err := globalmain.PreRun(false)
-			if err != nil {
-				return err
-			}
-
 			return catv1.MainV1UnInstall(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
@@ -110,12 +131,6 @@ func main() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-
-			err := globalmain.PreRun(false)
-			if err != nil {
-				return err
-			}
-
 			return catv1.MainV1Start(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
@@ -139,12 +154,6 @@ func main() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-
-			err := globalmain.PreRun(false)
-			if err != nil {
-				return err
-			}
-
 			return catv1.MainV1Stop(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
@@ -168,12 +177,6 @@ func main() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-
-			err := globalmain.PreRun(false)
-			if err != nil {
-				return err
-			}
-
 			return catv1.MainV1Restart(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
@@ -183,6 +186,6 @@ func main() {
 		},
 	}
 
-	cmd.AddCommand(install, uninstall, start, stop, restart)
+	cmd.AddCommand(version.CMD, license.CMD, report.CMD, check.CMD, install, uninstall, start, stop, restart)
 	exitutils.ExitQuite(cmd.Execute())
 }

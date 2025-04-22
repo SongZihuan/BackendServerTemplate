@@ -12,13 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var InputConfigFilePath string = "config.yaml"
-var OutputConfigFilePath string = ""
-
-func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
+func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outputConfigFilePath string) (exitCode error) {
 	var err error
 
-	configProvider, err := configparser.NewProvider(InputConfigFilePath, &configparser.NewProviderOption{
+	configProvider, err := configparser.NewProvider(inputConfigFilePath, &configparser.NewProviderOption{
 		AutoReload: false,
 	})
 	if err != nil {
@@ -26,8 +23,8 @@ func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 	}
 
 	err = config.InitConfig(&config.ConfigOption{
-		ConfigFilePath: InputConfigFilePath,
-		OutputFilePath: OutputConfigFilePath,
+		ConfigFilePath: inputConfigFilePath,
+		OutputFilePath: outputConfigFilePath,
 		Provider:       configProvider,
 	})
 	if err != nil {

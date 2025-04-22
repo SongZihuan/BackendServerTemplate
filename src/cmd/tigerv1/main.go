@@ -5,26 +5,97 @@
 package main
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/subcmd"
-	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
+	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	restartv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/restart/v1"
 	tigerv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/tiger/v1"
+	"github.com/SongZihuan/BackendServerTemplate/src/restart"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/spf13/cobra"
 )
 
+var inputConfigFilePath string = "config.yaml"
+var outputConfigFilePath string = ""
+var name string = global.Name
+var reload bool = false
+var ppid int = 0
+
 func main() {
-	defer logger.Recover()
+	err := globalmain.PreRun()
+	if err != nil {
+		exitutils.Exit(err)
+	}
+	defer globalmain.PostRun()
 
-	cmd := root.GetRootCMD("Single-tasking background system",
-		"A single-task background system that runs a single task directly without using a controller",
-		&tigerv1.AutoReload,
-		true,
-		tigerv1.MainV1)
+	cmd := &cobra.Command{
+		Use:           global.Name,
+		Short:         "Single-tasking background system",
+		Long:          "A single-task background system that runs a single task directly without using a controller",
+		SilenceUsage:  false,
+		SilenceErrors: false,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
 
-	subcmd.AddSubCMDOfRoot(cmd)
-	cmd.Flags().StringVarP(&tigerv1.InputConfigFilePath, "config", "c", tigerv1.InputConfigFilePath, "the file path of the configuration file")
-	cmd.Flags().StringVarP(&tigerv1.OutputConfigFilePath, "output-config", "o", tigerv1.OutputConfigFilePath, "the file path of the output configuration file")
+			if name = cleanstringutils.GetStringOneLine(name); cmd.Flags().Changed("name") && name != "" {
+				global.Name = name
+				global.NameFlagChanged = true
+			} else {
+				global.NameFlagChanged = false
+			}
+
+			return nil
+		},
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
+
+			if reload && cmd.Flags().Changed(restart.RestartFlag) {
+				if ppid == 0 {
+					return fmt.Errorf("`restart` cannot be specified as 0")
+				}
+				reload = false
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = true
+			cmd.SilenceErrors = true
+
+			if reload {
+				return restartv1.MainV1(cmd, args, inputConfigFilePath, outputConfigFilePath)
+			}
+
+			return tigerv1.MainV1(cmd, args, inputConfigFilePath, outputConfigFilePath, ppid)
+		},
+		PostRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
+			return nil
+		},
+		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
+			return nil
+		},
+	}
+
+	cmd.AddCommand(version.CMD, license.CMD, report.CMD, check.CMD)
+
+	cmd.PersistentFlags().StringVarP(&name, "name", "n", global.Name, "the program display name")
+
+	cmd.Flags().BoolVar(&reload, "auto-reload", false, "auto reload config file when the file changed")
+	cmd.Flags().IntVar(&ppid, restart.RestartFlag, 0, "restart mode, note: DO NOT SET THIS FLAG unless you know your purpose clearly.")
+
+	cmd.Flags().StringVarP(&inputConfigFilePath, "config", "c", inputConfigFilePath, "the file path of the configuration file")
+	cmd.Flags().StringVarP(&outputConfigFilePath, "output-config", "o", outputConfigFilePath, "the file path of the output configuration file")
 
 	exitutils.ExitQuite(cmd.Execute())
 }

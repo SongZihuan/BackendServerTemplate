@@ -6,11 +6,12 @@ package v1
 
 import (
 	"errors"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
+	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"github.com/SongZihuan/BackendServerTemplate/src/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/controller"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example2"
@@ -20,23 +21,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var InputConfigFilePath string = "config.yaml"
-var OutputConfigFilePath string = ""
-var AutoReload bool = false
-
-func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
+func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outputConfigFilePath string, ppid int) (exitCode error) {
 	var err error
 
-	configProvider, err := configparser.NewProvider(InputConfigFilePath, &configparser.NewProviderOption{
-		AutoReload: AutoReload,
+	configProvider, err := configparser.NewProvider(inputConfigFilePath, &configparser.NewProviderOption{
+		AutoReload: ppid != 0,
 	})
 	if err != nil {
 		return exitutils.InitFailedError("Get config file provider", err.Error())
 	}
 
 	err = config.InitConfig(&config.ConfigOption{
-		ConfigFilePath: InputConfigFilePath,
-		OutputFilePath: OutputConfigFilePath,
+		ConfigFilePath: inputConfigFilePath,
+		OutputFilePath: outputConfigFilePath,
 		Provider:       configProvider,
 	})
 	if err != nil {
@@ -49,6 +46,8 @@ func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 	if err != nil {
 		return exitutils.InitFailedError("Win32 console channel", err.Error())
 	}
+
+	ppidchan := restart.PpidWatcher(ppid)
 
 	ctrl, err := controller.NewController(&controller.ControllerOption{
 		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
@@ -82,15 +81,26 @@ func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 
 	var stopErr error
 
-SELECT:
 	select {
 	case <-restart.RestartChan:
-		if AutoReload {
-			logger.Warnf("stop/restart by config file change")
+		if ppid != 0 {
+			logger.Warnf("stop to restart")
 			err = nil
 			stopErr = nil
 		} else {
-			goto SELECT
+			logger.Warnf("stop to restart (error: restart not set)")
+			err = fmt.Errorf("stop by restart, but restart not set")
+			stopErr = err
+		}
+	case <-ppidchan:
+		if ppid != 0 {
+			logger.Warnf("stop by parent process")
+			err = nil
+			stopErr = nil
+		} else {
+			logger.Warnf("stop by parent process (error: ppid not set)")
+			err = fmt.Errorf("stop by parent process, but pppid not set")
+			stopErr = err
 		}
 	case sig := <-sigchan:
 		logger.Warnf("stop by signal (%s)", sig.String())
@@ -119,5 +129,10 @@ SELECT:
 		return exitutils.RunError(stopErr.Error())
 	}
 
-	return exitutils.SuccessExit("all tasks are completed and the main go routine exits")
+	select {
+	case <-restart.RestartChan:
+		return exitutils.SuccessExit("all tasks are completed and the main go routine exits", exitutils.ExitCodeReload)
+	default:
+		return exitutils.SuccessExit("all tasks are completed and the main go routine exits")
+	}
 }

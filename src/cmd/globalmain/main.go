@@ -11,19 +11,12 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 )
 
-func PreRun(hasConsole bool) (exitCode error) {
+func PreRun() (exitCode error) {
 	var err error
 
-	if hasConsole {
-		err = consoleutils.SetConsoleCPSafe(consoleutils.CodePageUTF8)
-		if err != nil {
-			return exitutils.InitFailedErrorForWin32ConsoleModule(err.Error())
-		}
-
-		err = consoleutils.BindStdToConsole()
-		if err != nil {
-			return exitutils.InitFailedErrorForWin32ConsoleModule(err.Error())
-		}
+	err = consoleutils.SetConsoleCPSafe(consoleutils.CodePageUTF8)
+	if err != nil {
+		return exitutils.InitFailedErrorForWin32ConsoleModule(err.Error())
 	}
 
 	err = logger.InitBaseLogger(loglevel.LevelDebug, true, nil, nil, nil, nil)
@@ -35,5 +28,6 @@ func PreRun(hasConsole bool) (exitCode error) {
 }
 
 func PostRun() {
-	defer logger.CloseLogger()
+	logger.CloseLogger()
+	logger.Recover()
 }

@@ -5,4 +5,4 @@
 package restart
 
 const RestartFlag = "restart"
-const RestartFlagComplete = "--" + RestartFlag
+const restartFlag = "--" + RestartFlag

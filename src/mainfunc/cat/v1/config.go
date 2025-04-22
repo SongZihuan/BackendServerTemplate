@@ -62,11 +62,19 @@ func initInstallServiceConfig(args []string) error {
 			serviceConfig.ArgumentList = nil
 		}
 	case FromConfig:
+		if len(args) > 0 {
+			return fmt.Errorf("no parameters are allowed: %v", args)
+		}
+
 		if len(serviceConfig.ArgumentList) == 0 {
 			serviceConfig.ArgumentFrom = FromNo
 			serviceConfig.ArgumentList = nil
 		}
 	default:
+		if len(args) > 0 {
+			return fmt.Errorf("no parameters are allowed: %v", args)
+		}
+
 		serviceConfig.ArgumentFrom = FromNo
 		serviceConfig.ArgumentList = nil
 	}

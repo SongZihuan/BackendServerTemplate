@@ -18,32 +18,50 @@ import (
 	"os"
 )
 
-var InputConfigFilePath string = "config.yaml"
-var OutputConfigFilePath string = ""
-
 type Program struct {
-	sigchan  chan os.Signal
-	stopErr  error
-	ser      serverinterface.Server
-	exitCode exitutils.ExitCode
+	sigchan    chan os.Signal
+	stopErr    error
+	ser        serverinterface.Server
+	exitCode   exitutils.ExitCode
+	configPath string
 }
 
 func NewProgram() *Program {
-	return &Program{}
+	return &Program{
+		sigchan:    make(chan os.Signal), // 临时顶替（后续会重新复制）
+		stopErr:    nil,
+		ser:        nil,
+		exitCode:   exitutils.ExitCode(0),
+		configPath: "",
+	}
+}
+
+func NewRunProgram(configPath string) *Program {
+	return &Program{
+		sigchan:    make(chan os.Signal), // 临时顶替（后续会重新复制）
+		stopErr:    nil,
+		ser:        nil,
+		exitCode:   exitutils.ExitCode(0),
+		configPath: configPath,
+	}
 }
 
 func (p *Program) Start(s service.Service) error {
 	var err error
 
-	configProvider, err := configparser.NewProvider(InputConfigFilePath, nil)
+	if p.configPath == "" {
+		panic("The main process should not be called.")
+	}
+
+	configProvider, err := configparser.NewProvider(p.configPath, nil)
 	if err != nil {
 		p.exitCode = exitutils.InitFailedError("Get config file provider", err.Error())
 		return err
 	}
 
 	err = config.InitConfig(&config.ConfigOption{
-		ConfigFilePath: InputConfigFilePath,
-		OutputFilePath: OutputConfigFilePath,
+		ConfigFilePath: p.configPath,
+		OutputFilePath: "",
 		Provider:       configProvider,
 	})
 	if err != nil {
@@ -90,6 +108,10 @@ func (p *Program) Start(s service.Service) error {
 }
 
 func (p *Program) Stop(s service.Service) error {
+	if p.configPath == "" {
+		panic("The main process should not be called.")
+	}
+
 	p.ser.Stop()
 	if p.stopErr != nil {
 		p.exitCode = exitutils.RunError(p.stopErr.Error())

@@ -20,11 +20,12 @@ var (
 	// 获取 FreeConsole 和 AllocConsole 函数
 	freeConsole           = kernel32.NewProc("FreeConsole")
 	allocConsole          = kernel32.NewProc("AllocConsole")
-	setConsoleCtrlHandler = kernel32.NewProc("SetConsoleCtrlHandler")
-	getConsoleWindow      = kernel32.NewProc("GetConsoleWindow")
-	setConsoleCP          = kernel32.NewProc("SetConsoleCP")
-	setConsoleOutputCP    = kernel32.NewProc("SetConsoleOutputCP")
-	attachConsole         = kernel32.NewProc("AttachConsole")
+	setConsoleCtrlHandler = kernel32.NewProc(
+		"SetConsoleCtrlHandler")
+	getConsoleWindow   = kernel32.NewProc("GetConsoleWindow")
+	setConsoleCP       = kernel32.NewProc("SetConsoleCP")
+	setConsoleOutputCP = kernel32.NewProc("SetConsoleOutputCP")
+	attachConsole      = kernel32.NewProc("AttachConsole")
 )
 
 func FreeConsole() error {
@@ -47,6 +48,14 @@ func AllocConsole() error {
 		return fmt.Errorf("AllocConsole error: %s", err.Error())
 	}
 	return nil
+}
+
+func BindStdToConsoleSafe() error {
+	if !HasConsoleWindow() {
+		return nil
+	}
+
+	return BindStdToConsole()
 }
 
 func BindStdToConsole() error {

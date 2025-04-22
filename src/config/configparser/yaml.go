@@ -6,9 +6,9 @@ package configparser
 
 import (
 	"errors"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"github.com/SongZihuan/BackendServerTemplate/src/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"github.com/fsnotify/fsnotify"
@@ -22,8 +22,8 @@ import (
 type YamlProvider struct {
 	viper      *viper.Viper
 	autoReload bool
-	reloadLock sync.Mutex
 	hasRead    bool
+	restart    sync.Once
 }
 
 func NewYamlProvider(opt *NewProviderOption) *YamlProvider {
@@ -36,8 +36,9 @@ func NewYamlProvider(opt *NewProviderOption) *YamlProvider {
 	}
 
 	p := &YamlProvider{
-		viper:   viper.New(),
-		hasRead: false,
+		viper:      viper.New(),
+		autoReload: opt.AutoReload,
+		hasRead:    false,
 	}
 
 	// 环境变量
@@ -45,31 +46,18 @@ func NewYamlProvider(opt *NewProviderOption) *YamlProvider {
 	p.viper.SetEnvKeyReplacer(envutils.GetEnvReplaced())
 	p.viper.AutomaticEnv()
 
-	if opt.AutoReload {
+	if p.autoReload {
 		logger.Infof("start auto reload")
-		p.viper.OnConfigChange(p.reloadEvent)
-		p.autoReload = true
-	} else {
-		p.autoReload = false
+
+		p.viper.OnConfigChange(func(e fsnotify.Event) {
+			logger.Infof("config change")
+			p.restart.Do(func() {
+				restart.SetRestart()
+			})
+		})
 	}
 
 	return p
-}
-
-func (y *YamlProvider) reloadEvent(e fsnotify.Event) {
-	if ok := y.reloadLock.TryLock(); !ok {
-		return
-	}
-
-	logger.Infof("config change")
-	err := restart.RestartProgram(restart.RestartFlagComplete)
-	if err != nil {
-		logger.Errorf("restart program error: %s", err.Error())
-		y.reloadLock.Unlock()
-		return
-	}
-
-	// 不需要释放 y.reloadLock 锁
 }
 
 func (y *YamlProvider) CanUTF8() bool {

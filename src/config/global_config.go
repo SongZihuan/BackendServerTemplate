@@ -5,7 +5,6 @@
 package config
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
@@ -67,7 +66,7 @@ func (d *GlobalConfig) check(c *configInfo) configerror.Error {
 
 func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
 	name := cleanstringutils.GetStringOneLine(d.Name)
-	if (!root.NameChanged() || global.Name == "") && name != "" {
+	if (!global.NameFlagChanged || global.Name == "") && name != "" {
 		global.Name = name
 	}
 

@@ -7,20 +7,23 @@ package configparser
 import (
 	"encoding/json"
 	"errors"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"github.com/SongZihuan/BackendServerTemplate/src/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"os"
 	"reflect"
+	"sync"
 )
 
 type JsonProvider struct {
-	viper   *viper.Viper
-	hasRead bool
+	viper      *viper.Viper
+	hasRead    bool
+	autoReload bool
+	restart    sync.Once
 }
 
 func NewJsonProvider(opt *NewProviderOption) *JsonProvider {
@@ -33,8 +36,9 @@ func NewJsonProvider(opt *NewProviderOption) *JsonProvider {
 	}
 
 	p := &JsonProvider{
-		viper:   viper.New(),
-		hasRead: false,
+		viper:      viper.New(),
+		autoReload: opt.AutoReload,
+		hasRead:    false,
 	}
 
 	// 环境变量
@@ -42,19 +46,15 @@ func NewJsonProvider(opt *NewProviderOption) *JsonProvider {
 	p.viper.SetEnvKeyReplacer(envutils.GetEnvReplaced())
 	p.viper.AutomaticEnv()
 
-	if opt.AutoReload {
+	if p.autoReload {
 		logger.Infof("start auto reload")
 
 		p.viper.OnConfigChange(func(e fsnotify.Event) {
 			logger.Infof("config change")
-
-			err := restart.RestartProgram(restart.RestartFlagComplete)
-			if err != nil {
-				logger.Errorf("restart program error: %s", err.Error())
-			}
+			p.restart.Do(func() {
+				restart.SetRestart()
+			})
 		})
-
-		p.viper.WatchConfig()
 	}
 
 	return p
@@ -77,6 +77,11 @@ func (j *JsonProvider) ReadFile(filepath string) configerror.Error {
 			return configerror.NewErrorf("config file not found: %s", err.Error())
 		}
 		return configerror.NewErrorf("read config file error: %s", err.Error())
+	}
+
+	if j.autoReload {
+		logger.Infof("auto reload: watch file: %s", j.viper.ConfigFileUsed())
+		j.viper.WatchConfig()
 	}
 
 	j.hasRead = true

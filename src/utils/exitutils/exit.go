@@ -17,9 +17,12 @@ const (
 	exitCodeMax                 = 255
 	exitCodeDefaultSuccess      = 0
 	exitCodeDefaultError        = 1
-	exitWithUnknownError        = 253
+	exitCodeReload              = 252
+	exitCodeWithUnknownError    = 253
 	exitCodeErrorLogMustBeReady = 254
 )
+
+const ExitCodeReload = exitCodeReload
 
 type ExitCode int
 

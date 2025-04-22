@@ -5,25 +5,21 @@
 package v1
 
 import (
-	"errors"
-	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/signalwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
 )
 
-func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outputConfigFilePath string, ppid int) (exitCode error) {
+func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outputConfigFilePath string) (exitCode error) {
 	var err error
 
 	configProvider, err := configparser.NewProvider(inputConfigFilePath, &configparser.NewProviderOption{
-		AutoReload: ppid != 0,
+		AutoReload: false,
 	})
 	if err != nil {
 		return exitutils.InitFailedError("Get config file provider", err.Error())
@@ -45,41 +41,15 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		return exitutils.InitFailedError("Win32 console channel", err.Error())
 	}
 
-	ppidchan := restart.PpidWatcher(ppid)
-
-	ser, _, err := example1.NewServerExample1(&example1.ServerExample1Option{
-		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
-	})
-	if err != nil {
-		return exitutils.InitFailedError("Server Example1", err.Error())
-	}
-
-	logger.Infof("Start to run server example 1")
-	go ser.Run()
+	stopchan := restart.RunRestart()
 
 	var stopErr error
 
 	select {
-	case <-restart.RestartChan:
-		if ppid != 0 {
-			logger.Warnf("stop to restart")
-			err = nil
-			stopErr = nil
-		} else {
-			logger.Warnf("stop to restart (error: restart not set)")
-			err = fmt.Errorf("stop by restart, but restart not set")
-			stopErr = err
-		}
-	case <-ppidchan:
-		if ppid != 0 {
-			logger.Warnf("stop by parent process")
-			err = nil
-			stopErr = nil
-		} else {
-			logger.Warnf("stop by parent process (error: ppid not set)")
-			err = fmt.Errorf("stop by parent process, but pppid not set")
-			stopErr = err
-		}
+	case <-stopchan:
+		logger.Warnf("stop by sub process")
+		err = nil
+		stopErr = nil
 	case sig := <-sigchan:
 		logger.Warnf("stop by signal (%s)", sig.String())
 		err = nil
@@ -88,29 +58,13 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		logger.Infof("stop by console event (%s)", event.String())
 		err = nil
 		stopErr = nil
-	case <-ser.GetCtx().Listen():
-		err = ser.GetCtx().Error()
-		if err == nil || errors.Is(err, servercontext.StopAllTask) {
-			logger.Infof("stop by server")
-			err = nil
-			stopErr = nil
-		} else {
-			logger.Errorf("stop by server with error: %s", err.Error())
-			stopErr = err
-		}
 	}
 
-	ser.Stop()
 	close(consolewaitexitchan)
 
 	if stopErr != nil {
 		return exitutils.RunError(stopErr.Error())
 	}
 
-	select {
-	case <-restart.RestartChan:
-		return exitutils.SuccessExit("all tasks are completed and the main go routine exits", exitutils.ExitCodeReload)
-	default:
-		return exitutils.SuccessExit("all tasks are completed and the main go routine exits")
-	}
+	return exitutils.SuccessExit("all tasks are completed and the main go routine exits")
 }

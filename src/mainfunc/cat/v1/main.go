@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
+func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
 	var err error
 
 	logfile, err := os.OpenFile("C:\\Users\\songz\\Code\\GoProject\\BackendServerTemplate\\test_self\\tmpcat.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
@@ -36,7 +36,7 @@ func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 		EnvVars:     serviceConfig.EnvSetList,
 	}
 
-	prg := NewProgram()
+	prg := NewRunProgram(inputConfigFilePath)
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
 		return exitutils.InitFailedError("Service New", err.Error())
