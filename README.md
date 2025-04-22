@@ -102,8 +102,7 @@ $ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' github.com
 
 以下标志为`tigerv1`和`lionv1`共有，`catv1`没有的：
 
-* `lionv1 --console-mode no`，`lionv1 --console-mode normal` 是否有`Windows`控制台，`no`表示没有（例如stdout重定向了、后台进程无对应的`Console`），`normal`表示有。
-* `lionv1 --auto-reload` 自动重载（监测配置文件，若其变化则重启服务系统）。该功能应该仅仅用在开发时。若在`Windows`平台启用，则其要求具有对应的`Console`（`--console-mode`的值为`normal`）。
+* `lionv1 --auto-reload` 自动重载（监测配置文件，若其变化则重启服务系统）。该功能应该仅仅用在开发时。
 
 以下为`check`子命令的标志：
 
