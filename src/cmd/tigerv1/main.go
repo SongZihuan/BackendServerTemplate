@@ -6,6 +6,7 @@ package main
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/subcmd"
 	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	tigerv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/tiger/v1"
@@ -21,6 +22,7 @@ func main() {
 		true,
 		tigerv1.MainV1)
 
+	subcmd.AddSubCMDOfRoot(cmd)
 	cmd.Flags().StringVarP(&tigerv1.InputConfigFilePath, "config", "c", tigerv1.InputConfigFilePath, "the file path of the configuration file")
 	cmd.Flags().StringVarP(&tigerv1.OutputConfigFilePath, "output-config", "o", tigerv1.OutputConfigFilePath, "the file path of the output configuration file")
 

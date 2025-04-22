@@ -7,7 +7,6 @@ package configparser
 import (
 	"errors"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
@@ -63,7 +62,7 @@ func (y *YamlProvider) reloadEvent(e fsnotify.Event) {
 	}
 
 	logger.Infof("config change")
-	err := restart.RestartProgram(root.RestartFlag)
+	err := restart.RestartProgram(restart.RestartFlagComplete)
 	if err != nil {
 		logger.Errorf("restart program error: %s", err.Error())
 		y.reloadLock.Unlock()

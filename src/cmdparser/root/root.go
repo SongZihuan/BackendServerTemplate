@@ -8,9 +8,6 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
@@ -27,9 +24,6 @@ var nameChanged bool = false
 var isRestart bool = false
 var consoleMode string = ConsoleModeNormal
 var hasConsole bool = false
-
-const restartFlag = "restart"
-const RestartFlag = "--" + restartFlag
 
 func GetRootCMD(shortDescribe string, longDescribe string, reload *bool, _hasConsole bool, action func(cmd *cobra.Command, args []string) error) *cobra.Command {
 	hasConsole = _hasConsole && consoleutils.HasConsoleWindow()
@@ -70,7 +64,7 @@ func GetRootCMD(shortDescribe string, longDescribe string, reload *bool, _hasCon
 					return fmt.Errorf("`auto-reload` can only be enabled when `console-mode` is `normal`")
 				}
 
-				if cmd.Flags().Changed(restartFlag) {
+				if cmd.Flags().Changed(restart.RestartFlag) {
 					if isRestart {
 						err := restart.FromRestart()
 						if err != nil {
@@ -110,7 +104,6 @@ func GetRootCMD(shortDescribe string, longDescribe string, reload *bool, _hasCon
 		},
 	}
 
-	cmd.AddCommand(version.CMD, license.CMD, report.CMD)
 	cmd.PersistentFlags().StringVarP(&name, "name", "n", global.Name, "the program display name")
 
 	if _hasConsole {
@@ -119,7 +112,7 @@ func GetRootCMD(shortDescribe string, longDescribe string, reload *bool, _hasCon
 
 	if reload != nil {
 		cmd.Flags().BoolVar(reload, "auto-reload", false, "auto reload config file when the file changed")
-		cmd.Flags().BoolVar(&isRestart, restartFlag, false, "restart mode, note: DO NOT SET THIS FLAG unless you know your purpose clearly.")
+		cmd.Flags().BoolVar(&isRestart, restart.RestartFlag, false, "restart mode, note: DO NOT SET THIS FLAG unless you know your purpose clearly.")
 	}
 
 	return cmd

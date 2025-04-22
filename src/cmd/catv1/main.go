@@ -7,6 +7,7 @@ package main
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/subcmd"
 	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	catv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/cat/v1"
@@ -32,6 +33,7 @@ func main() {
 		false,
 		catv1.MainV1)
 
+	subcmd.AddSubCMDOfRoot(cmd)
 	cmd.Flags().StringVarP(&catv1.InputConfigFilePath, "config", "c", catv1.InputConfigFilePath, "the file path of the configuration file")
 	cmd.Flags().StringVarP(&catv1.OutputConfigFilePath, "output-config", "o", catv1.OutputConfigFilePath, "the file path of the output configuration file")
 

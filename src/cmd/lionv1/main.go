@@ -6,6 +6,7 @@ package main
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/subcmd"
 	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	lionv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/lion/v1"
@@ -21,6 +22,7 @@ func main() {
 		true,
 		lionv1.MainV1)
 
+	subcmd.AddSubCMDOfRoot(cmd)
 	cmd.Flags().StringVarP(&lionv1.InputConfigFilePath, "config", "c", lionv1.InputConfigFilePath, "the file path of the configuration file")
 	cmd.Flags().StringVarP(&lionv1.OutputConfigFilePath, "output-config", "o", lionv1.OutputConfigFilePath, "the file path of the output configuration file")
 
