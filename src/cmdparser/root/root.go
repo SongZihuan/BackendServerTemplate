@@ -12,6 +12,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
 	"github.com/spf13/cobra"
+	"runtime"
 )
 
 const (
@@ -26,7 +27,11 @@ var consoleMode string = ConsoleModeNormal
 var hasConsole bool = false
 
 func GetRootCMD(shortDescribe string, longDescribe string, reload *bool, _hasConsole bool, action func(cmd *cobra.Command, args []string) error) *cobra.Command {
-	hasConsole = _hasConsole && consoleutils.HasConsoleWindow()
+	if runtime.GOOS == "windows" {
+		hasConsole = _hasConsole && consoleutils.HasConsoleWindow()
+	} else {
+		hasConsole = true
+	}
 
 	cmd := &cobra.Command{
 		Use:           global.Name,
@@ -106,7 +111,7 @@ func GetRootCMD(shortDescribe string, longDescribe string, reload *bool, _hasCon
 
 	cmd.PersistentFlags().StringVarP(&name, "name", "n", global.Name, "the program display name")
 
-	if _hasConsole {
+	if _hasConsole && runtime.GOOS == "windows" {
 		cmd.Flags().StringVar(&consoleMode, "console-mode", ConsoleModeNormal, "the console mode. normally, select `normal`. If you are not using a terminal (e.g. redirection, etc.) please select `no`.")
 	}
 
