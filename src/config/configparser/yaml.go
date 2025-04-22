@@ -5,23 +5,72 @@
 package configparser
 
 import (
-	"fmt"
+	"errors"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 	"os"
 	"reflect"
+	"sync"
 )
 
 type YamlProvider struct {
-	HasRead  bool
-	FileData []byte
+	viper      *viper.Viper
+	autoReload bool
+	reloadLock sync.Mutex
+	hasRead    bool
 }
 
-func NewYamlProvider() *YamlProvider {
-	return &YamlProvider{
-		HasRead:  false,
-		FileData: nil,
+func NewYamlProvider(opt *NewProviderOption) *YamlProvider {
+	if opt == nil {
+		opt = new(NewProviderOption)
 	}
+
+	if opt.EnvPrefix == "" {
+		opt.EnvPrefix = envutils.StringToEnvName(osutils.GetArgs0NamePOSIX())
+	}
+
+	p := &YamlProvider{
+		viper:   viper.New(),
+		hasRead: false,
+	}
+
+	// 环境变量
+	p.viper.SetEnvPrefix(opt.EnvPrefix)
+	p.viper.SetEnvKeyReplacer(envutils.GetEnvReplaced())
+	p.viper.AutomaticEnv()
+
+	if opt.AutoReload {
+		logger.Infof("start auto reload")
+		p.viper.OnConfigChange(p.reloadEvent)
+		p.autoReload = true
+	} else {
+		p.autoReload = false
+	}
+
+	return p
+}
+
+func (y *YamlProvider) reloadEvent(e fsnotify.Event) {
+	if ok := y.reloadLock.TryLock(); !ok {
+		return
+	}
+
+	logger.Infof("config change")
+	err := restart.RestartProgram(root.RestartFlag)
+	if err != nil {
+		logger.Errorf("restart program error: %s", err.Error())
+		y.reloadLock.Unlock()
+		return
+	}
+
+	// 不需要释放 y.reloadLock 锁
 }
 
 func (y *YamlProvider) CanUTF8() bool {
@@ -29,23 +78,32 @@ func (y *YamlProvider) CanUTF8() bool {
 }
 
 func (y *YamlProvider) ReadFile(filepath string) configerror.Error {
-	if y.HasRead {
+	if y.hasRead {
 		return configerror.NewErrorf("config file has been read")
 	}
 
-	data, err := os.ReadFile(filepath)
+	y.viper.SetConfigFile(filepath)
+	y.viper.SetConfigType("yaml")
+	err := y.viper.ReadInConfig()
 	if err != nil {
-		return configerror.NewErrorf(fmt.Sprintf("read file error: %s", err.Error()))
+		if errors.Is(err, viper.ConfigFileNotFoundError{}) {
+			return configerror.NewErrorf("config file not found: %s", err.Error())
+		}
+		return configerror.NewErrorf("read config file error: %s", err.Error())
 	}
 
-	y.FileData = data
-	y.HasRead = true
+	if y.autoReload {
+		logger.Infof("auto reload: watch file: %s", y.viper.ConfigFileUsed())
+		y.viper.WatchConfig()
+	}
+
+	y.hasRead = true
 
 	return nil
 }
 
 func (y *YamlProvider) ParserFile(target any) configerror.Error {
-	if !y.HasRead {
+	if !y.hasRead {
 		return configerror.NewErrorf("config file has not been read")
 	}
 
@@ -53,7 +111,7 @@ func (y *YamlProvider) ParserFile(target any) configerror.Error {
 		return configerror.NewErrorf("target must be a pointer")
 	}
 
-	err := yaml.Unmarshal(y.FileData, target)
+	err := y.viper.Unmarshal(target)
 	if err != nil {
 		return configerror.NewErrorf("yaml unmarshal error: %s", err.Error())
 	}
@@ -62,7 +120,7 @@ func (y *YamlProvider) ParserFile(target any) configerror.Error {
 }
 
 func (y *YamlProvider) WriteFile(filepath string, src any) configerror.Error {
-	if !y.HasRead {
+	if !y.hasRead {
 		return configerror.NewErrorf("config file has not been read")
 	}
 

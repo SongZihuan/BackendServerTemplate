@@ -10,11 +10,11 @@ import (
 )
 
 type ConfigData struct {
-	GlobalConfig `json:",inline" yaml:",inline"`
-	Logger       LoggerConfig       `json:"logger" yaml:"logger"`
-	Signal       SignalConfig       `json:"signal" yaml:"signal"`
-	Win32Console Win32ConsoleConfig `json:"win32-console" yaml:"win32-console"`
-	Server       ServerConfig       `json:"server" yaml:"server"`
+	GlobalConfig `json:",inline" yaml:",inline" mapstructure:",squash"`
+	Logger       LoggerConfig       `json:"logger" yaml:"logger" mapstructure:"logger"`
+	Signal       SignalConfig       `json:"signal" yaml:"signal" mapstructure:"signal"`
+	Win32Console Win32ConsoleConfig `json:"win32-console" yaml:"win32-console" mapstructure:"win32-console"`
+	Server       ServerConfig       `json:"server" yaml:"server" mapstructure:"server"`
 }
 
 func (d *ConfigData) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {

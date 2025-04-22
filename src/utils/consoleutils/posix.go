@@ -6,6 +6,11 @@
 
 package consoleutils
 
+import (
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/fileutils"
+	"os"
+)
+
 func FreeConsole() error {
 	return nil
 }
@@ -27,6 +32,9 @@ func MakeNewConsole() error {
 }
 
 func GetConsoleWindow() uintptr {
+	if fileutils.IsFileOpen(os.Stdout) || fileutils.IsFileOpen(os.Stdout) || fileutils.IsFileOpen(os.Stdout) {
+		return 1 // 设置为 1 表示具有 console
+	}
 	return 0
 }
 
@@ -47,5 +55,9 @@ func SetConsoleCP(codePage uint) error {
 }
 
 func SetConsoleCPSafe(codePage uint) error {
+	return nil
+}
+
+func AttachConsole() error {
 	return nil
 }

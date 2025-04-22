@@ -13,11 +13,11 @@ import (
 )
 
 type Win32ConsoleConfig struct {
-	UseOn                string               `json:"use-on" yaml:"use-on"`
-	Use                  bool                 `json:"-" yaml:"-"`
-	CtrlCExit            typeutils.StringBool `json:"ctrl-c-exit" yaml:"ctrl-c-exit"`
-	CtrlBreakExit        typeutils.StringBool `json:"ctrl-break-exit" yaml:"ctrl-break-exit"`
-	ConsoleCloseRecovery typeutils.StringBool `json:"console-close-recovery" yaml:"console-close-recovery"`
+	UseOn                string               `json:"use-on" yaml:"use-on" mapstructure:"use-on"`
+	Use                  bool                 `json:"-" yaml:"-" mapstructure:"-"`
+	CtrlCExit            typeutils.StringBool `json:"ctrl-c-exit" yaml:"ctrl-c-exit" mapstructure:"ctrl-c-exit"`
+	CtrlBreakExit        typeutils.StringBool `json:"ctrl-break-exit" yaml:"ctrl-break-exit" mapstructure:"ctrl-break-exit"`
+	ConsoleCloseRecovery typeutils.StringBool `json:"console-close-recovery" yaml:"console-close-recovery" mapstructure:"console-close-recovery"`
 }
 
 func (d *Win32ConsoleConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {

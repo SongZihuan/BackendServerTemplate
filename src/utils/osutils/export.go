@@ -12,7 +12,7 @@ import (
 
 var _args0 = ""
 var _args0Name = ""
-var _args0NamePosix = ""
+var _args0NamePOSIX = ""
 
 func init() {
 	var err error
@@ -35,10 +35,10 @@ func init() {
 		panic("_args0Name was empty")
 	}
 
-	_args0NamePosix = strings.TrimSuffix(_args0Name, ".exe")
+	_args0NamePOSIX = strings.TrimSuffix(_args0Name, ".exe")
 
-	if _args0NamePosix == "" {
-		panic("_args0NamePosix was empty")
+	if _args0NamePOSIX == "" {
+		panic("_args0NamePOSIX was empty")
 	}
 }
 
@@ -47,5 +47,9 @@ func GetArgs0() string {
 }
 
 func GetArgs0Name() string {
-	return filepath.Base(_args0Name)
+	return _args0Name
+}
+
+func GetArgs0NamePOSIX() string {
+	return _args0NamePOSIX
 }

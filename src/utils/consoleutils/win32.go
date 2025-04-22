@@ -12,6 +12,8 @@ import (
 	"syscall"
 )
 
+const ATTACH_PARENT_PROCESS = uintptr(^uint32(0)) // 0xFFFFFFFF
+
 var (
 	kernel32 = syscall.NewLazyDLL("kernel32.dll")
 
@@ -22,20 +24,27 @@ var (
 	getConsoleWindow      = kernel32.NewProc("GetConsoleWindow")
 	setConsoleCP          = kernel32.NewProc("SetConsoleCP")
 	setConsoleOutputCP    = kernel32.NewProc("SetConsoleOutputCP")
+	attachConsole         = kernel32.NewProc("AttachConsole")
 )
 
 func FreeConsole() error {
-	ret, _, _ := freeConsole.Call()
+	ret, _, err := freeConsole.Call()
 	if ret == 0 {
-		return fmt.Errorf("FreeConsole error")
+		if err == nil {
+			err = fmt.Errorf("unknown")
+		}
+		return fmt.Errorf("FreeConsole error: %s", err.Error())
 	}
 	return nil
 }
 
 func AllocConsole() error {
-	ret, _, _ := allocConsole.Call()
+	ret, _, err := allocConsole.Call()
 	if ret == 0 {
-		return fmt.Errorf("AllocConsole error")
+		if err == nil {
+			err = fmt.Errorf("unknow")
+		}
+		return fmt.Errorf("AllocConsole error: %s", err.Error())
 	}
 	return nil
 }
@@ -65,7 +74,7 @@ func SetConsoleCtrlHandler(handler func(event uint) bool, add bool) error {
 		_add = 1
 	}
 
-	ret, _, _ := setConsoleCtrlHandler.Call(
+	ret, _, err := setConsoleCtrlHandler.Call(
 		syscall.NewCallback(func(event uint) uintptr {
 			if handler(event) {
 				return 1
@@ -75,19 +84,24 @@ func SetConsoleCtrlHandler(handler func(event uint) bool, add bool) error {
 		_add,
 	)
 	if ret == 0 {
-		return fmt.Errorf("SetConsoleCtrlHandler error")
+		if err == nil {
+			err = fmt.Errorf("unknown")
+		}
+		return fmt.Errorf("SetConsoleCtrlHandler error: %s", err)
 	}
 
 	return nil
 }
 
 func MakeNewConsole(codePage uint) error {
-	err := FreeConsole()
-	if err != nil {
-		return err
+	if HasConsoleWindow() {
+		err := FreeConsole()
+		if err != nil {
+			return err
+		}
 	}
 
-	err = AllocConsole()
+	err := AllocConsole()
 	if err != nil {
 		return err
 	}
@@ -115,17 +129,23 @@ func HasConsoleWindow() bool {
 }
 
 func SetConsoleInputCP(codePage uint) error {
-	ret, _, _ := setConsoleCP.Call(uintptr(codePage))
+	ret, _, err := setConsoleCP.Call(uintptr(codePage))
 	if ret == 0 {
-		return fmt.Errorf("SetConsoleInputCP error")
+		if err == nil {
+			err = fmt.Errorf("unknown")
+		}
+		return fmt.Errorf("SetConsoleInputCP error: %s", err.Error())
 	}
 	return nil
 }
 
 func SetConsoleOutputCP(codePage uint) error {
-	ret, _, _ := setConsoleOutputCP.Call(uintptr(codePage))
+	ret, _, err := setConsoleOutputCP.Call(uintptr(codePage))
 	if ret == 0 {
-		return fmt.Errorf("SetConsoleOutputCP error")
+		if err == nil {
+			err = fmt.Errorf("unknown")
+		}
+		return fmt.Errorf("SetConsoleOutputCP error: %s", err.Error())
 	}
 	return nil
 }
@@ -150,4 +170,44 @@ func SetConsoleCPSafe(codePage uint) error {
 	}
 
 	return SetConsoleCP(codePage)
+}
+
+func AttachConsole(ppid int) error {
+	if HasConsoleWindow() {
+		err := FreeConsole()
+		if err != nil {
+			return err
+		}
+	}
+
+	// 定义目标进程 ID
+	ret, _, err := attachConsole.Call(uintptr(ppid))
+	if ret == 0 {
+		if err == nil {
+			err = fmt.Errorf("unknown")
+		}
+		return fmt.Errorf("AttachParentConsole error: %s", err.Error())
+	}
+
+	return nil
+}
+
+func AttachParentConsole() error {
+	if HasConsoleWindow() {
+		err := FreeConsole()
+		if err != nil {
+			return err
+		}
+	}
+
+	// 定义目标进程 ID
+	ret, _, err := attachConsole.Call(ATTACH_PARENT_PROCESS)
+	if ret == 0 {
+		if err == nil {
+			err = fmt.Errorf("unknown")
+		}
+		return fmt.Errorf("AttachParentConsole error: %s", err.Error())
+	}
+
+	return nil
 }

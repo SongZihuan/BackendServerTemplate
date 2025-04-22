@@ -11,7 +11,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"os"
 	"path"
-	"strings"
 )
 
 var config *configInfo
@@ -31,16 +30,14 @@ func (opt *ConfigOption) setDefault() error {
 		}
 
 		opt.ConfigFilePath = path.Join(wd, "config.yaml")
-		opt.Provider = configparser.NewYamlProvider()
 	}
 
 	if opt.Provider == nil {
-		if strings.HasSuffix(opt.ConfigFilePath, ".yaml") || strings.HasSuffix(opt.ConfigFilePath, ".yml") {
-			opt.Provider = configparser.NewYamlProvider()
-		} else if strings.HasSuffix(opt.ConfigFilePath, ".json") {
-			opt.Provider = configparser.NewJsonProvider()
-		} else {
-			opt.Provider = configparser.NewYamlProvider()
+		var err error
+
+		opt.Provider, err = configparser.NewProvider(opt.ConfigFilePath, nil)
+		if err != nil {
+			return err
 		}
 	}
 

@@ -6,22 +6,59 @@ package configparser
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/root"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
 	"os"
 	"reflect"
 )
 
 type JsonProvider struct {
-	HasRead  bool
-	FileData []byte
+	viper   *viper.Viper
+	hasRead bool
 }
 
-func NewJsonProvider() *JsonProvider {
-	return &JsonProvider{
-		HasRead:  false,
-		FileData: nil,
+func NewJsonProvider(opt *NewProviderOption) *JsonProvider {
+	if opt == nil {
+		opt = new(NewProviderOption)
 	}
+
+	if opt.EnvPrefix == "" {
+		opt.EnvPrefix = envutils.StringToEnvName(osutils.GetArgs0NamePOSIX())
+	}
+
+	p := &JsonProvider{
+		viper:   viper.New(),
+		hasRead: false,
+	}
+
+	// 环境变量
+	p.viper.SetEnvPrefix(opt.EnvPrefix)
+	p.viper.SetEnvKeyReplacer(envutils.GetEnvReplaced())
+	p.viper.AutomaticEnv()
+
+	if opt.AutoReload {
+		logger.Infof("start auto reload")
+
+		p.viper.OnConfigChange(func(e fsnotify.Event) {
+			logger.Infof("config change")
+
+			err := restart.RestartProgram(root.RestartFlag)
+			if err != nil {
+				logger.Errorf("restart program error: %s", err.Error())
+			}
+		})
+
+		p.viper.WatchConfig()
+	}
+
+	return p
 }
 
 func (j *JsonProvider) CanUTF8() bool {
@@ -29,23 +66,27 @@ func (j *JsonProvider) CanUTF8() bool {
 }
 
 func (j *JsonProvider) ReadFile(filepath string) configerror.Error {
-	if j.HasRead {
+	if j.hasRead {
 		return configerror.NewErrorf("config file has been read")
 	}
 
-	data, err := os.ReadFile(filepath)
+	j.viper.SetConfigFile(filepath)
+	j.viper.SetConfigType("json")
+	err := j.viper.ReadInConfig()
 	if err != nil {
-		return configerror.NewErrorf(fmt.Sprintf("read file error: %s", err.Error()))
+		if errors.Is(err, viper.ConfigFileNotFoundError{}) {
+			return configerror.NewErrorf("config file not found: %s", err.Error())
+		}
+		return configerror.NewErrorf("read config file error: %s", err.Error())
 	}
 
-	j.FileData = data
-	j.HasRead = true
+	j.hasRead = true
 
 	return nil
 }
 
 func (j *JsonProvider) ParserFile(target any) configerror.Error {
-	if !j.HasRead || j.FileData == nil {
+	if !j.hasRead {
 		return configerror.NewErrorf("config file has not been read")
 	}
 
@@ -53,16 +94,16 @@ func (j *JsonProvider) ParserFile(target any) configerror.Error {
 		return configerror.NewErrorf("target must be a pointer")
 	}
 
-	err := json.Unmarshal(j.FileData, target)
+	err := j.viper.Unmarshal(target)
 	if err != nil {
-		return configerror.NewErrorf("json parser error: %s", err.Error())
+		return configerror.NewErrorf("yaml unmarshal error: %s", err.Error())
 	}
 
 	return nil
 }
 
 func (j *JsonProvider) WriteFile(filepath string, src any) configerror.Error {
-	if !j.HasRead {
+	if !j.hasRead {
 		return configerror.NewErrorf("config file has not been read")
 	}
 
@@ -70,7 +111,7 @@ func (j *JsonProvider) WriteFile(filepath string, src any) configerror.Error {
 		return configerror.NewErrorf("target must be a pointer")
 	}
 
-	target, err := json.Marshal(src)
+	target, err := json.MarshalIndent(src, "", "  ")
 	if err != nil {
 		return configerror.NewErrorf("json marshal error: %s", err.Error())
 	}

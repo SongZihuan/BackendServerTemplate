@@ -12,3 +12,8 @@ type ConfigParserProvider interface {
 	ParserFile(target any) configerror.Error
 	WriteFile(filepath string, data any) configerror.Error
 }
+
+type NewProviderOption struct {
+	EnvPrefix  string
+	AutoReload bool
+}

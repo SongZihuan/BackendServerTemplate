@@ -52,7 +52,7 @@ func InitFailedErrorForWin32ConsoleModule(reason string, exitCode ...int) ExitCo
 
 	ec := getExitCode(exitCodeDefaultError, exitCode...)
 
-	log.Printf("The module `Win32 Console` init failed (reason: `%s`) .", reason)
+	log.Printf("The module `Win32 Console XXX` init failed (reason: `%s`) .", reason)
 	log.Printf("Now we should exit with code %d.", ec)
 
 	return ec
@@ -130,7 +130,7 @@ func SuccessExit(reason string, exitCode ...int) ExitCode {
 
 func SuccessExitSimple(reason string, exitCode ...int) ExitCode {
 	if reason != "" {
-		fmt.Println(reason)
+		log.Println(reason)
 	}
 	return getExitCode(exitCodeDefaultSuccess, exitCode...)
 }
@@ -153,12 +153,22 @@ func Exit(err error) {
 		ExitByCode(ec)
 	} else {
 		if logger.IsReady() {
-			logger.Warnf("Now we should exit with code %d (reason: %s) .", ec, err.Error())
+			logger.Warnf("Now we should exit with code %d (reason: %s) .", exitCodeDefaultError, err.Error())
 		} else {
-			log.Printf("Now we should exit with code %d (reason: %s) .", ec, err.Error())
+			log.Printf("Now we should exit with code %d (reason: %s) .", exitCodeDefaultError, err.Error())
 		}
 		os.Exit(exitCodeDefaultError)
 	}
+}
+
+func ExitQuite(err error) {
+	var ec ExitCode
+	if err == nil {
+		os.Exit(exitCodeDefaultSuccess)
+	} else if errors.As(err, &ec) {
+		ExitByCode(ec)
+	}
+	os.Exit(exitCodeDefaultError)
 }
 
 func ExitByCode(ec ExitCode) {

@@ -6,7 +6,7 @@ package v1
 
 import (
 	"errors"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmd/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
@@ -22,20 +22,22 @@ import (
 
 var InputConfigFilePath string = "config.yaml"
 var OutputConfigFilePath string = ""
+var AutoReload bool = false
 
 func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = globalmain.PreRun()
+	configProvider, err := configparser.NewProvider(InputConfigFilePath, &configparser.NewProviderOption{
+		AutoReload: AutoReload,
+	})
 	if err != nil {
-		return err
+		return exitutils.InitFailedError("Get config file provider", err.Error())
 	}
-	defer globalmain.PostRun()
 
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: InputConfigFilePath,
 		OutputFilePath: OutputConfigFilePath,
-		Provider:       configparser.NewYamlProvider(),
+		Provider:       configProvider,
 	})
 	if err != nil {
 		return exitutils.InitFailedError("Config file read and parser", err.Error())
@@ -79,7 +81,17 @@ func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 	go ctrl.Run()
 
 	var stopErr error
+
+SELECT:
 	select {
+	case <-restart.RestartChan:
+		if AutoReload {
+			logger.Warnf("stop/restart by config file change")
+			err = nil
+			stopErr = nil
+		} else {
+			goto SELECT
+		}
 	case sig := <-sigchan:
 		logger.Warnf("stop by signal (%s)", sig.String())
 		err = nil

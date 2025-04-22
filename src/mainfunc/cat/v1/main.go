@@ -5,20 +5,22 @@
 package v1
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/kardianos/service"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = globalmain.PreRun()
+	logfile, err := os.OpenFile("C:\\Users\\songz\\Code\\GoProject\\BackendServerTemplate\\test_self\\tmpcat.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	defer globalmain.PostRun()
+	defer func() {
+		_ = logfile.Close()
+	}()
 
 	err = initServiceConfig()
 	if err != nil {
@@ -46,12 +48,6 @@ func MainV1(cmd *cobra.Command, args []string) (exitCode error) {
 
 func MainV1Install(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
-
-	err = globalmain.PreRun()
-	if err != nil {
-		return err
-	}
-	defer globalmain.PostRun()
 
 	err = initInstallServiceConfig(args)
 	if err != nil {
@@ -85,12 +81,6 @@ func MainV1Install(cmd *cobra.Command, args []string) (exitCode error) {
 func MainV1UnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = globalmain.PreRun()
-	if err != nil {
-		return err
-	}
-	defer globalmain.PostRun()
-
 	err = initServiceConfig()
 	if err != nil {
 		return exitutils.InitFailedError("service config", err.Error())
@@ -122,12 +112,6 @@ func MainV1UnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 
 func MainV1Start(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
-
-	err = globalmain.PreRun()
-	if err != nil {
-		return err
-	}
-	defer globalmain.PostRun()
 
 	err = initServiceConfig()
 	if err != nil {
@@ -161,12 +145,6 @@ func MainV1Start(cmd *cobra.Command, args []string) (exitCode error) {
 func MainV1Stop(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = globalmain.PreRun()
-	if err != nil {
-		return err
-	}
-	defer globalmain.PostRun()
-
 	err = initServiceConfig()
 	if err != nil {
 		return exitutils.InitFailedError("service config", err.Error())
@@ -198,12 +176,6 @@ func MainV1Stop(cmd *cobra.Command, args []string) (exitCode error) {
 
 func MainV1Restart(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
-
-	err = globalmain.PreRun()
-	if err != nil {
-		return err
-	}
-	defer globalmain.PostRun()
 
 	err = initServiceConfig()
 	if err != nil {

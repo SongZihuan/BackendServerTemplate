@@ -12,9 +12,10 @@ import (
 )
 
 type ServerConfig struct {
-	StopWaitTime string `json:"stop-wait-time" yaml:"stop-wait-time"`
+	StopWaitTime string `json:"stop-wait-time" yaml:"stop-wait-time" mapstructure:"stop-wait-time"`
+	Name         string `json:"name" yaml:"name" mapstructure:"name"`
 
-	StopWaitTimeDuration time.Duration `yaml:"-"`
+	StopWaitTimeDuration time.Duration `json:"-" yaml:"-" mapstructure:"-"`
 }
 
 func (d *ServerConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
@@ -24,6 +25,10 @@ func (d *ServerConfig) init(filePath string, provider configparser.ConfigParserP
 func (d *ServerConfig) setDefault(c *configInfo) (err configerror.Error) {
 	if d.StopWaitTime == "" {
 		d.StopWaitTime = "10s"
+	}
+
+	if d.Name == "" {
+		d.Name = "Jack"
 	}
 	return nil
 }

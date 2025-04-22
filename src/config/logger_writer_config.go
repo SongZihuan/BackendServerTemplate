@@ -20,10 +20,10 @@ import (
 )
 
 type LoggerWriterConfig struct {
-	WriteToStd          string `json:"write-to-std" yaml:"write-to-std"` // stdout stderr all no
-	WriteToFile         string `json:"write-to-file" yaml:"write-to-file"`
-	WriteToDirWithDate  string `json:"write-to-dir-with-date" yaml:"write-to-dir-with-date"`
-	WriteWithDatePrefix string `json:"write-with-date-prefix" yaml:"write-with-date-prefix"`
+	WriteToStd          string `json:"write-to-std" yaml:"write-to-std" mapstructure:"write-to-std"` // stdout stderr all no
+	WriteToFile         string `json:"write-to-file" yaml:"write-to-file" mapstructure:"write-to-file"`
+	WriteToDirWithDate  string `json:"write-to-dir-with-date" yaml:"write-to-dir-with-date" mapstructure:"write-to-dir-with-date"`
+	WriteWithDatePrefix string `json:"write-with-date-prefix" yaml:"write-with-date-prefix" mapstructure:"write-with-date-prefix"`
 }
 
 func (d *LoggerWriterConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {

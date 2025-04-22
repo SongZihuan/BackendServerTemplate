@@ -8,13 +8,11 @@ import (
 	"errors"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
-	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example3"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
 	"github.com/SongZihuan/BackendServerTemplate/src/signalwatcher"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/kardianos/service"
 	"os"
@@ -24,12 +22,10 @@ var InputConfigFilePath string = "config.yaml"
 var OutputConfigFilePath string = ""
 
 type Program struct {
-	sigchan             chan os.Signal
-	consolechan         chan consoleutils.Event
-	consolewaitexitchan chan any
-	stopErr             error
-	ser                 serverinterface.Server
-	exitCode            exitutils.ExitCode
+	sigchan  chan os.Signal
+	stopErr  error
+	ser      serverinterface.Server
+	exitCode exitutils.ExitCode
 }
 
 func NewProgram() *Program {
@@ -39,10 +35,16 @@ func NewProgram() *Program {
 func (p *Program) Start(s service.Service) error {
 	var err error
 
+	configProvider, err := configparser.NewProvider(InputConfigFilePath, nil)
+	if err != nil {
+		p.exitCode = exitutils.InitFailedError("Get config file provider", err.Error())
+		return err
+	}
+
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: InputConfigFilePath,
 		OutputFilePath: OutputConfigFilePath,
-		Provider:       configparser.NewYamlProvider(),
+		Provider:       configProvider,
 	})
 	if err != nil {
 		p.exitCode = exitutils.InitFailedError("Config file read and parser", err.Error())
@@ -50,12 +52,6 @@ func (p *Program) Start(s service.Service) error {
 	}
 
 	p.sigchan = signalwatcher.NewSignalExitChannel()
-
-	p.consolechan, p.consolewaitexitchan, err = consolewatcher.NewWin32ConsoleExitChannel()
-	if err != nil {
-		p.exitCode = exitutils.InitFailedError("Win32 console channel", err.Error())
-		return err
-	}
 
 	p.ser, _, err = example3.NewServerExample3(&example3.ServerExample3Option{
 		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
@@ -69,21 +65,17 @@ func (p *Program) Start(s service.Service) error {
 	go func() {
 		select {
 		case sig := <-p.sigchan:
-			logger.Warnf("stop by signal (%s)", sig.String())
-			err = nil
-			p.stopErr = nil
-		case event := <-p.consolechan:
-			logger.Infof("stop by console event (%s)", event.String())
+			logger.Warnf("Stop by signal (%s)", sig.String())
 			err = nil
 			p.stopErr = nil
 		case <-p.ser.GetCtx().Listen():
 			err = p.ser.GetCtx().Error()
 			if err == nil || errors.Is(err, servercontext.StopAllTask) {
-				logger.Infof("stop by server")
+				logger.Infof("Stop by server")
 				err = nil
 				p.stopErr = nil
 			} else {
-				logger.Errorf("stop by server with error: %s", err.Error())
+				logger.Errorf("Stop by server with error: %s", err.Error())
 				p.stopErr = err
 			}
 		}
@@ -99,13 +91,10 @@ func (p *Program) Start(s service.Service) error {
 
 func (p *Program) Stop(s service.Service) error {
 	p.ser.Stop()
-	close(p.consolewaitexitchan)
-
 	if p.stopErr != nil {
 		p.exitCode = exitutils.RunError(p.stopErr.Error())
 		return p.stopErr
 	}
-
 	p.exitCode = exitutils.SuccessExit("all tasks are completed and the main go routine exits")
 	return nil
 }

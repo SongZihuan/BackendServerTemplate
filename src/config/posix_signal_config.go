@@ -13,12 +13,12 @@ import (
 )
 
 type SignalConfig struct {
-	UseOn       string               `json:"use-on" yaml:"use-on"`
-	Use         bool                 `json:"-" yaml:"-"`
-	SigIntExit  typeutils.StringBool `json:"sigint-exit" yaml:"sigint-exit"`
-	SigTermExit typeutils.StringBool `json:"sigterm-exit" yaml:"sigterm-exit"`
-	SigHupExit  typeutils.StringBool `json:"sighup-exit" yaml:"sighup-exit"`
-	SigQuitExit typeutils.StringBool `json:"sigquit-exit" yaml:"sigquit-exit"`
+	UseOn       string               `json:"use-on" yaml:"use-on" mapstructure:"use-on"`
+	Use         bool                 `json:"-" yaml:"-" mapstructure:"-"`
+	SigIntExit  typeutils.StringBool `json:"sigint-exit" yaml:"sigint-exit" mapstructure:"sigint-exit"`
+	SigTermExit typeutils.StringBool `json:"sigterm-exit" yaml:"sigterm-exit" mapstructure:"sigterm-exit"`
+	SigHupExit  typeutils.StringBool `json:"sighup-exit" yaml:"sighup-exit" mapstructure:"sighup-exit"`
+	SigQuitExit typeutils.StringBool `json:"sigquit-exit" yaml:"sigquit-exit" mapstructure:"sigquit-exit"`
 }
 
 func (d *SignalConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {

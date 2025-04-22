@@ -7,6 +7,13 @@
 
 **注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E5%8F%98%E6%9B%B4%E6%97%A5%E5%BF%97)冲突，则以后者为准**
 
+## [未发布]
+
+### 重构
+
+- 使用`viper`重构配置文件读取。
+- 支持文件重载后，完整重启系统（用于调试功能）。
+
 ## [0.7.0] - 2025-04-21
 
 ### 修复

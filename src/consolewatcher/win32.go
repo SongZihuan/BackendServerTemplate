@@ -22,14 +22,14 @@ func consoleHandler(exitChannel chan consoleutils.Event, waitExitChannel chan an
 			exitChannel <- consoleutils.EventMap[event]
 
 			if config.Data().Win32Console.ConsoleCloseRecovery.IsEnable(false) {
+				logger.Warnf("终端暂时重启，等待程序清理完毕，请勿关闭当前终端！")
+				logger.Warnf("若不希望重启终端，可在配置文件处关闭。")
+
 				err := consoleutils.MakeNewConsole(consoleutils.CodePageUTF8)
 				if err != nil {
 					logger.Errorf("win32 make new console failed: %s", err.Error())
 				}
 			}
-
-			logger.Warnf("终端暂时重启，等待程序清理完毕，请勿关闭当前终端！")
-			logger.Warnf("若不希望重启终端，可在配置文件处关闭。")
 
 			select {
 			case <-waitExitChannel:

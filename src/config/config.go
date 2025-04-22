@@ -31,7 +31,7 @@ func newConfig(inputFilePath string, outputFilePath string, provider configparse
 	}
 
 	if provider == nil {
-		provider = configparser.NewYamlProvider()
+		provider = configparser.NewYamlProvider(nil)
 	}
 
 	if !provider.CanUTF8() {

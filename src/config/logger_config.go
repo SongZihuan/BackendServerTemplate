@@ -13,13 +13,13 @@ import (
 )
 
 type LoggerConfig struct {
-	LogLevel loglevel.LoggerLevel `json:"log-level" yaml:"log-level"`
-	LogTag   typeutils.StringBool `json:"log-tag" yaml:"log-tag"`
+	LogLevel loglevel.LoggerLevel `json:"log-level" yaml:"log-level" mapstructure:"log-level"`
+	LogTag   typeutils.StringBool `json:"log-tag" yaml:"log-tag" mapstructure:"log-tag"`
 
-	HumanWarnWriter   LoggerWriterConfig `json:"human-warn-writer" yaml:"human-warn-writer"`
-	HumanErrWriter    LoggerWriterConfig `json:"human-error-writer" yaml:"human-error-writer"`
-	MachineWarnWriter LoggerWriterConfig `json:"machine-warn-writer" yaml:"machine-warn-writer"`
-	MachineErrWriter  LoggerWriterConfig `json:"machine-error-writer" yaml:"machine-error-writer"`
+	HumanWarnWriter   LoggerWriterConfig `json:"human-warn-writer" yaml:"human-warn-writer" mapstructure:"human-warn-writer"`
+	HumanErrWriter    LoggerWriterConfig `json:"human-error-writer" yaml:"human-error-writer" mapstructure:"human-error-writer"`
+	MachineWarnWriter LoggerWriterConfig `json:"machine-warn-writer" yaml:"machine-warn-writer" mapstructure:"machine-warn-writer"`
+	MachineErrWriter  LoggerWriterConfig `json:"machine-error-writer" yaml:"machine-error-writer" mapstructure:"machine-error-writer"`
 }
 
 func (d *LoggerConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {

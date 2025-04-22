@@ -6,6 +6,7 @@ package example2
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
@@ -78,7 +79,7 @@ func (s *ServerExample2) Run() {
 
 MainCycle:
 	for {
-		fmt.Println("Example2: I am running!")
+		fmt.Printf("Example2: Hello, %s. I am running!\n", config.Data().Server.Name)
 
 		select {
 		case <-s.ctx.Listen():

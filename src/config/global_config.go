@@ -23,14 +23,14 @@ const (
 )
 
 type GlobalConfig struct {
-	Name     string  `json:"name" yaml:"name"`
-	Mode     RunMode `json:"mode" yaml:"mode"`
-	Timezone string  `json:"time-zone" yaml:"time-zone"`
+	Name     string  `json:"name" yaml:"name" mapstructure:"name"`
+	Mode     RunMode `json:"mode" yaml:"mode" mapstructure:"mode"`
+	Timezone string  `json:"time-zone" yaml:"time-zone" mapstructure:"time-zone"`
 
 	// Time UTCDate Timestamp 记录为配置文件读取时间
-	Time      time.Time `json:"-" yaml:"-"`
-	UTCDate   string    `json:"utc-date" yaml:"utc-date"`
-	Timestamp int64     `json:"timestamp" yaml:"timestamp"`
+	Time      time.Time `json:"-" yaml:"-" mapstructure:"-"`
+	UTCDate   string    `json:"utc-date" yaml:"utc-date" mapstructure:"utc-date"`
+	Timestamp int64     `json:"timestamp" yaml:"timestamp" mapstructure:"timestamp"`
 }
 
 func (d *GlobalConfig) init(filePath string, provider configparser.ConfigParserProvider) configerror.Error {

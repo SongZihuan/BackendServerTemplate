@@ -9,3 +9,12 @@ func CopySlice[T any](src []T) []T {
 	copy(dest, src)
 	return dest
 }
+
+func SliceHasItem[T comparable](src []T, item T) bool {
+	for _, i := range src {
+		if i == item {
+			return true
+		}
+	}
+	return false
+}
