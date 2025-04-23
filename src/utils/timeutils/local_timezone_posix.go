@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"os"
 	"os/exec"
 	"time"
@@ -39,7 +40,7 @@ func GetLocalTimezone() *time.Location {
 }
 
 func getLocalTimezoneFromEnvTZ() (*time.Location, error) {
-	tz := cleanstringutils.GetStringOneLine(os.Getenv("TZ"))
+	tz := cleanstringutils.GetStringOneLine(envutils.GetSysEnv("TZ"))
 	if tz == "" {
 		return nil, fmt.Errorf("TZ not found")
 	}

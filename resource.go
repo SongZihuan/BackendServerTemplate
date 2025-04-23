@@ -41,6 +41,9 @@ var GitTagCommitHash string
 //go:embed random_data.txt
 var randomData string
 
+//go:embed ENV_PREFIX
+var EnvPrefix string
+
 func init() {
 	initCleanFile() // 最先执行
 
@@ -61,6 +64,7 @@ func initCleanFile() {
 	GitCommitHash = utilsClenFileData(GitCommitHash)
 	GitTag = utilsClenFileData(GitTag)
 	GitTagCommitHash = utilsClenFileData(GitTagCommitHash)
+	EnvPrefix = utilsClenFileData(EnvPrefix)
 }
 
 func initName() {

@@ -19,6 +19,7 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string) (exit
 
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: inputConfigFilePath,
+		AutoReload:     false,
 	})
 	if err != nil {
 		return exitutils.InitFailed("Config file read and parser", err.Error())

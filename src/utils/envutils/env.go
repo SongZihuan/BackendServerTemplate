@@ -5,8 +5,26 @@
 package envutils
 
 import (
+	"fmt"
+	resource "github.com/SongZihuan/BackendServerTemplate"
+	"os"
 	"strings"
 )
+
+var EnvPrefix = resource.EnvPrefix
+
+func init() {
+	if EnvPrefix == "" {
+		return
+	}
+
+	newEnvPrefix := StringToEnvName(EnvPrefix)
+	if EnvPrefix != newEnvPrefix {
+		panic(fmt.Errorf("bad %s; good %s", EnvPrefix, newEnvPrefix))
+	} else if strings.HasSuffix(EnvPrefix, "_") {
+		panic("EnvPrefix End With '_'")
+	}
+}
 
 func StringToEnvName(input string) string {
 	// Replace '.' and '-' with '_'
@@ -28,7 +46,7 @@ func StringToEnvName(input string) string {
 
 func GetEnvReplaced() *strings.Replacer {
 	rules := make([]string, 0, (26+2)*2)
-	rules = append(rules, ".", "_", "-", "_")
+	rules = append(rules, ".", "_", "-", "_", " ", "")
 
 	for _, i := range "abcdefghijklmnopqrstuvwxyz" {
 		u := strings.ToUpper(string(i))
@@ -36,4 +54,15 @@ func GetEnvReplaced() *strings.Replacer {
 	}
 
 	return strings.NewReplacer(rules...)
+}
+
+func GetSysEnv(name string) string {
+	return os.Getenv(name)
+}
+
+func GetEnv(name string) string {
+	if resource.EnvPrefix != "" {
+		return os.Getenv(fmt.Sprintf("%s_%s", resource.EnvPrefix, name))
+	}
+	return os.Getenv(name)
 }

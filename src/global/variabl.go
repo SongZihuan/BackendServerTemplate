@@ -6,12 +6,13 @@ package global
 
 import (
 	resource "github.com/SongZihuan/BackendServerTemplate"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/timeutils"
 	"time"
 )
 
 var (
-	// Version SemanticVersioning License Report BuildTime GitCommitHash GitTag GitTagCommitHash 继承自resource（程序init完成后即可调用）
+	// Version SemanticVersioning License Report BuildTime GitCommitHash GitTag GitTagCommitHash EnvPrefix 继承自resource（程序init完成后即可调用）
 	Version            = resource.Version
 	SemanticVersioning = resource.SemanticVersioning
 	License            = resource.License
@@ -20,6 +21,7 @@ var (
 	GitCommitHash      = resource.GitCommitHash
 	GitTag             = resource.GitTag
 	GitTagCommitHash   = resource.GitTagCommitHash
+	EnvPrefix          = envutils.EnvPrefix
 
 	// Name 继承自resource
 	// 注意：命令行参数或配置文件加载时可能会被更改

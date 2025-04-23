@@ -10,9 +10,15 @@ import (
 )
 
 func InitBaseLogger() error {
+	if IsReady() {
+		return nil
+	}
 	return internal.InitLogger(loglevel.LevelDebug, true, nil, nil)
 }
 
 func CloseLogger() {
+	if !IsReady() {
+		return
+	}
 	internal.CloseLogger()
 }

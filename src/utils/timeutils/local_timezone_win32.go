@@ -9,7 +9,7 @@ package timeutils
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
-	"os"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"os/exec"
 	"time"
 )
@@ -47,7 +47,7 @@ func GetLocalTimezone() *time.Location {
 }
 
 func getLocalTimezoneFromEnvTZ() (*time.Location, error) {
-	tz := cleanstringutils.GetStringOneLine(os.Getenv("TZ"))
+	tz := cleanstringutils.GetStringOneLine(envutils.GetSysEnv("TZ"))
 	if tz == "" {
 		return nil, fmt.Errorf("TZ not found")
 	}

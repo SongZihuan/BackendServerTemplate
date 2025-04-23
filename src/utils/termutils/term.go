@@ -5,6 +5,7 @@
 package termutils
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"github.com/mattn/go-isatty"
 	"io"
 	"os"
@@ -25,7 +26,7 @@ func IsTerm(writer io.Writer) bool {
 
 func EnvHasTermDump() bool {
 	// TERM为dump表示终端为基础模式，不支持高级显示
-	return os.Getenv("TERM") == "dumb"
+	return envutils.GetSysEnv("TERM") == "dumb"
 }
 
 func IsTermDump(writer io.Writer) bool {

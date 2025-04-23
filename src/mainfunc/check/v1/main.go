@@ -19,6 +19,7 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: inputConfigFilePath,
 		OutputFilePath: outputConfigFilePath,
+		AutoReload:     false,
 	})
 	if err != nil {
 		return exitutils.RunError(fmt.Sprintf("config file check failed: %s!", err.Error()))

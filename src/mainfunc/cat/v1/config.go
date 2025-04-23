@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/sliceutils"
 	"gopkg.in/yaml.v3"
-	"os"
 	"regexp"
 )
 
@@ -90,7 +90,7 @@ func initInstallServiceConfig(args []string) error {
 
 		serviceConfig.EnvSetList = make(map[string]string, len(serviceConfig.EnvGetList))
 		for _, e := range serviceConfig.EnvGetList {
-			serviceConfig.EnvSetList[e] = os.Getenv(e)
+			serviceConfig.EnvSetList[e] = envutils.GetSysEnv(e)
 		}
 	case FromConfig:
 		serviceConfig.EnvGetList = nil

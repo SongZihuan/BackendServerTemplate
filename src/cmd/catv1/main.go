@@ -35,11 +35,15 @@ var name string = global.Name
 var inputConfigFilePath string = "config.yaml"
 
 func main() {
+	command().Init().Exit()
+}
+
+func command() exitutils.ExitCode {
 	err := prerun.PreRun()
+	defer prerun.PostRun() // 此处defer放在err之前（因为RPreRun包含启动东西太多，虽然返回err，但不代表全部操作没成功，因此defer设置在这个位置，确保清理函数被调用。清理函数可以判断当前是否需要清理）
 	if err != nil {
-		exitutils.Exit(err)
+		return exitutils.ErrorToExit(err)
 	}
-	defer prerun.PostRun()
 
 	cmd := &cobra.Command{
 		Use:           global.Name,
@@ -192,5 +196,5 @@ func main() {
 	}
 
 	cmd.AddCommand(version.CMD, license.CMD, report.CMD, check.CMD, install, uninstall, start, stop, restart)
-	exitutils.ExitQuite(cmd.Execute())
+	return exitutils.ExitQuite(cmd.Execute())
 }

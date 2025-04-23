@@ -33,6 +33,29 @@ func (e ExitCode) Error() string {
 	return fmt.Sprintf("Exit with code %d", e)
 }
 
+func (e ExitCode) Init() ExitCode {
+	if e < exitCodeMin {
+		e = -e
+	}
+
+	if e > exitCodeMax {
+		e = exitCodeMax
+	}
+
+	return e
+}
+
+func (e ExitCode) Exit() {
+	os.Exit(int(e))
+}
+
+func (e ExitCode) ChangeToLoggerNotReady() ExitCode {
+	if e == exitCodeDefaultError || e == exitCodeWithUnknownError {
+		return exitCodeErrorLogMustBeReady
+	}
+	return e
+}
+
 func getExitCode(defaultExitCode int, exitCode ...int) (ec ExitCode) {
 	if len(exitCode) == 1 {
 		ec = ExitCode(exitCode[0])
@@ -40,15 +63,7 @@ func getExitCode(defaultExitCode int, exitCode ...int) (ec ExitCode) {
 		ec = ExitCode(defaultExitCode)
 	}
 
-	if ec < exitCodeMin {
-		ec = -ec
-	}
-
-	if ec > exitCodeMax {
-		ec = exitCodeMax
-	}
-
-	return ec
+	return ec.Init()
 }
 
 func initModuleFailedLog(module string, reason string) string {
@@ -67,6 +82,15 @@ func InitFailedForWin32ConsoleModule(reason string, exitCode ...int) ExitCode {
 	ec := getExitCode(exitCodeInitFailedError, exitCode...)
 
 	log.Printf(initModuleFailedLog("Win32 Console API", reason))
+	log.Printf("Init error exit %d: failed", ec)
+
+	return ec
+}
+
+func InitFailedForQuiteModeModule(reason string, exitCode ...int) ExitCode {
+	ec := getExitCode(exitCodeInitFailedError, exitCode...)
+
+	log.Printf(initModuleFailedLog("Quite Mode", reason))
 	log.Printf("Init error exit %d: failed", ec)
 
 	return ec
@@ -91,16 +115,17 @@ func InitFailedForLoggerModule(reason string, exitCode ...int) ExitCode {
 }
 
 func InitFailed(module string, reason string, exitCode ...int) ExitCode {
-	if !logger.IsReady() {
-		return exitCodeErrorLogMustBeReady
-	}
-
 	ec := getExitCode(exitCodeInitFailedError, exitCode...)
 
-	logger.Error(initModuleFailedLog(module, reason))
-	logger.Errorf("Init error exit %d: failed", ec)
-
-	return ec
+	if logger.IsReady() {
+		logger.Error(initModuleFailedLog(module, reason))
+		logger.Errorf("Init error exit %d: failed", ec)
+		return ec
+	} else {
+		log.Println(initModuleFailedLog(module, reason))
+		log.Printf("Init error exit %d: failed\n", ec)
+		return ec.ChangeToLoggerNotReady()
+	}
 }
 
 func RunErrorQuite(exitCode ...int) ExitCode {
@@ -108,63 +133,68 @@ func RunErrorQuite(exitCode ...int) ExitCode {
 }
 
 func RunError(reason string, exitCode ...int) ExitCode {
-	if !logger.IsReady() {
-		return exitCodeErrorLogMustBeReady
-	}
-
 	ec := getExitCode(exitCodeRunError, exitCode...)
 
-	if reason != "" {
-		logger.Errorf("Run error exit %d: %s", ec, reason)
+	if logger.IsReady() {
+		if reason != "" {
+			logger.Errorf("Run error exit %d: %s", ec, reason)
+		} else {
+			logger.Errorf("Run error exit %d: failed", ec)
+		}
+		return ec
 	} else {
-		logger.Errorf("Run error exit %d: failed", ec)
+		if reason != "" {
+			log.Printf("Run error exit %d: %s\n", ec, reason)
+		} else {
+			log.Printf("Run error exit %d: failed\n", ec)
+		}
+		return ec.ChangeToLoggerNotReady()
 	}
-
-	return ec
 }
 
 func SuccessExit(reason string, exitCode ...int) ExitCode {
-	if !logger.IsReady() {
-		return exitCodeErrorLogMustBeReady
-	}
-
 	ec := getExitCode(exitCodeDefaultSuccess, exitCode...)
 
-	if reason != "" {
-		logger.Warnf("Exit %d: %s", ec, reason)
+	if logger.IsReady() {
+		if reason != "" {
+			logger.Warnf("Exit %d: %s", ec, reason)
+		} else {
+			logger.Warnf("Exit %d: ok", ec)
+		}
 	} else {
-		logger.Warnf("Exit %d: ok", ec)
+		if reason != "" {
+			log.Printf("Exit %d: %s\n", ec, reason)
+		} else {
+			log.Printf("Exit %d: ok\n", ec)
+		}
 	}
 
-	return ec
+	return ec // ec 不再受 logger 的 ready 问题影响
 }
 
-func Exit(err error) {
+func ErrorToExit(err error) ExitCode {
 	var ec ExitCode
 	if err == nil {
-		os.Exit(exitCodeDefaultSuccess)
+		return exitCodeDefaultSuccess
 	} else if errors.As(err, &ec) {
-		ExitByCode(ec)
+		return ec
 	} else {
 		if logger.IsReady() {
 			logger.Errorf("Exit %d: %s", ec, err.Error())
 		} else {
 			log.Printf("Exit %d: %s\n", ec, err.Error())
 		}
-		os.Exit(exitCodeDefaultError)
+		return exitCodeDefaultError
 	}
 }
 
-func ExitQuite(err error) {
+func ExitQuite(err error) ExitCode {
 	var ec ExitCode
 	if err == nil {
-		os.Exit(exitCodeDefaultSuccess)
+		return exitCodeDefaultSuccess
 	} else if errors.As(err, &ec) {
-		ExitByCode(ec)
+		return ec
+	} else {
+		return exitCodeDefaultError
 	}
-	os.Exit(exitCodeDefaultError)
-}
-
-func ExitByCode(ec ExitCode) {
-	os.Exit(int(ec))
 }

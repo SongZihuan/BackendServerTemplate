@@ -10,7 +10,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"reflect"
@@ -27,10 +26,6 @@ type YamlProvider struct {
 func NewYamlProvider(opt *NewConfigParserProviderOption) *YamlProvider {
 	if opt == nil {
 		opt = new(NewConfigParserProviderOption)
-	}
-
-	if opt.EnvPrefix == "" {
-		opt.EnvPrefix = envutils.StringToEnvName(osutils.GetArgs0NamePOSIX())
 	}
 
 	p := &YamlProvider{

@@ -8,6 +8,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configoutputer"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
+	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/filesystemutils"
 	"os"
@@ -32,6 +33,7 @@ type ConfigOption struct {
 	OutputFilePath string
 	ParserProvider configparser.ConfigParserProvider
 	OutputProvider configoutputer.ConfigOutputProvider
+	AutoReload     bool
 }
 
 func (opt *ConfigOption) setDefault() (err error) {
@@ -46,7 +48,10 @@ func (opt *ConfigOption) setDefault() (err error) {
 	}
 
 	if opt.ParserProvider == nil {
-		opt.ParserProvider, err = configparser.NewConfigParserProvider(opt.ConfigFilePath, nil)
+		opt.ParserProvider, err = configparser.NewConfigParserProvider(opt.ConfigFilePath, &configparser.NewConfigParserProviderOption{
+			EnvPrefix:  global.EnvPrefix,
+			AutoReload: opt.AutoReload,
+		})
 		if err != nil {
 			return err
 		}

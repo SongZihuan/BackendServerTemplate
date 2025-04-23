@@ -54,6 +54,7 @@ func (p *Program) Start(s service.Service) error {
 
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: p.configPath,
+		AutoReload:     false,
 	})
 	if err != nil {
 		p.exitCode = exitutils.InitFailed("Config file read and parser", err.Error())
