@@ -2,8 +2,6 @@
 
 我们衷心感谢所有为本项目做出贡献的人！
 
-**注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E8%B4%A1%E7%8C%AE%E8%80%85)冲突，则以后者为准**
-
 以下是按字母顺序排列的贡献者名单（排名不分先后）：
 
 - **总贡献**
