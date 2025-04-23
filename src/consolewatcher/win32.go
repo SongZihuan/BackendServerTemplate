@@ -59,7 +59,7 @@ func NewWin32ConsoleExitChannel() (chan consoleutils.Event, chan any, error) {
 	var exitChannel = make(chan consoleutils.Event)
 	var waitExitChannel = make(chan any)
 
-	if !config.Data().Win32Console.Use {
+	if !config.Data().Win32Console.Use || !consoleutils.HasConsoleWindow() {
 		return exitChannel, waitExitChannel, nil
 	}
 
