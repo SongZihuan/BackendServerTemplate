@@ -7,6 +7,7 @@ package cleanstringutils
 import "strings"
 
 func GetStringOneLine(data string) (res string) {
+	res = strings.Replace(data, "\t", "    ", -1)
 	res = strings.Replace(data, "\r", "", -1)
 	res = strings.Split(res, "\n")[0]
 	res = strings.TrimSpace(res)

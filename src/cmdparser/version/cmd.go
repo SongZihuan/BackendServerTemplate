@@ -38,10 +38,9 @@ func init() {
 func printVersion(writer io.Writer) (int, error) {
 	res := new(strings.Builder)
 	res.WriteString(fmt.Sprintf("Version: %s\n", global.Version))
-	res.WriteString(fmt.Sprintf("Build Date (UTC): %s\n", global.BuildTime.In(time.UTC).Format(time.DateTime)))
-	if time.Local != nil && time.Local.String() != time.UTC.String() {
-		zone, _ := time.Now().Local().Zone()
-		res.WriteString(fmt.Sprintf("Build Date (%s): %s\n", zone, global.BuildTime.In(time.Local).Format(time.DateTime)))
+	res.WriteString(fmt.Sprintf("Build Date (UTC): %s\n", global.BuildTime.In(global.UTCLocation).Format(time.DateTime)))
+	if global.LocalLocation.String() != global.UTCLocation.String() {
+		res.WriteString(fmt.Sprintf("Build Date (%s): %s\n", global.LocalLocation.String(), global.BuildTime.In(global.LocalLocation).Format(time.DateTime)))
 	}
 	res.WriteString(fmt.Sprintf("Compiler: %s\n", runtime.Version()))
 	res.WriteString(fmt.Sprintf("OS: %s\n", runtime.GOOS))

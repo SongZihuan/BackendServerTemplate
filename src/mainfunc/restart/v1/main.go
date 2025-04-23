@@ -22,7 +22,7 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		AutoReload: false,
 	})
 	if err != nil {
-		return exitutils.InitFailedError("Get config file provider", err.Error())
+		return exitutils.InitFailed("Get config file provider", err.Error())
 	}
 
 	err = config.InitConfig(&config.ConfigOption{
@@ -31,14 +31,14 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		Provider:       configProvider,
 	})
 	if err != nil {
-		return exitutils.InitFailedError("Config file read and parser", err.Error())
+		return exitutils.InitFailed("Config file read and parser", err.Error())
 	}
 
 	sigchan := signalwatcher.NewSignalExitChannel()
 
 	consolechan, consolewaitexitchan, err := consolewatcher.NewWin32ConsoleExitChannel()
 	if err != nil {
-		return exitutils.InitFailedError("Win32 console channel", err.Error())
+		return exitutils.InitFailed("Win32 console channel", err.Error())
 	}
 
 	stopchan := restart.RunRestart()

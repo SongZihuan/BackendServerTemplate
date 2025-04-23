@@ -5,7 +5,7 @@
 package check
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmd/prerun"
 	checkv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/check/v1"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +21,7 @@ var CMD = &cobra.Command{
 		cmd.SilenceUsage = true
 		cmd.SilenceErrors = true
 
-		err := globalmain.PreRun()
+		err := prerun.PreRun()
 		if err != nil {
 			return err
 		}

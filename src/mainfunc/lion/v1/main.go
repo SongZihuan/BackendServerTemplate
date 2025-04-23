@@ -28,7 +28,7 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		AutoReload: ppid != 0,
 	})
 	if err != nil {
-		return exitutils.InitFailedError("Get config file provider", err.Error())
+		return exitutils.InitFailed("Get config file provider", err.Error())
 	}
 
 	err = config.InitConfig(&config.ConfigOption{
@@ -37,14 +37,14 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		Provider:       configProvider,
 	})
 	if err != nil {
-		return exitutils.InitFailedError("Config file read and parser", err.Error())
+		return exitutils.InitFailed("Config file read and parser", err.Error())
 	}
 
 	sigchan := signalwatcher.NewSignalExitChannel()
 
 	consolechan, consolewaitexitchan, err := consolewatcher.NewWin32ConsoleExitChannel()
 	if err != nil {
-		return exitutils.InitFailedError("Win32 console channel", err.Error())
+		return exitutils.InitFailed("Win32 console channel", err.Error())
 	}
 
 	ppidchan := restart.PpidWatcher(ppid)
@@ -53,29 +53,29 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
 	})
 	if err != nil {
-		return exitutils.InitFailedError("Server Controller", err.Error())
+		return exitutils.InitFailed("Server Controller", err.Error())
 	}
 
 	ser1, _, err := example1.NewServerExample1(&example1.ServerExample1Option{
 		LockThread: true,
 	})
 	if err != nil {
-		return exitutils.InitFailedError("Server Example1", err.Error())
+		return exitutils.InitFailed("Server Example1", err.Error())
 	}
 
 	err = ctrl.AddServer(ser1)
 	if err != nil {
-		return exitutils.InitFailedError("Add Server Example1", err.Error())
+		return exitutils.InitFailed("Add Server Example1", err.Error())
 	}
 
 	ser2, _, err := example2.NewServerExample2(nil)
 	if err != nil {
-		return exitutils.InitFailedError("Server Example2", err.Error())
+		return exitutils.InitFailed("Server Example2", err.Error())
 	}
 
 	err = ctrl.AddServer(ser2)
 	if err != nil {
-		return exitutils.InitFailedError("Add Server Example2", err.Error())
+		return exitutils.InitFailed("Add Server Example2", err.Error())
 	}
 
 	logger.Infof("Start to run server controller")

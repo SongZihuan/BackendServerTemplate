@@ -55,7 +55,7 @@ func (p *Program) Start(s service.Service) error {
 
 	configProvider, err := configparser.NewProvider(p.configPath, nil)
 	if err != nil {
-		p.exitCode = exitutils.InitFailedError("Get config file provider", err.Error())
+		p.exitCode = exitutils.InitFailed("Get config file provider", err.Error())
 		return err
 	}
 
@@ -65,7 +65,7 @@ func (p *Program) Start(s service.Service) error {
 		Provider:       configProvider,
 	})
 	if err != nil {
-		p.exitCode = exitutils.InitFailedError("Config file read and parser", err.Error())
+		p.exitCode = exitutils.InitFailed("Config file read and parser", err.Error())
 		return err
 	}
 
@@ -75,7 +75,7 @@ func (p *Program) Start(s service.Service) error {
 		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
 	})
 	if err != nil {
-		return exitutils.InitFailedError("Server Example1", err.Error())
+		return exitutils.InitFailed("Server Example1", err.Error())
 	}
 
 	logger.Infof("Start to run server example 3")

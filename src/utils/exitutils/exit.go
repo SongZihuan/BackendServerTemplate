@@ -48,7 +48,7 @@ func getExitCode(defaultExitCode int, exitCode ...int) (ec ExitCode) {
 	return ec
 }
 
-func InitFailedErrorForWin32ConsoleModule(reason string, exitCode ...int) ExitCode {
+func InitFailedForWin32ConsoleModule(reason string, exitCode ...int) ExitCode {
 	if reason == "" {
 		reason = "no reason"
 	}
@@ -61,7 +61,20 @@ func InitFailedErrorForWin32ConsoleModule(reason string, exitCode ...int) ExitCo
 	return ec
 }
 
-func InitFailedErrorForLoggerModule(reason string, exitCode ...int) ExitCode {
+func InitFailedForTimeLocationModule(reason string, exitCode ...int) ExitCode {
+	if reason == "" {
+		reason = "no reason"
+	}
+
+	ec := getExitCode(exitCodeDefaultError, exitCode...)
+
+	log.Printf("The module `Time Location` init failed (reason: `%s`) .", reason)
+	log.Printf("Now we should exit with code %d.", ec)
+
+	return ec
+}
+
+func InitFailedForLoggerModule(reason string, exitCode ...int) ExitCode {
 	if reason == "" {
 		reason = "no reason"
 	}
@@ -74,7 +87,7 @@ func InitFailedErrorForLoggerModule(reason string, exitCode ...int) ExitCode {
 	return ec
 }
 
-func InitFailedError(module string, reason string, exitCode ...int) ExitCode {
+func InitFailed(module string, reason string, exitCode ...int) ExitCode {
 	if !logger.IsReady() {
 		return exitCodeErrorLogMustBeReady
 	}

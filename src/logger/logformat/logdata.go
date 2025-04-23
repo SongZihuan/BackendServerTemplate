@@ -37,16 +37,13 @@ type LogData struct {
 func GetLogData(level loglevel.LoggerLevel, msg string, now time.Time) *LogData {
 	var res = new(LogData)
 
-	zone := global.Location.String()
-	if strings.ToLower(zone) == "local" {
-		zone, _ = now.Zone()
-	}
+	now = now.In(global.Location)
 
 	res.LogLevel = level
 	res.Level = strings.ToUpper(string(level))
 	res.Now = now
 	res.Date = now.Format(time.DateTime)
-	res.Zone = zone
+	res.Zone = global.Location.String()
 	res.Timestamp = now.Unix()
 	res.Name = global.Name
 	res.Version = global.Version

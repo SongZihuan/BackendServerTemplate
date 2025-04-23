@@ -4,9 +4,14 @@
 
 package main
 
+// 必须明确导入 prerun 包 （虽然下面的import确实导入了 prerun 包，但此处重复写一次表示冗余，以免在某些情况下本包不适用 prerun 后，下方的导入被自动删除）
+import (
+	_ "github.com/SongZihuan/BackendServerTemplate/src/cmd/prerun"
+)
+
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/globalmain"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmd/prerun"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
@@ -27,11 +32,11 @@ var reload bool = false
 var ppid int = 0
 
 func main() {
-	err := globalmain.PreRun()
+	err := prerun.PreRun()
 	if err != nil {
 		exitutils.Exit(err)
 	}
-	defer globalmain.PostRun()
+	defer prerun.PostRun()
 
 	cmd := &cobra.Command{
 		Use:           global.Name,

@@ -9,6 +9,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/timeutils"
 	"strings"
 	"time"
 )
@@ -49,7 +50,7 @@ func (d *GlobalConfig) setDefault(c *configInfo) configerror.Error {
 		d.Timezone = strings.ToLower(d.Timezone)
 	}
 
-	d.Time = time.Now().In(time.UTC)
+	d.Time = time.Now().In(global.UTCLocation)
 	d.UTCDate = d.Time.Format(time.DateTime)
 	d.Timestamp = d.Time.Unix()
 
@@ -72,36 +73,35 @@ func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
 
 	var location *time.Location
 	if strings.ToLower(d.Timezone) == "utc" {
-		location = time.UTC
+		location = global.UTCLocation
 		if location == nil {
-			location = time.Local
+			location = timeutils.GetLocalTimezone()
 		}
 	} else if strings.ToLower(d.Timezone) == "local" {
-		location = time.Local
+		location = timeutils.GetLocalTimezone()
 		if location == nil {
-			location = time.UTC
+			location = global.UTCLocation
 		}
 	} else {
 		var err error
-		location, err = time.LoadLocation(d.Timezone)
+		location, err = timeutils.LoadLocation(d.Timezone)
 		if err != nil || location == nil {
-			location = time.UTC
+			location = global.UTCLocation
 		}
 
 		if location != nil {
-			location = time.Local
+			location = timeutils.GetLocalTimezone()
 		}
 	}
 
-	if location == nil {
+	if location == nil || strings.ToLower(location.String()) == "local" {
 		if d.Timezone == "utc" || d.Timezone == "local" {
 			return configerror.NewErrorf("can not get location UTC or Local")
 		}
-
 		return configerror.NewErrorf("can not get location UTC, Local or %s", d.Timezone)
-	} else {
-		global.Location = location
 	}
+
+	global.Location = location
 
 	return nil
 }
