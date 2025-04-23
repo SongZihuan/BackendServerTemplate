@@ -2,7 +2,15 @@
 
 首先，感谢您考虑为本项目做出贡献！我们非常欢迎并珍视来自社区的每一份贡献。无论是代码提交、文档更新还是问题报告，您的参与都是对我们最大的支持。
 
-**注意：本文档内容若与[GitHub Wiki](https://github.com/SongZihuan/BackendServerTemplate/wiki/%E8%B4%A1%E7%8C%AE%E6%8C%87%E5%8D%97)冲突，则以后者为准**
+## 协议与准则
+
+本软件基于 [MIT LICENSE](/LICENSE) 发布，请务必阅读并遵守相关规定。 了解更多关于 MIT LICENSE，请 [点击此处](https://mit-license.song-zh.com) 。
+
+我们欢迎各位贡献者、赞助商等参与项目的开发等各项工作。请务必阅读并遵守我们的 [行为准则](/CODE_OF_CONDUCT.md) 。
+
+同时，欢迎各位贡献者阅读 [贡献者指南](CONTRIBUTING.md) ，有助于我们更好的交流和维护项目。
+
+若您为项目做出了任何贡献，我们将会记录在 [贡献者名单](/CONTRIBUTORS.md) 上，若有任何遗漏可以随时通过 `Issue` 与我们取得联系。
 
 ## 如何做出贡献
 
@@ -19,14 +27,13 @@
 
 **注意：本项目是模板Golang项目，不具备实际业务，因此不接受数据库系统、缓存系统、HTTP系统服务、TCP系统服务等相关功能的引入。可以参考我另一个由此项目延伸开发案的HTTP服务系统项目模板。**
 
-### 文档等修缮
+### 修改文档
 
-如果您认为文档有错误，建议您直接提交[Issue](https://github.com/SongZihuan/BackendServerTemplate/issues)，工作人员查明后进行更正。
-此处的文档指：根目录下的`README.md`等文档，以及位于项目`Github Wiki`的文档。
+如果您认为文档有错误，建议您直接提交 [Issue](https://github.com/SongZihuan/BackendServerTemplate/issues) ，工作人员查明后进行更正。
 
-### 代码注释修缮
+### 修改代码注释
 
-若您认为代码中存在含糊不清的注释或缺失应有注释，你可以直接提交[Issue](https://github.com/SongZihuan/BackendServerTemplate/issues)，或提交直接提交[PR](https://github.com/SongZihuan/BackendServerTemplate/pulls)。
+若您认为代码中存在含糊不清的注释或缺失应有注释，你可以直接提交 [Issue](https://github.com/SongZihuan/BackendServerTemplate/issues) ，或提交直接提交 [PR](https://github.com/SongZihuan/BackendServerTemplate/pulls) 。
 
 ## 代码风格约束
 
@@ -39,6 +46,6 @@
     package xxx
     ```
 
-2. 请先阅读`Wiki`，明白各包的作用和相互依赖关系，避免造成以来混乱。
-3. 本项目仅是一个模板项目，不具与实际业务。
-4. 请编写合适的单元测试，并且提交`PR`后由`GitHub Action`进行测试。
+2. 本项目仅是一个模板项目，不具与实际业务。
+3. 请编写合适的单元测试，并且提交`PR`后由`GitHub Action`进行测试。
+4. 代码风格遵守 [《Go 编码最佳实践》](https://google.github.io/styleguide/go/best-practices) 。
