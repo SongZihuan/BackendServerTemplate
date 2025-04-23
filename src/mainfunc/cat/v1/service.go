@@ -7,7 +7,6 @@ package v1
 import (
 	"errors"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
-	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example3"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
@@ -53,16 +52,8 @@ func (p *Program) Start(s service.Service) error {
 		panic("The main process should not be called.")
 	}
 
-	configProvider, err := configparser.NewProvider(p.configPath, nil)
-	if err != nil {
-		p.exitCode = exitutils.InitFailed("Get config file provider", err.Error())
-		return err
-	}
-
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: p.configPath,
-		OutputFilePath: "",
-		Provider:       configProvider,
 	})
 	if err != nil {
 		p.exitCode = exitutils.InitFailed("Config file read and parser", err.Error())

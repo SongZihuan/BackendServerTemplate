@@ -15,11 +15,14 @@ import (
 const (
 	exitCodeMin                 = 0
 	exitCodeMax                 = 255
-	exitCodeDefaultSuccess      = 0
-	exitCodeDefaultError        = 1
-	exitCodeReload              = 252
-	exitCodeWithUnknownError    = 253
-	exitCodeErrorLogMustBeReady = 254
+	exitCodeDefaultSuccess      = 0   // 默认值：正常
+	exitCodeDefaultError        = 1   // 默认值：错误
+	exitCodeInitFailedError     = 2   // 初始化错误
+	exitCodeRunError            = 3   // 运行时错误
+	exitCodeRunErrorQuite       = 4   // 运行时错误（安静关闭）
+	exitCodeReload              = 252 // 重启信号
+	exitCodeWithUnknownError    = 253 // 未知错误
+	exitCodeErrorLogMustBeReady = 254 // 报告该错误需要日志系统加载完成
 )
 
 const ExitCodeReload = exitCodeReload
@@ -48,41 +51,41 @@ func getExitCode(defaultExitCode int, exitCode ...int) (ec ExitCode) {
 	return ec
 }
 
-func InitFailedForWin32ConsoleModule(reason string, exitCode ...int) ExitCode {
-	if reason == "" {
-		reason = "no reason"
+func initModuleFailedLog(module string, reason string) string {
+	if module == "" {
+		panic("module can not be empty")
 	}
 
-	ec := getExitCode(exitCodeDefaultError, exitCode...)
+	if reason != "" {
+		return fmt.Sprintf("Init failed [ %s ]: %s", module, reason)
+	} else {
+		return fmt.Sprintf("Init failed [ %s ]", module)
+	}
+}
 
-	log.Printf("The module `Win32 Console XXX` init failed (reason: `%s`) .", reason)
-	log.Printf("Now we should exit with code %d.", ec)
+func InitFailedForWin32ConsoleModule(reason string, exitCode ...int) ExitCode {
+	ec := getExitCode(exitCodeInitFailedError, exitCode...)
+
+	log.Printf(initModuleFailedLog("Win32 Console API", reason))
+	log.Printf("Init error exit %d: failed", ec)
 
 	return ec
 }
 
 func InitFailedForTimeLocationModule(reason string, exitCode ...int) ExitCode {
-	if reason == "" {
-		reason = "no reason"
-	}
+	ec := getExitCode(exitCodeInitFailedError, exitCode...)
 
-	ec := getExitCode(exitCodeDefaultError, exitCode...)
-
-	log.Printf("The module `Time Location` init failed (reason: `%s`) .", reason)
-	log.Printf("Now we should exit with code %d.", ec)
+	log.Printf(initModuleFailedLog("Time Location", reason))
+	log.Printf("Init error exit %d: failed", ec)
 
 	return ec
 }
 
 func InitFailedForLoggerModule(reason string, exitCode ...int) ExitCode {
-	if reason == "" {
-		reason = "no reason"
-	}
+	ec := getExitCode(exitCodeInitFailedError, exitCode...)
 
-	ec := getExitCode(exitCodeDefaultError, exitCode...)
-
-	log.Printf("The module `Logger` init failed (reason: `%s`) .", reason)
-	log.Printf("Now we should exit with code %d.", ec)
+	log.Printf(initModuleFailedLog("Logger", reason))
+	log.Printf("Init error exit %d: failed", ec)
 
 	return ec
 }
@@ -92,23 +95,16 @@ func InitFailed(module string, reason string, exitCode ...int) ExitCode {
 		return exitCodeErrorLogMustBeReady
 	}
 
-	if reason == "" {
-		reason = "no reason"
-	}
+	ec := getExitCode(exitCodeInitFailedError, exitCode...)
 
-	ec := getExitCode(exitCodeDefaultError, exitCode...)
-
-	logger.Errorf("The module `%s` init failed (reason: `%s`) .", module, reason)
-	logger.Errorf("Now we should exit with code %d.", ec)
+	logger.Error(initModuleFailedLog(module, reason))
+	logger.Errorf("Init error exit %d: failed", ec)
 
 	return ec
 }
 
 func RunErrorQuite(exitCode ...int) ExitCode {
-	if !logger.IsReady() {
-		return exitCodeErrorLogMustBeReady
-	}
-	return getExitCode(exitCodeDefaultError, exitCode...)
+	return getExitCode(exitCodeRunErrorQuite, exitCode...)
 }
 
 func RunError(reason string, exitCode ...int) ExitCode {
@@ -116,14 +112,13 @@ func RunError(reason string, exitCode ...int) ExitCode {
 		return exitCodeErrorLogMustBeReady
 	}
 
-	if reason == "" {
-		reason = "no reason"
+	ec := getExitCode(exitCodeRunError, exitCode...)
+
+	if reason != "" {
+		logger.Errorf("Run error exit %d: %s", ec, reason)
+	} else {
+		logger.Errorf("Run error exit %d: failed", ec)
 	}
-
-	ec := getExitCode(exitCodeDefaultError, exitCode...)
-
-	logger.Errorf("Run error (reason: `%s`) .", reason)
-	logger.Errorf("Now we should exit with code %d.", ec)
 
 	return ec
 }
@@ -133,30 +128,13 @@ func SuccessExit(reason string, exitCode ...int) ExitCode {
 		return exitCodeErrorLogMustBeReady
 	}
 
-	if reason == "" {
-		reason = "no reason"
-	}
-
 	ec := getExitCode(exitCodeDefaultSuccess, exitCode...)
 
-	logger.Warnf("Now we should exit with code %d (reason: %s) .", ec, reason)
-
-	return ec
-}
-
-func SuccessExitSimple(reason string, exitCode ...int) ExitCode {
 	if reason != "" {
-		log.Println(reason)
+		logger.Warnf("Exit %d: %s", ec, reason)
+	} else {
+		logger.Warnf("Exit %d: ok", ec)
 	}
-	return getExitCode(exitCodeDefaultSuccess, exitCode...)
-}
-
-func SuccessExitQuite(exitCode ...int) ExitCode {
-	if !logger.IsReady() {
-		return exitCodeErrorLogMustBeReady
-	}
-
-	ec := getExitCode(exitCodeDefaultSuccess, exitCode...)
 
 	return ec
 }
@@ -169,9 +147,9 @@ func Exit(err error) {
 		ExitByCode(ec)
 	} else {
 		if logger.IsReady() {
-			logger.Warnf("Now we should exit with code %d (reason: %s) .", exitCodeDefaultError, err.Error())
+			logger.Errorf("Exit %d: %s", ec, err.Error())
 		} else {
-			log.Printf("Now we should exit with code %d (reason: %s) .", exitCodeDefaultError, err.Error())
+			log.Printf("Exit %d: %s\n", ec, err.Error())
 		}
 		os.Exit(exitCodeDefaultError)
 	}

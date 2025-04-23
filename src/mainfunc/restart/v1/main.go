@@ -6,7 +6,6 @@ package v1
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
-	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
@@ -18,16 +17,8 @@ import (
 func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
 	var err error
 
-	configProvider, err := configparser.NewProvider(inputConfigFilePath, &configparser.NewProviderOption{
-		AutoReload: false,
-	})
-	if err != nil {
-		return exitutils.InitFailed("Get config file provider", err.Error())
-	}
-
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: inputConfigFilePath,
-		Provider:       configProvider,
 	})
 	if err != nil {
 		return exitutils.InitFailed("Config file read and parser", err.Error())

@@ -2,14 +2,14 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package configparser
+package configoutputer
 
 import (
 	"fmt"
 	"strings"
 )
 
-func NewConfigParserProvider(configPath string, opt *NewConfigParserProviderOption) (ConfigParserProvider, error) {
+func NewConfigOutputProvider(configPath string, opt *NewConfigOutputProviderOption) (ConfigOutputProvider, error) {
 	switch {
 	case strings.HasSuffix(configPath, ".yaml") || strings.HasSuffix(configPath, ".yml"):
 		return NewYamlProvider(opt), nil

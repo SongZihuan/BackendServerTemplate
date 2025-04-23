@@ -5,6 +5,7 @@
 package logger
 
 import (
+	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/internal"
 )
 
@@ -49,7 +50,7 @@ func Errorf(format string, args ...interface{}) {
 
 func Panicf(format string, args ...interface{}) {
 	if !internal.IsReady() {
-		return
+		panic(fmt.Sprintf(format, args...))
 	}
 	internal.GlobalLogger.Panicf(format, args...)
 }
@@ -91,7 +92,7 @@ func Error(args ...interface{}) {
 
 func Panic(args ...interface{}) {
 	if !internal.IsReady() {
-		return
+		panic(fmt.Sprint(args...))
 	}
 	internal.GlobalLogger.Panic(args...)
 }
@@ -133,7 +134,7 @@ func ErrorWrite(msg string) {
 
 func PanicWrite(msg string) {
 	if !internal.IsReady() {
-		return
+		panic(msg)
 	}
 	internal.GlobalLogger.PanicWrite(msg)
 }

@@ -13,8 +13,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v3"
-	"os"
 	"reflect"
 	"sync"
 )
@@ -26,9 +24,9 @@ type YamlProvider struct {
 	restart    sync.Once
 }
 
-func NewYamlProvider(opt *NewProviderOption) *YamlProvider {
+func NewYamlProvider(opt *NewConfigParserProviderOption) *YamlProvider {
 	if opt == nil {
-		opt = new(NewProviderOption)
+		opt = new(NewConfigParserProviderOption)
 	}
 
 	if opt.EnvPrefix == "" {
@@ -101,28 +99,6 @@ func (y *YamlProvider) ParserFile(target any) configerror.Error {
 	err := y.viper.Unmarshal(target)
 	if err != nil {
 		return configerror.NewErrorf("yaml unmarshal error: %s", err.Error())
-	}
-
-	return nil
-}
-
-func (y *YamlProvider) WriteFile(filepath string, src any) configerror.Error {
-	if !y.hasRead {
-		return configerror.NewErrorf("config file has not been read")
-	}
-
-	if reflect.TypeOf(src).Kind() != reflect.Pointer {
-		return configerror.NewErrorf("target must be a pointer")
-	}
-
-	target, err := yaml.Marshal(src)
-	if err != nil {
-		return configerror.NewErrorf("yaml marshal error: %s", err.Error())
-	}
-
-	err = os.WriteFile(filepath, target, 0644)
-	if err != nil {
-		return configerror.NewErrorf("write file error: %s", err.Error())
 	}
 
 	return nil

@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
-	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
@@ -24,16 +23,8 @@ import (
 func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid int) (exitCode error) {
 	var err error
 
-	configProvider, err := configparser.NewProvider(inputConfigFilePath, &configparser.NewProviderOption{
-		AutoReload: ppid != 0,
-	})
-	if err != nil {
-		return exitutils.InitFailed("Get config file provider", err.Error())
-	}
-
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: inputConfigFilePath,
-		Provider:       configProvider,
 	})
 	if err != nil {
 		return exitutils.InitFailed("Config file read and parser", err.Error())

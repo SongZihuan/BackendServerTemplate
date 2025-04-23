@@ -7,29 +7,27 @@ package v1
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
-	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/filesystemutils"
 	"github.com/spf13/cobra"
 )
 
 func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outputConfigFilePath string) (exitCode error) {
 	var err error
 
-	configProvider, err := configparser.NewProvider(inputConfigFilePath, &configparser.NewProviderOption{
-		AutoReload: false,
-	})
-	if err != nil {
-		return exitutils.SuccessExitSimple(fmt.Sprintf("Error: config file check failed: %s!", err.Error()))
-	}
-
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: inputConfigFilePath,
 		OutputFilePath: outputConfigFilePath,
-		Provider:       configProvider,
 	})
 	if err != nil {
-		return exitutils.SuccessExitSimple(fmt.Sprintf("Error: config file check failed: %s!", err.Error()))
+		return exitutils.RunError(fmt.Sprintf("config file check failed: %s!", err.Error()))
 	}
 
-	return exitutils.SuccessExitSimple("Info: config file check ok!")
+	outputPath := config.OutputPath()
+	if outputPath != "" && filesystemutils.IsFile(outputPath) {
+		logger.Warnf("config output ok: %s", outputPath)
+	}
+
+	return exitutils.SuccessExit("config file check ok!")
 }

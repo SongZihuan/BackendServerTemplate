@@ -5,7 +5,6 @@
 package configparser
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
@@ -14,7 +13,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"os"
 	"reflect"
 	"sync"
 )
@@ -26,9 +24,9 @@ type JsonProvider struct {
 	restart    sync.Once
 }
 
-func NewJsonProvider(opt *NewProviderOption) *JsonProvider {
+func NewJsonProvider(opt *NewConfigParserProviderOption) *JsonProvider {
 	if opt == nil {
-		opt = new(NewProviderOption)
+		opt = new(NewConfigParserProviderOption)
 	}
 
 	if opt.EnvPrefix == "" {
@@ -101,28 +99,6 @@ func (j *JsonProvider) ParserFile(target any) configerror.Error {
 	err := j.viper.Unmarshal(target)
 	if err != nil {
 		return configerror.NewErrorf("yaml unmarshal error: %s", err.Error())
-	}
-
-	return nil
-}
-
-func (j *JsonProvider) WriteFile(filepath string, src any) configerror.Error {
-	if !j.hasRead {
-		return configerror.NewErrorf("config file has not been read")
-	}
-
-	if reflect.TypeOf(src).Kind() != reflect.Pointer {
-		return configerror.NewErrorf("target must be a pointer")
-	}
-
-	target, err := json.MarshalIndent(src, "", "  ")
-	if err != nil {
-		return configerror.NewErrorf("json marshal error: %s", err.Error())
-	}
-
-	err = os.WriteFile(filepath, target, 0644)
-	if err != nil {
-		return configerror.NewErrorf("write file error: %s", err.Error())
 	}
 
 	return nil

@@ -75,7 +75,7 @@ func MainV1Install(cmd *cobra.Command, args []string) (exitCode error) {
 		return exitutils.InitFailed("Service Install", err.Error())
 	}
 
-	return exitutils.SuccessExitSimple("Service Install Success")
+	return exitutils.SuccessExit("Service Install Success")
 }
 
 func MainV1UnInstall(cmd *cobra.Command, args []string) (exitCode error) {
@@ -107,7 +107,7 @@ func MainV1UnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 		return exitutils.InitFailed("Service Remove", err.Error())
 	}
 
-	return exitutils.SuccessExitSimple("Service Remove Success")
+	return exitutils.SuccessExit("Service Remove Success")
 }
 
 func MainV1Start(cmd *cobra.Command, args []string) (exitCode error) {
@@ -139,7 +139,7 @@ func MainV1Start(cmd *cobra.Command, args []string) (exitCode error) {
 		return exitutils.InitFailed("Service Start", err.Error())
 	}
 
-	return exitutils.SuccessExitSimple("Service Start Success")
+	return exitutils.SuccessExit("Service Start Success")
 }
 
 func MainV1Stop(cmd *cobra.Command, args []string) (exitCode error) {
@@ -171,7 +171,7 @@ func MainV1Stop(cmd *cobra.Command, args []string) (exitCode error) {
 		return exitutils.InitFailed("Service Stop", err.Error())
 	}
 
-	return exitutils.SuccessExitSimple("Service Stop Success")
+	return exitutils.SuccessExit("Service Stop Success")
 }
 
 func MainV1Restart(cmd *cobra.Command, args []string) (exitCode error) {
@@ -203,5 +203,5 @@ func MainV1Restart(cmd *cobra.Command, args []string) (exitCode error) {
 		return exitutils.InitFailed("Service Restart", err.Error())
 	}
 
-	return exitutils.SuccessExitSimple("Service Restart Success")
+	return exitutils.SuccessExit("Service Restart Success")
 }
