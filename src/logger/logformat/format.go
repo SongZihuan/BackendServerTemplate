@@ -65,6 +65,7 @@ func _test_func() {
 	a = FormatMachine
 	a = FormatFile
 	a = FormatConsole
+	a = FormatConsolePretty
 
 	_ = a
 }
