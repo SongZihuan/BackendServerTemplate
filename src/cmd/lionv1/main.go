@@ -26,7 +26,6 @@ import (
 )
 
 var inputConfigFilePath string = "config.yaml"
-var outputConfigFilePath string = ""
 var name string = global.Name
 var reload bool = false
 var ppid int = 0
@@ -75,10 +74,10 @@ func main() {
 			cmd.SilenceErrors = true
 
 			if reload {
-				return restartv1.MainV1(cmd, args, inputConfigFilePath, outputConfigFilePath)
+				return restartv1.MainV1(cmd, args, inputConfigFilePath)
 			}
 
-			return lionv1.MainV1(cmd, args, inputConfigFilePath, outputConfigFilePath, ppid)
+			return lionv1.MainV1(cmd, args, inputConfigFilePath, ppid)
 		},
 		PostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -100,7 +99,6 @@ func main() {
 	cmd.Flags().IntVar(&ppid, restart.RestartFlag, 0, "restart mode, note: DO NOT SET THIS FLAG unless you know your purpose clearly.")
 
 	cmd.Flags().StringVarP(&inputConfigFilePath, "config", "c", inputConfigFilePath, "the file path of the configuration file")
-	cmd.Flags().StringVarP(&outputConfigFilePath, "output-config", "o", outputConfigFilePath, "the file path of the output configuration file")
 
 	exitutils.ExitQuite(cmd.Execute())
 }

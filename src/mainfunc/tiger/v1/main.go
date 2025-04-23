@@ -19,7 +19,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outputConfigFilePath string, ppid int) (exitCode error) {
+func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid int) (exitCode error) {
 	var err error
 
 	configProvider, err := configparser.NewProvider(inputConfigFilePath, &configparser.NewProviderOption{
@@ -31,7 +31,6 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string, outpu
 
 	err = config.InitConfig(&config.ConfigOption{
 		ConfigFilePath: inputConfigFilePath,
-		OutputFilePath: outputConfigFilePath,
 		Provider:       configProvider,
 	})
 	if err != nil {
