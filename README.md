@@ -139,24 +139,28 @@ logger:
     log-tag: enable  # 是否输出tag调试日志。
     
     human-warn-writer:  # 人类可读的 debug、tag、info、warn 日志的输出器
+        ansi: enable  # 当输出到console时，若console支持，是否启用ANSI转义序列优化显示的内容
         write-to-std: stdout  # 输出到标准输出或标准错误输出（为空则不启用）
         write-to-file: ""  # 输出到固定文件（append）模式
         write-to-dir-with-date: ""  # 输出到指定目录，并按日期分割，此处为输出路径
         write-with-date-prefix: ""  # 配合 write-to-dir-with-date ，表示文件的输出前缀
         
     human-error-writer:  # 人类可读的 error、panic 日志的输出器，含义同上
+        ansi: enable
         write-to-std: stdout
         write-to-file: ""
         write-to-dir-with-date: ""
         write-with-date-prefix: ""
 
     machine-warn-writer:  # 机器可读的 debug、tag、info、warn 日志的输出器，含义同上
+      ansi: enable
       write-to-std: stdout
       write-to-file: ""
       write-to-dir-with-date: ""
       write-with-date-prefix: ""
       
     machine-error-writer:  # 机器可读的 error、panic 日志的输出器，含义同上
+      ansi: enable
       write-to-std: stdout
       write-to-file: ""
       write-to-dir-with-date: ""

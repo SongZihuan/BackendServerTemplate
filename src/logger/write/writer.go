@@ -4,13 +4,16 @@
 
 package write
 
-import "io"
+import (
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
+	"io"
+)
 
 type Writer interface {
-	io.Writer
+	Write(data *logformat.LogData) (n int, err error)
 }
 
 type WriteCloser interface {
-	io.WriteCloser
-	ExitClose() error
+	Writer
+	io.Closer
 }

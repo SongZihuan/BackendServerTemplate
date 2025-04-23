@@ -5,21 +5,18 @@
 package nonewriter
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 )
 
 type NoneWriter struct {
 }
 
-func (f *NoneWriter) Write(p []byte) (n int, err error) {
-	return len(p), nil
+func (f *NoneWriter) Write(_ *logformat.LogData) (n int, err error) {
+	return 0, nil
 }
 
 func (f *NoneWriter) Close() error {
-	return f.ExitClose()
-}
-
-func (f *NoneWriter) ExitClose() error {
 	return nil
 }
 

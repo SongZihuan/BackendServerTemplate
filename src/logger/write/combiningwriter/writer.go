@@ -6,6 +6,7 @@ package combiningwriter
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/sliceutils"
 )
@@ -16,7 +17,7 @@ type CombiningWriter struct {
 	close  bool
 }
 
-func (c *CombiningWriter) Write(p []byte) (n int, err error) {
+func (c *CombiningWriter) Write(data *logformat.LogData) (n int, err error) {
 	if c.close {
 		return 0, fmt.Errorf("combining writer has been close")
 	}
@@ -28,7 +29,7 @@ func (c *CombiningWriter) Write(p []byte) (n int, err error) {
 			continue
 		}
 
-		nTmp, errTmp := w.Write(p)
+		nTmp, errTmp := w.Write(data)
 		if errTmp != nil {
 			errMsg += errTmp.Error() + ";"
 		}
@@ -44,10 +45,6 @@ func (c *CombiningWriter) Write(p []byte) (n int, err error) {
 }
 
 func (c *CombiningWriter) Close() error {
-	return c.ExitClose()
-}
-
-func (c *CombiningWriter) ExitClose() error {
 	defer func() {
 		c.close = true
 	}()

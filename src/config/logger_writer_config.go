@@ -8,22 +8,23 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/combiningwriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/datefilewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/filewriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
-	"io"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/warpwriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/termutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/typeutils"
 	"os"
 	"strings"
 )
 
 type LoggerWriterConfig struct {
-	WriteToStd          string `json:"write-to-std" yaml:"write-to-std" mapstructure:"write-to-std"` // stdout stderr all no
-	WriteToFile         string `json:"write-to-file" yaml:"write-to-file" mapstructure:"write-to-file"`
-	WriteToDirWithDate  string `json:"write-to-dir-with-date" yaml:"write-to-dir-with-date" mapstructure:"write-to-dir-with-date"`
-	WriteWithDatePrefix string `json:"write-with-date-prefix" yaml:"write-with-date-prefix" mapstructure:"write-with-date-prefix"`
+	ANSI                typeutils.StringBool `json:"ansi" yaml:"ansi" mapstructure:"ansi"`
+	WriteToStd          string               `json:"write-to-std" yaml:"write-to-std" mapstructure:"write-to-std"` // stdout stderr all no
+	WriteToFile         string               `json:"write-to-file" yaml:"write-to-file" mapstructure:"write-to-file"`
+	WriteToDirWithDate  string               `json:"write-to-dir-with-date" yaml:"write-to-dir-with-date" mapstructure:"write-to-dir-with-date"`
+	WriteWithDatePrefix string               `json:"write-with-date-prefix" yaml:"write-with-date-prefix" mapstructure:"write-with-date-prefix"`
 }
 
 func (d *LoggerWriterConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
@@ -31,6 +32,8 @@ func (d *LoggerWriterConfig) init(filePath string, provider configparser.ConfigP
 }
 
 func (d *LoggerWriterConfig) setDefault(c *configInfo) (err configerror.Error) {
+	d.ANSI.SetDefaultEnable()
+
 	d.WriteToStd = strings.ToLower(d.WriteToStd)
 
 	if d.WriteToDirWithDate != "" && d.WriteWithDatePrefix == "" {
@@ -47,57 +50,54 @@ func (d *LoggerWriterConfig) check(c *configInfo) (err configerror.Error) {
 	return nil
 }
 
-func (d *LoggerWriterConfig) process(c *configInfo, setter func(w io.Writer) (io.Writer, error)) (cfgErr configerror.Error) {
-	writerList := make([]write.Writer, 0, 10)
+func (d *LoggerWriterConfig) process(c *configInfo, machine bool) (writerList []write.Writer, cfgErr configerror.Error) {
+	writerList = make([]write.Writer, 0, 10)
+
+	var consoleFn, fileFn, dateFn logformat.FormatFunc
+	if machine {
+		consoleFn = logformat.FormatMachine
+		fileFn = logformat.FormatMachine
+		dateFn = logformat.FormatMachine
+	} else {
+		if d.ANSI.IsEnable(true) && termutils.IsTermAdvanced(os.Stdout) && termutils.IsTermAdvanced(os.Stderr) {
+			consoleFn = logformat.FormatConsolePretty
+		} else {
+			consoleFn = logformat.FormatConsole
+		}
+		fileFn = logformat.FormatFile
+		dateFn = logformat.FormatFile
+	}
 
 	switch d.WriteToStd {
 	case "stdout":
-		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stdout))
+		writerList = append(writerList, warpwriter.NewWarpWriter(os.Stdout, consoleFn))
 	case "stderr":
-		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stderr))
+		writerList = append(writerList, warpwriter.NewWarpWriter(os.Stderr, consoleFn))
 	case "stderr+stdout", "stdout+stderr":
-		writerList = append(writerList, wrapwriter.WrapToWriter(os.Stdout), wrapwriter.WrapToWriter(os.Stderr))
+		writerList = append(writerList, warpwriter.NewWarpWriter(os.Stdout, consoleFn), warpwriter.NewWarpWriter(os.Stderr, consoleFn))
 	case "", "no":
 		// pass
 	default:
-		return configerror.NewErrorf("bad write-to-std: %s", d.WriteToStd)
+		return nil, configerror.NewErrorf("bad write-to-std: %s", d.WriteToStd)
 	}
 
 	if d.WriteToFile != "" {
-		fileWriter, err := filewriter.NewFileWriter(d.WriteToFile)
+		fileWriter, err := filewriter.NewFileWriter(d.WriteToFile, fileFn)
 		if err != nil {
-			return configerror.NewErrorf("new file writer (on %s) error error: %s", d.WriteToFile, err.Error())
+			return nil, configerror.NewErrorf("new file writer (on %s) error error: %s", d.WriteToFile, err.Error())
 		}
 
 		writerList = append(writerList, fileWriter)
 	}
 
 	if d.WriteToDirWithDate != "" {
-		dateFileWriter, err := datefilewriter.NewDateFileWriter(d.WriteToDirWithDate, d.WriteWithDatePrefix)
+		dateFileWriter, err := datefilewriter.NewDateFileWriter(d.WriteToDirWithDate, d.WriteWithDatePrefix, dateFn)
 		if err != nil {
-			return configerror.NewErrorf("new date file writer (on %s) error error: %s", d.WriteToDirWithDate, err.Error())
+			return nil, configerror.NewErrorf("new date file writer (on %s) error error: %s", d.WriteToDirWithDate, err.Error())
 		}
 
 		writerList = append(writerList, dateFileWriter)
 	}
 
-	if len(writerList) == 0 {
-		_, err := setter(nonewriter.NewNoneWriter())
-		if err != nil {
-			return configerror.NewErrorf("set new writer error: %s", err.Error())
-		}
-	} else if len(writerList) == 1 {
-		_, err := setter(writerList[0])
-		if err != nil {
-			return configerror.NewErrorf("set new writer error: %s", err.Error())
-		}
-	} else {
-		combiningWriter := combiningwriter.NewCombiningWriter(writerList...)
-		_, err := setter(combiningWriter)
-		if err != nil {
-			return configerror.NewErrorf("set new combining writer error: %s", err.Error())
-		}
-	}
-
-	return nil
+	return writerList, nil
 }

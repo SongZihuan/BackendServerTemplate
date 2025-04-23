@@ -6,6 +6,8 @@ package loglevel
 
 type LoggerLevel string
 
+const PseudoLevelTag LoggerLevel = "TAG"
+
 const (
 	LevelDebug LoggerLevel = "debug"
 	LevelInfo  LoggerLevel = "info"

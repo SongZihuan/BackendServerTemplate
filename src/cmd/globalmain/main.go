@@ -6,7 +6,6 @@ package globalmain
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 )
@@ -19,7 +18,7 @@ func PreRun() (exitCode error) {
 		return exitutils.InitFailedErrorForWin32ConsoleModule(err.Error())
 	}
 
-	err = logger.InitBaseLogger(loglevel.LevelDebug, true, nil, nil, nil, nil)
+	err = logger.InitBaseLogger()
 	if err != nil {
 		return exitutils.InitFailedErrorForLoggerModule(err.Error())
 	}

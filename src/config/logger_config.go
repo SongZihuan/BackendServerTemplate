@@ -9,6 +9,8 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/combiningwriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/typeutils"
 )
 
@@ -115,24 +117,63 @@ func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		return configerror.NewErrorf("set log tag error: %s", err.Error())
 	}
 
-	cfgErr = d.HumanWarnWriter.process(c, logger.SetHumanWarnWriter)
+	humanWarn, cfgErr := d.HumanWarnWriter.process(c, false)
 	if cfgErr != nil {
 		return cfgErr
 	}
 
-	cfgErr = d.HumanErrWriter.process(c, logger.SetHumanErrWriter)
+	humanErr, cfgErr := d.HumanErrWriter.process(c, false)
 	if cfgErr != nil {
 		return cfgErr
 	}
 
-	cfgErr = d.MachineWarnWriter.process(c, logger.SetMachineWarnWriter)
+	machineWarn, cfgErr := d.MachineWarnWriter.process(c, true)
 	if cfgErr != nil {
 		return cfgErr
 	}
 
-	cfgErr = d.MachineErrWriter.process(c, logger.SetMachineErrWriter)
+	machineErr, cfgErr := d.MachineErrWriter.process(c, true)
 	if cfgErr != nil {
 		return cfgErr
+	}
+
+	logWarn := append(humanWarn, machineWarn...)
+	logErr := append(humanErr, machineErr...)
+
+	if len(logWarn) == 0 {
+		_, err := logger.SetWarnWriter(nonewriter.NewNoneWriter())
+		if err != nil {
+			return configerror.NewErrorf("set warn writer error: %s", err.Error())
+		}
+	} else if len(logWarn) == 1 {
+		_, err := logger.SetWarnWriter(logWarn[0])
+		if err != nil {
+			return configerror.NewErrorf("set warn writer error: %s", err.Error())
+		}
+	} else {
+		combiningWriter := combiningwriter.NewCombiningWriter(logWarn...)
+		_, err := logger.SetWarnWriter(combiningWriter)
+		if err != nil {
+			return configerror.NewErrorf("set warn combining writer error: %s", err.Error())
+		}
+	}
+
+	if len(logErr) == 0 {
+		_, err := logger.SetErrWriter(nonewriter.NewNoneWriter())
+		if err != nil {
+			return configerror.NewErrorf("set error writer error: %s", err.Error())
+		}
+	} else if len(logErr) == 1 {
+		_, err := logger.SetErrWriter(logErr[0])
+		if err != nil {
+			return configerror.NewErrorf("set error writer error: %s", err.Error())
+		}
+	} else {
+		combiningWriter := combiningwriter.NewCombiningWriter(logErr...)
+		_, err := logger.SetErrWriter(combiningWriter)
+		if err != nil {
+			return configerror.NewErrorf("set error combining writer error: %s", err.Error())
+		}
 	}
 
 	return nil

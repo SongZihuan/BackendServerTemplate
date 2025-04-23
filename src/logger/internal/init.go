@@ -7,42 +7,31 @@ package internal
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/wrapwriter"
-	"io"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/warpwriter"
 	"os"
 )
 
-func InitLogger(level loglevel.LoggerLevel, logTag bool, humanWarnWriter, humanErrWriter io.Writer, machineWarnWriter, machineErrWriter io.Writer) error {
+func InitLogger(level loglevel.LoggerLevel, logTag bool, warnWriter, errWriter write.Writer) error {
 	logLevel, ok := levelMap[level]
 	if !ok {
 		return fmt.Errorf("invalid log level: %s", level)
 	}
 
-	if humanWarnWriter == nil {
-		humanWarnWriter = wrapwriter.WrapToWriter(os.Stdout)
+	if warnWriter == nil {
+		warnWriter = warpwriter.NewWarpWriter(os.Stdout, nil)
 	}
 
-	if humanErrWriter == nil {
-		humanErrWriter = wrapwriter.WrapToWriter(os.Stderr)
-	}
-
-	if machineWarnWriter == nil {
-		machineWarnWriter = nonewriter.NewNoneWriter()
-	}
-
-	if machineErrWriter == nil {
-		machineErrWriter = nonewriter.NewNoneWriter()
+	if errWriter == nil {
+		errWriter = warpwriter.NewWarpWriter(os.Stderr, nil)
 	}
 
 	logger := &Logger{
-		level:             level,
-		logLevel:          logLevel,
-		logTag:            logTag,
-		humanWarnWriter:   humanWarnWriter,
-		humanErrWriter:    humanErrWriter,
-		machineWarnWriter: machineWarnWriter,
-		machineErrWriter:  machineErrWriter,
+		level:      level,
+		logLevel:   logLevel,
+		logTag:     logTag,
+		warnWriter: warnWriter,
+		errWriter:  errWriter,
 	}
 
 	GlobalLogger = logger
@@ -54,8 +43,6 @@ func IsReady() bool {
 }
 
 func CloseLogger() {
-	_ = GlobalLogger.CloseHumanWarnWriter()
-	_ = GlobalLogger.CloseHumanErrWriter()
-	_ = GlobalLogger.CloseMachineWarnWriter()
-	_ = GlobalLogger.CloseMachineErrWriter()
+	_ = GlobalLogger.CloseWarnWriter()
+	_ = GlobalLogger.CloseErrWriter()
 }

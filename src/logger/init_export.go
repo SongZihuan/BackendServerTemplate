@@ -7,11 +7,10 @@ package logger
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/internal"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"io"
 )
 
-func InitBaseLogger(level loglevel.LoggerLevel, logTag bool, humanWarnWriter, humanErrWriter, machineWarnWriter, machineErWriter io.Writer) error {
-	return internal.InitLogger(level, logTag, humanWarnWriter, humanErrWriter, machineWarnWriter, machineErWriter)
+func InitBaseLogger() error {
+	return internal.InitLogger(loglevel.LevelDebug, true, nil, nil)
 }
 
 func CloseLogger() {

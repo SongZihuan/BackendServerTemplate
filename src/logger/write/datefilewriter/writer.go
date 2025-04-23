@@ -6,6 +6,7 @@ package datefilewriter
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/filesystemutils"
 	"os"
@@ -19,9 +20,10 @@ type DateFileWriter struct {
 	filenameSuffix string
 	file           *os.File
 	close          bool
+	fn             logformat.FormatFunc
 }
 
-func (f *DateFileWriter) Write(p []byte) (n int, err error) {
+func (f *DateFileWriter) Write(data *logformat.LogData) (n int, err error) {
 	if f.close {
 		return 0, fmt.Errorf("date file writer has been close")
 	}
@@ -43,7 +45,7 @@ func (f *DateFileWriter) Write(p []byte) (n int, err error) {
 		return 0, fmt.Errorf("file writer has been close")
 	}
 
-	return f.file.Write(p)
+	return fmt.Fprintf(f.file, "%s\n", f.fn(data))
 }
 
 func (f *DateFileWriter) closeFile() error {
@@ -78,12 +80,9 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 }
 
 func (f *DateFileWriter) Close() error {
-	return f.ExitClose()
-}
-
-func (f *DateFileWriter) ExitClose() error {
 	defer func() {
 		f.file = nil
+		f.close = true
 	}()
 
 	if f.file != nil {
@@ -93,7 +92,7 @@ func (f *DateFileWriter) ExitClose() error {
 	return nil
 }
 
-func NewDateFileWriter(dirpath string, filenamePrefix string) (*DateFileWriter, error) {
+func NewDateFileWriter(dirpath string, filenamePrefix string, fn logformat.FormatFunc) (*DateFileWriter, error) {
 	var writer write.WriteCloser
 	var res = new(DateFileWriter)
 
@@ -109,6 +108,7 @@ func NewDateFileWriter(dirpath string, filenamePrefix string) (*DateFileWriter, 
 	res.dirPath = dirpath
 	res.filenamePrefix = filenamePrefix
 	res.close = false
+	res.fn = fn
 
 	writer = res // 用于检验StdWriter实现了io.WriteCloser
 	_ = writer

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/internal"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"io"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 )
 
 func SetLevel(level loglevel.LoggerLevel) error {
@@ -25,30 +25,16 @@ func SetLogTag(logTag bool) error {
 	return internal.GlobalLogger.SetLogTag(logTag)
 }
 
-func SetHumanWarnWriter(w io.Writer) (io.Writer, error) {
+func SetWarnWriter(w write.Writer) (write.Writer, error) {
 	if !internal.IsReady() {
 		return nil, fmt.Errorf("logger not ready")
 	}
-	return internal.GlobalLogger.SetHumanWarnWriter(w)
+	return internal.GlobalLogger.SetWarnWriter(w)
 }
 
-func SetHumanErrWriter(w io.Writer) (io.Writer, error) {
+func SetErrWriter(w write.Writer) (write.Writer, error) {
 	if !internal.IsReady() {
 		return nil, fmt.Errorf("logger not ready")
 	}
-	return internal.GlobalLogger.SetHumanErrWriter(w)
-}
-
-func SetMachineWarnWriter(w io.Writer) (io.Writer, error) {
-	if !internal.IsReady() {
-		return nil, fmt.Errorf("logger not ready")
-	}
-	return internal.GlobalLogger.SetMachineWarnWriter(w)
-}
-
-func SetMachineErrWriter(w io.Writer) (io.Writer, error) {
-	if !internal.IsReady() {
-		return nil, fmt.Errorf("logger not ready")
-	}
-	return internal.GlobalLogger.SetMachineErrWriter(w)
+	return internal.GlobalLogger.SetErrWriter(w)
 }

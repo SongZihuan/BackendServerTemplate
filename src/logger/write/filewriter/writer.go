@@ -6,6 +6,7 @@ package filewriter
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"os"
 )
@@ -13,9 +14,10 @@ import (
 type FileWriter struct {
 	filePath string
 	file     *os.File
+	fn       logformat.FormatFunc
 }
 
-func (f *FileWriter) Write(p []byte) (n int, err error) {
+func (f *FileWriter) Write(data *logformat.LogData) (n int, err error) {
 	if f.file == nil {
 		return 0, fmt.Errorf("file writer has been close")
 	}
@@ -24,27 +26,27 @@ func (f *FileWriter) Write(p []byte) (n int, err error) {
 		return 0, fmt.Errorf("file writer has been close")
 	}
 
-	return f.file.Write(p)
+	return fmt.Fprintf(f.file, "%s\n", f.fn(data))
 }
 
 func (f *FileWriter) Close() error {
-	return f.ExitClose()
-}
+	if f.file == nil {
+		return nil
+	}
 
-func (f *FileWriter) ExitClose() error {
 	defer func() {
 		f.file = nil
 	}()
 
-	if f.file != nil {
-		return f.file.Close()
-	}
-
-	return nil
+	return f.file.Close()
 }
 
-func NewFileWriter(filepath string) (*FileWriter, error) {
+func NewFileWriter(filepath string, fn logformat.FormatFunc) (*FileWriter, error) {
 	var res = new(FileWriter)
+
+	if fn == nil {
+		fn = logformat.FormatFile
+	}
 
 	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -53,6 +55,7 @@ func NewFileWriter(filepath string) (*FileWriter, error) {
 
 	res.filePath = filepath
 	res.file = file
+	res.fn = fn
 
 	return res, nil
 }
