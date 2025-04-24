@@ -8,8 +8,10 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/builddate"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/git"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/mod"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/random"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/releaseinfo"
+	"log"
 	"os"
 )
 
@@ -20,7 +22,14 @@ func main() {
 func command() int {
 	var err error
 
-	err = basefile.CreateBaseFile()
+	log.Println("generate start to run")
+
+	_, err = mod.GetGoModuleName() // 提前一步帕胺的
+	if err != nil {
+		return ReturnError(err)
+	}
+
+	err = basefile.TouchBaseFile()
 	if err != nil {
 		return ReturnError(err)
 	}
@@ -36,6 +45,11 @@ func command() int {
 	}
 
 	err = git.WriteGitData()
+	if err != nil {
+		return ReturnError(err)
+	}
+
+	err = git.WriteGitIgnore()
 	if err != nil {
 		return ReturnError(err)
 	}

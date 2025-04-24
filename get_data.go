@@ -2,12 +2,6 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-//go:build !windows
-
-//go:generate /bin/bash ./get_date.sh
-
-//go:generate /bin/bash ./get_git.sh
-
-//go:generate /bin/bash ./get_random.sh
+//go:generate go run github.com/SongZihuan/BackendServerTemplate/tool/generate
 
 package resource

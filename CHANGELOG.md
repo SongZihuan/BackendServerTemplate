@@ -14,6 +14,7 @@
 - 强制所以`cmd`下的可执行程序包都必须显示导入`prerun`包。
 - 强制`prerun`包必须显示导入`global`包。
 - 默认导入`time/tzdata`时区数据包，除非添加`systemtzdata`标签，表示使用操作系统自带的数据包。
+- 在 `go gerenate` 中添加发布信息（`release_info.md`），但因为该文件需要被忽略，因此修改为：`release_info.md.ignore`。
 
 ### 修改
 
@@ -29,6 +30,7 @@
 
 - 完善时区系统，获取本地时间时可以读取到`IANA`时区信息。
 - 重构了退出机制。将`main`程序移到`command`程序，将原本的`os.Exit`替换成`return`一个`ExitCode`，最后在`main`函数在使用`os.Exit`退出程序。有效的解决了以前直接在`main`使用`os.Exit`导致`defer`函数无法释放。
+- 将 `go generate` 从原本的 `Shell` 脚本（`.sh`和`.ps1`）换成由 `go run` 直接执行的 `.go` 程序。 同时，数据文件以 `.dat` 作为文件后缀（除特殊的 `VERSION`，`NAME`，`REPORT`，`LICENSE`，`ENV_PREFIX`），并且需要忽略的文件以 `.ignore`  作为后缀。
 
 ### 文档
 
@@ -42,6 +44,7 @@
 ### 其他
 
 - 调整`GitHub`的`PR`模板。
+- 使用`GitHub Action`流水线创建`Release`时使用`markdown`文件：`release_info.md`。
 
 ## [0.10.0] - 2025-04-23 Asia/Shanghai
 

@@ -8,8 +8,15 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/randomutils"
+	"log"
 )
 
 func WriteRandomData() error {
-	return fileutils.Write(basefile.FileRandomData, randomutils.GenerateRandomString(40))
+	log.Println("generate: write random number (length=40) data")
+	defer log.Println("generate: write random number (length=40) data finish")
+
+	val := randomutils.GenerateRandomString(40)
+
+	log.Printf("generate: write %s to file %s\n", val, basefile.FileRandomData)
+	return fileutils.Write(basefile.FileRandomData, val)
 }

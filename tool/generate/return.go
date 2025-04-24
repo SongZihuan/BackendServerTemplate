@@ -10,11 +10,11 @@ const exitCodeSuccess = 0
 const exitCodeFailed = 1
 
 func ReturnError(err error) int {
-	log.Printf("Error: %s\n", err.Error())
+	log.Printf("generate: error: %s\n", err.Error())
 	return exitCodeFailed
 }
 
 func ReturnSuccess() int {
-	log.Println("Success!")
+	log.Println("generate: success!")
 	return exitCodeSuccess
 }

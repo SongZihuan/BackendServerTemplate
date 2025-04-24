@@ -8,7 +8,7 @@ import "strings"
 
 func GetString(data string) (res string) {
 	res = strings.Replace(data, "\r", "", -1)
-	res = strings.Split(res, "\n")[0]
+	res = strings.TrimRight(res, "\n")
 	res = strings.TrimSpace(res)
 	return res
 }

@@ -4,75 +4,106 @@
 
 package basefile
 
-import "github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
-
-const (
-	FileVersion   = "./VERSION"
-	FileLicense   = "./LICENSE"
-	FileReport    = "./REPORT"
-	FileName      = "./NAME"
-	FileEnvPrefix = "./ENV_PREFIX"
-
-	FileBuildDateTxt  = "./build_date.txt"
-	FileCommitDateTxt = "./commit_data.txt"
-	FileTagDataTxt    = "./tag_data.txt"
-	FileTagCommitData = "./tag_commit_data.txt"
-	FileRandomData    = "./random_data.txt"
-
-	FileReleaseInfoMD = "./release_info.md"
+import (
+	"github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
+	"log"
 )
 
-func CreateBaseFile() (err error) {
+const (
+	FileIgnoreExt    = ".ignore"
+	GitIgnoreExtFlag = "*" + FileIgnoreExt
+)
+
+const (
+	FileVersion    = "./VERSION"
+	FileLicense    = "./LICENSE"
+	FileReport     = "./REPORT"
+	FileName       = "./NAME"
+	FileEnvPrefix  = "./ENV_PREFIX"
+	FileSystemYaml = "./SERVICE.yaml"
+
+	FileBuildDateTxt  = "./build_date.dat" + FileIgnoreExt
+	FileCommitDateTxt = "./commit_data.dat" + FileIgnoreExt
+	FileTagDataTxt    = "./tag_data.dat" + FileIgnoreExt
+	FileTagCommitData = "./tag_commit_data.dat" + FileIgnoreExt
+	FileRandomData    = "./random_data.dat" + FileIgnoreExt
+
+	FileReleaseInfoMD = "./release_info.md" + FileIgnoreExt
+
+	FileGitIgnore = "./.gitignore"
+)
+
+func TouchBaseFile() (err error) {
+	log.Println("generate: touch base file")
+	defer log.Println("generate: touch base file finish")
+
+	log.Printf("generate: touch file %s\n", FileVersion)
 	err = fileutils.Touch(FileVersion)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileLicense)
 	err = fileutils.Touch(FileLicense)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileReport)
 	err = fileutils.Touch(FileReport)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileName)
 	err = fileutils.Touch(FileName)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileEnvPrefix)
 	err = fileutils.Touch(FileEnvPrefix)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileSystemYaml)
+	err = fileutils.Touch(FileSystemYaml)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("generate: touch file %s\n", FileBuildDateTxt)
 	err = fileutils.Touch(FileBuildDateTxt)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileCommitDateTxt)
 	err = fileutils.Touch(FileCommitDateTxt)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileTagDataTxt)
 	err = fileutils.Touch(FileTagDataTxt)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileTagCommitData)
 	err = fileutils.Touch(FileTagCommitData)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileRandomData)
 	err = fileutils.Touch(FileRandomData)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("generate: touch file %s\n", FileReleaseInfoMD)
 	err = fileutils.Touch(FileReleaseInfoMD)
 	if err != nil {
 		return err

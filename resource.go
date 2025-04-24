@@ -27,21 +27,21 @@ var Name string
 //go:embed ENV_PREFIX
 var EnvPrefix string
 
-//go:embed build_date.txt
+//go:embed build_date.dat.ignore
 var buildDateTxt string
 
 var BuildTime time.Time
 
-//go:embed commit_data.txt
+//go:embed commit_data.dat.ignore
 var GitCommitHash string
 
-//go:embed tag_data.txt
+//go:embed tag_data.dat.ignore
 var GitTag string
 
-//go:embed tag_commit_data.txt
+//go:embed tag_commit_data.dat.ignore
 var GitTagCommitHash string
 
-//go:embed random_data.txt
+//go:embed random_data.dat.ignore
 var randomData string
 
 func init() {

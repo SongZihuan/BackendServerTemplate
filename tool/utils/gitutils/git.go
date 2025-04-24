@@ -27,7 +27,7 @@ func GetLastCommit() (string, error) {
 }
 
 func GetTagListWithFilter(filter func(string) bool) ([]string, error) {
-	ret, err := executils.RunOnline("git", "for-each-ref", "--sort=-creatordate", "--format", "%(refname:short)", "refs/tags/")
+	ret, err := executils.Run("git", "for-each-ref", "--sort=-creatordate", "--format", "%(refname:short)", "refs/tags/")
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func GetTagListWithFilter(filter func(string) bool) ([]string, error) {
 	tagListSrc := strings.Split(ret, "\n")
 	tagList := make([]string, 0, len(tagListSrc))
 
-	for _, tag := range tagList {
+	for _, tag := range tagListSrc {
 		tag = strings.TrimSpace(tag)
 		if tag == "" || (filter != nil && !filter(tag)) {
 			continue

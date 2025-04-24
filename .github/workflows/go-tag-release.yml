@@ -8,7 +8,7 @@ on:
       - main
       - master
     tags:
-      - '*'   # 匹配所有标签
+      - 'v*'   # 匹配 'v' 开头的标签
   pull_request:
     types:
       - opened
@@ -100,6 +100,9 @@ jobs:
         run: |
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_catv1" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/catv1
 
+      - name: Copy Release Info
+        run: copy "${{ github.workspace }}/release_info.md.ignore" "${{ github.workspace }}/output/release_info.md"
+
       - name: List build directory
         run: |
           ls -l "${{ github.workspace }}/output"
@@ -181,6 +184,14 @@ jobs:
         with:
           fetch-depth: 0 # 获取所有历史记录以便能够创建标签
 
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.4' # 根据需要指定Go版本
+
+      - name: Go generate
+        run: GOOS=linux GOARCH=amd64 go generate ./...
+
       - name: Extract tag name
         id: extract_tag
         run: |
@@ -210,9 +221,7 @@ jobs:
           artifacts: "${{ github.workspace }}/output/linux_amd64_lionv1,${{ github.workspace }}/output/linux_amd64_tigerv1,${{ github.workspace }}/output/linux_amd64_catv1,${{ github.workspace }}/output/windows_amd64_lionv1.exe,${{ github.workspace }}/output/windows_amd64_tigerv1.exe,${{ github.workspace }}/output/windows_amd64_catv1.exe"
           artifactErrorsFailBuild: true
           allowUpdates: false
-          body: |
-            新版本 ${{  steps.extract_tag.outputs.tag  }} 发布啦！
-            快来体验吧！
+          bodyFile: "${{ github.workspace }}/output/release_info.md"
           generateReleaseNotes: true
           makeLatest: "legacy"
           tag: "${{  github.ref  }} "
