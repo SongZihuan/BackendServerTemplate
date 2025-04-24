@@ -25,4 +25,7 @@ build_date.txt
 commit_data.txt
 tag_data.txt
 tag_commit_data.txt
+
 random_data.txt
+
+release_info.md

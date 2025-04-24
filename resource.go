@@ -24,6 +24,9 @@ var Report string
 //go:embed NAME
 var Name string
 
+//go:embed ENV_PREFIX
+var EnvPrefix string
+
 //go:embed build_date.txt
 var buildDateTxt string
 
@@ -40,9 +43,6 @@ var GitTagCommitHash string
 
 //go:embed random_data.txt
 var randomData string
-
-//go:embed ENV_PREFIX
-var EnvPrefix string
 
 func init() {
 	initCleanFile() // 最先执行

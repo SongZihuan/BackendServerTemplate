@@ -6,20 +6,11 @@ package filesystemutils
 
 import "os"
 
-func IsFile(path string) bool {
+func IsDir(path string) bool {
 	s, err := os.Stat(path)
 	if err != nil {
 		return false
 	}
 
-	return !s.IsDir()
-}
-
-func IsExistsAndFile(path string) (exists, isFile bool) {
-	s, err := os.Stat(path)
-	if err != nil {
-		return false, false
-	}
-
-	return true, !s.IsDir()
+	return s.IsDir()
 }

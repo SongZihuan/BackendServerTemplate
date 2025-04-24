@@ -21,5 +21,5 @@ func IsExistsAndDir(path string) (exists, isDir bool) {
 		return false, false
 	}
 
-	return s.IsDir(), true
+	return true, s.IsDir()
 }
