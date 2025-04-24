@@ -5,6 +5,8 @@
 package changelog
 
 import (
+	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/git"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
 	"log"
 	"os"
@@ -50,7 +52,8 @@ FindVersionCycle:
 		s := logSrc[index]
 		if strings.HasPrefix(s, "## [") && !strings.HasPrefix(s, "## [未") {
 			log.Printf("generate: read file %s title [index: %d]: %s\n", FileChangelog, index, s)
-			res.WriteString(s + "\n")
+			res.WriteString("\n\n---\n\n") // 前一个\n\n是用于与前者空开一行以上（使用双\n放在前者写完后没空行。后面\n\n双恐慌可以实现后者直接写内容就与前面保存空行。
+			res.WriteString(fmt.Sprintf("### **%s** 更新内容\n", git.Version()))
 			break FindVersionCycle
 		}
 	}
@@ -68,7 +71,11 @@ GetVersionLogCycle:
 		}
 
 		log.Printf("generate: read file %s content [index: %d]: %s\n", FileChangelog, index, s)
-		res.WriteString(s + "\n")
+		if strings.HasPrefix(s, "### ") {
+			res.WriteString("#" + s + "\n")
+		} else {
+			res.WriteString(s + "\n")
+		}
 	}
 
 	return res.String()

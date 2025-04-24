@@ -9,6 +9,7 @@
 ### 其他
 
 - 新增`CodeQL流水线`。
+- 修复流水线生成`release_info.md`时的一些问题。
 
 ## [0.11.0] - 2025/04/25 Asia/Shanghai
 

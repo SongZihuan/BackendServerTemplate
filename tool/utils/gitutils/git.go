@@ -5,7 +5,6 @@
 package gitutils
 
 import (
-	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/executils"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/filesystemutils"
@@ -33,19 +32,15 @@ func GetTagListWithFilter(filter func(string) bool) ([]string, error) {
 		return nil, err
 	}
 
-	fmt.Printf("\n=1=\n%s\n=1=\n", ret)
 	ret = cleanstringutils.GetString(ret)
-	fmt.Printf("\n=2=\n%s\n=2=\n", ret)
 
 	tagListSrc := strings.Split(ret, "\n")
-	fmt.Printf("tagListSrc length=%d\n", len(tagListSrc))
 
 	tagList := make([]string, 0, len(tagListSrc))
 
 	for _, tag := range tagListSrc {
 		tag = strings.TrimSpace(tag)
 		if tag == "" || (filter != nil && !filter(tag)) {
-			fmt.Printf("generate: skip tag %s\n", tag)
 			continue
 		}
 		tagList = append(tagList, tag)
