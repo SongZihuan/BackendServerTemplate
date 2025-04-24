@@ -88,6 +88,10 @@ jobs:
       - name: Go generate
         run: GOOS=linux GOARCH=amd64 go generate ./...
 
+      - name: List source directory
+        run: |
+          ls -l "${{ github.workspace }}/output"
+
       - name: Build lionv1
         run: |
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_lionv1" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
@@ -140,6 +144,10 @@ jobs:
           set GOARCH=amd64
           go generate ./...
 
+      - name: List source directory
+        run: |
+          ls -l "${{ github.workspace }}/output"
+
       - name: Build lionv1
         run: |
           set GOOS=windows
@@ -183,14 +191,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # 获取所有历史记录以便能够创建标签
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.23.4' # 根据需要指定Go版本
-
-      - name: Go generate
-        run: GOOS=linux GOARCH=amd64 go generate ./...
 
       - name: Extract tag name
         id: extract_tag
