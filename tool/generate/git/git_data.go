@@ -72,7 +72,6 @@ func initGitData() (err error) {
 	if err != nil {
 		return err
 	}
-
 	log.Printf("generate: get git tag list length: %d\n", len(tagList))
 
 	if len(tagList) > 0 {
