@@ -238,7 +238,7 @@ jobs:
           artifactErrorsFailBuild: true
           allowUpdates: false
           bodyFile: "${{ github.workspace }}/output/release_info.md"
-          generateReleaseNotes: true
+          generateReleaseNotes: false
           makeLatest: "legacy"
           tag: "${{  github.ref  }} "
           name: "版本 ${{  steps.extract_tag.outputs.tag  }} 发布！"
