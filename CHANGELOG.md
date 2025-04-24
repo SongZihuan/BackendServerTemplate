@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](/CHANGELOG_SPECIFICATION.md) 。
 
+## [未发布]
+
+### 亲她
+
+- 新增`CodeQL流水线`。
+
 ## [0.11.0] - 2025/04/25 Asia/Shanghai
 
 ### 新增
