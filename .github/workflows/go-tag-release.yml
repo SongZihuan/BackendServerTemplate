@@ -90,7 +90,7 @@ jobs:
 
       - name: List source directory
         run: |
-          ls -l "${{ github.workspace }}/output"
+          ls -l "${{ github.workspace }}"
 
       - name: Build lionv1
         run: |
@@ -146,7 +146,7 @@ jobs:
 
       - name: List source directory
         run: |
-          ls -l "${{ github.workspace }}/output"
+          ls -l "${{ github.workspace }}"
 
       - name: Build lionv1
         run: |
