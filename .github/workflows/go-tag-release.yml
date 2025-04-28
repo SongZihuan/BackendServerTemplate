@@ -94,6 +94,9 @@ jobs:
       - name: Go generate
         run: GOOS=linux GOARCH=amd64 go generate ./...
 
+      - name: Go generate patch
+        run: GOOS=linux GOARCH=amd64 go run github.com/SongZihuan/BackendServerTemplate/tool/patch
+
       - name: List source directory
         run: |
           ls -l "${{ github.workspace }}"
