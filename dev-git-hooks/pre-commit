@@ -1,0 +1,19 @@
+#!/bin/sh
+
+mkdir -p third-party/github.com.SongZihuan.BackendServerTemplate/
+
+cp LICENSE third-party/github.com.SongZihuan.BackendServerTemplate/LICENSE
+cp REPORT third-party/github.com.SongZihuan.BackendServerTemplate/REPORT
+
+cp CHANGELOG.md third-party/github.com.SongZihuan.BackendServerTemplate/CHANGELOG.md
+cp CHANGELOG_SPECIFICATION.md third-party/github.com.SongZihuan.BackendServerTemplate/CHANGELOG_SPECIFICATION.md
+
+cp .git/hooks/pre-commit dev-git-hooks/pre-commit
+
+git add third-party/github.com.SongZihuan.BackendServerTemplate/LICENSE
+git add third-party/github.com.SongZihuan.BackendServerTemplate/REPORT
+
+git add third-party/github.com.SongZihuan.BackendServerTemplate/CHANGELOG.md
+git add third-party/github.com.SongZihuan.BackendServerTemplate/CHANGELOG_SPECIFICATION.md
+
+git add dev-git-hooks/pre-commit
