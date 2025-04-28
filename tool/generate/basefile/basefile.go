@@ -5,13 +5,9 @@
 package basefile
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/tool/global"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
 	"log"
-)
-
-const (
-	FileIgnoreExt    = ".ignore"
-	GitIgnoreExtFlag = "*" + FileIgnoreExt
 )
 
 const (
@@ -22,13 +18,13 @@ const (
 	FileEnvPrefix  = "./ENV_PREFIX"
 	FileSystemYaml = "./SERVICE.yaml"
 
-	FileBuildDateTxt  = "./build_date.dat" + FileIgnoreExt
-	FileCommitDateTxt = "./commit_data.dat" + FileIgnoreExt
-	FileTagDataTxt    = "./tag_data.dat" + FileIgnoreExt
-	FileTagCommitData = "./tag_commit_data.dat" + FileIgnoreExt
-	FileRandomData    = "./random_data.dat" + FileIgnoreExt
+	FileBuildDateTxt  = "./build_date.dat" + global.FileIgnoreExt
+	FileCommitDateTxt = "./commit_data.dat" + global.FileIgnoreExt
+	FileTagDataTxt    = "./tag_data.dat" + global.FileIgnoreExt
+	FileTagCommitData = "./tag_commit_data.dat" + global.FileIgnoreExt
+	FileRandomData    = "./random_data.dat" + global.FileIgnoreExt
 
-	FileReleaseInfoMD = "./release_info.md" + FileIgnoreExt
+	FileReleaseInfoMD = "./release_info.md" + global.FileIgnoreExt
 
 	FileGitIgnore = "./.gitignore"
 )

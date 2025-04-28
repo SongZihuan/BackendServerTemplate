@@ -5,6 +5,7 @@
 package gitutils
 
 import (
+	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/executils"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/filesystemutils"
@@ -59,4 +60,14 @@ func GetTagCommit(tag string) (string, error) {
 
 func GetFirstCommit() (string, error) {
 	return executils.RunOnline("git", "rev-list", "--max-parents=0", "HEAD")
+}
+
+func GetPatch(from string, to string, excludes ...string) ([]byte, error) {
+	args := make([]string, 0, len(excludes)+3)
+	args = append(args, "diff", from, to, ".")
+	for _, e := range excludes {
+		args = append(args, fmt.Sprintf(":(exclude)%s", e))
+	}
+
+	return executils.RunBytes("git", args...)
 }

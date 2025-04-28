@@ -23,6 +23,31 @@ func Write(filePath string, dat string) error {
 	return err
 }
 
+func WriteBytes(filePath string, dat []byte) error {
+	// 尝试打开文件
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+	_, err = file.Write(dat)
+	return err
+}
+
+func WriteEmpty(filePath string) error {
+	// 尝试打开文件
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+	return err
+}
+
 func AppendOnExistsFile(filePath string, dat string) error {
 	// 尝试打开文件（若文件不存在则返回错误）
 	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0644)

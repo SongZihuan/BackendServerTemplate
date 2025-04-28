@@ -34,3 +34,18 @@ func RunOnline(name string, args ...string) (string, error) {
 
 	return cleanstringutils.GetStringOneLine(res), nil
 }
+
+func RunBytes(name string, args ...string) ([]byte, error) {
+	cmd := exec.Command(name, args...)
+
+	var out bytes.Buffer
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = &out
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return nil, err
+	}
+
+	return out.Bytes(), nil
+}

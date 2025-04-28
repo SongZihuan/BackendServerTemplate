@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/mod"
+	"github.com/SongZihuan/BackendServerTemplate/tool/global"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
 	"github.com/SongZihuan/BackendServerTemplate/tool/utils/gitutils"
 	"log"
@@ -212,7 +213,7 @@ func WriteGitIgnore() error {
 	}
 
 	res, err := fileutils.CheckFileByLine(basefile.FileGitIgnore, func(s string) bool {
-		if s == basefile.GitIgnoreExtFlag {
+		if s == global.GitIgnoreExtFlag {
 			return true
 		}
 		return false
@@ -224,15 +225,15 @@ func WriteGitIgnore() error {
 		return nil
 	}
 
-	log.Printf("generaate: auto ignore '%s', write to file %s\n", basefile.GitIgnoreExtFlag, basefile.FileGitIgnore)
+	log.Printf("generaate: auto ignore '%s', write to file %s\n", global.GitIgnoreExtFlag, basefile.FileGitIgnore)
 	return appendGitIgnore()
 }
 
 func newGitIgnore() error {
-	return fileutils.Write(basefile.FileGitIgnore, fmt.Sprintf("# auto write by go generate\n%s\n", basefile.GitIgnoreExtFlag))
+	return fileutils.Write(basefile.FileGitIgnore, fmt.Sprintf("# auto write by go generate\n%s\n", global.GitIgnoreExtFlag))
 }
 
 func appendGitIgnore() error {
 	// 写入前添加\n，确保在新的一行
-	return fileutils.AppendOnExistsFile(basefile.FileGitIgnore, fmt.Sprintf("\n# auto write by go generate\n%s\n", basefile.GitIgnoreExtFlag))
+	return fileutils.AppendOnExistsFile(basefile.FileGitIgnore, fmt.Sprintf("\n# auto write by go generate\n%s\n", global.GitIgnoreExtFlag))
 }
