@@ -35,11 +35,11 @@
 
 ## 入口
 
-入口文件在`src/cmd`下，目前分别有两个程序：`lionv1`和`tigerv1`。
+入口文件在`src/cmd`下，目前分别有三个程序：
 
-* `lionv1` 是使用控制单元的多服务演示程序。
-* `tigerv1` 是直接运行服务的单服务演示程序。
-* `catv1` 是服务安装演示程序。
+* `lion` 是使用控制单元的多服务演示程序。
+* `tiger` 是直接运行服务的单服务演示程序。
+* `cat` 是服务安装演示程序。
 
 入口程序不直接包含太多的实际代码，真正的`main`函数位于`src\mainfunc`下。
 程序的返回值代表程序的`Exit Code`。
@@ -68,22 +68,22 @@ $ go generate ./...
 
 ### 编译
 
-使用`go build`指令进行编译。如何包位于`github.com/SongZihuan/BackendServerTemplate/src/cmd/`下，例如`github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1`
+使用`go build`指令进行编译。如何包位于`github.com/SongZihuan/BackendServerTemplate/src/cmd/`下，例如`github.com/SongZihuan/BackendServerTemplate/src/cmd/lion`
 
-所以，编译命令如下（以`lionv1`为例）：
+所以，编译命令如下（以`lion`为例）：
 ```shell
-$ go build github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
+$ go build github.com/SongZihuan/BackendServerTemplate/src/cmd/lion
 ```
 
 若用于开发环境，可以按如下方式编译：
 ```shell
-$ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/lionv1
+$ go build -o lion -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/lion
 ```
 
 其中：
- * `-o lionv1` 表示输出二进制文件的路径和名称
-   * Windows： `-o lionv1.exe`
-   * Linux/MacOS：`-o lionv1`
+ * `-o lion` 表示输出二进制文件的路径和名称
+   * Windows： `-o lion.exe`
+   * Linux/MacOS：`-o lion`
  * `-trimpath` 表示擦除二进制文件中关于源码目录的信息，可以压缩二进制文件体积和包含隐私。
  * `-ldflags='-s -w'` 是传递给链接器的参数。
    * `-s` 表示去掉符号和调试信息，可以减少二进制文件大小，同时增加反编译的难度。
@@ -97,41 +97,41 @@ $ go build -o lionv1 -trimpath -ldflags='-s -w -extldflags "-static"' github.com
 
 ### 运行参数
 
-接下来所列出来的指令，是`lionv1`、`tigerv1`和`catv1`所共有的子命令和标志。
+接下来所列出来的指令，是`lion`、`tiger`和`cat`所共有的子命令和标志。
 
-下列为公共子命令，以`lionv1`为例子：
+下列为公共子命令，以`lion`为例子：
 
-* `lionv1` 无子命令时，表示直接运行该程序。
-  * 注意：直接调用`catv1`运行代码是具有未知性的，应该使用`catv1 start`。
-* `lionv1 help` 查看`lionv1`的帮助文档。
-  * `lionv1 help <subcommand>` 查看子命令的帮助文档，例如：`lionv1 help version`。
-* `lionv1 version` 输出详细的版本号。
-* `lionv1 license` 输出授权协议（位于项目根目录的`LICENSE`）。
-* `lionv1 report` 输出程序反馈、报告方式文档。
-* `lionv1 check` 检查并输出配置文件的检查接管。
+* `lion` 无子命令时，表示直接运行该程序。
+  * 注意：直接调用`cat`运行代码是具有未知性的，应该使用`cat start`。
+* `lion help` 查看`lion`的帮助文档。
+  * `lion help <subcommand>` 查看子命令的帮助文档，例如：`lion help version`。
+* `lion version` 输出详细的版本号。
+* `lion license` 输出授权协议（位于项目根目录的`LICENSE`）。
+* `lion report` 输出程序反馈、报告方式文档。
+* `lion check` 检查并输出配置文件的检查接管。
 * `completion` 与`shell`和`powershell`实现自动补全有关。
 
-下列为公共标志，以`lionv1`为例子：
+下列为公共标志，以`lion`为例子：
 
-* `lionv1 -n xxx`，`lionv1 --name xxx` 设置程序运行的名称，需要一个参数 **（全局参数，任何子命令均具有此参数）**。
-* `lionv1 -h`，`lionv1 --help` 查看帮助文档 **（全局参数，任何子命令均具有此参数）**。
-* `lionv1 -c xxx`，`lionv1 --config xxx` 配置文件位置（可提供一个字符串参数作为路径指向配置文件，默认值为：`config.yaml`）。
-* `lionv1 -o xxx`、`lionv1 --output-config xxx` 反向输出配置文件（默认不输出，若提供一个路径则会输出到该路径所指处）。未知配置项不会输出，未设定配置项则以默认值（若有）输出。**前提：配置文件被正确导入和识别。**
+* `lion -n xxx`，`lion --name xxx` 设置程序运行的名称，需要一个参数 **（全局参数，任何子命令均具有此参数）**。
+* `lion -h`，`lion --help` 查看帮助文档 **（全局参数，任何子命令均具有此参数）**。
+* `lion -c xxx`，`lion --config xxx` 配置文件位置（可提供一个字符串参数作为路径指向配置文件，默认值为：`config.yaml`）。
+* `lion -o xxx`、`lion --output-config xxx` 反向输出配置文件（默认不输出，若提供一个路径则会输出到该路径所指处）。未知配置项不会输出，未设定配置项则以默认值（若有）输出。**前提：配置文件被正确导入和识别。**
 
-以下标志为`tigerv1`和`lionv1`共有，`catv1`没有的：
+以下标志为`tiger`和`lion`共有，`cat`没有的：
 
-* `lionv1 --auto-reload` 自动重载（监测配置文件，若其变化则重启服务系统）。该功能应该仅仅用在开发时。
+* `lion --auto-reload` 自动重载（监测配置文件，若其变化则重启服务系统）。该功能应该仅仅用在开发时。
 
 以下为`check`子命令的标志：
 
-* `lionv1 check -c xxx`，`lionv1 check --config xxx` 配置文件位置（可提供一个字符串参数作为路径指向配置文件，默认值为：`config.yaml`）。
-* `lionv1 check -o xxx`、`lionv1 check --output-config xxx` 反向输出配置文件（默认不输出，若提供一个路径则会输出到该路径所指处）。未知配置项不会输出，未设定配置项则以默认值（若有）输出。**前提：配置文件被正确导入和识别。**
+* `lion check -c xxx`，`lion check --config xxx` 配置文件位置（可提供一个字符串参数作为路径指向配置文件，默认值为：`config.yaml`）。
+* `lion check -o xxx`、`lion check --output-config xxx` 反向输出配置文件（默认不输出，若提供一个路径则会输出到该路径所指处）。未知配置项不会输出，未设定配置项则以默认值（若有）输出。**前提：配置文件被正确导入和识别。**
 
 以下为`version`子命令的标志：
 
-* `lionv1 version -s` `lionv1 version --short` 仅输出短的版本号。
+* `lion version -s` `lion version --short` 仅输出短的版本号。
 
-特定于`catv1`的子命令（如：`install`、`start`等）可参考：[后端服务](#后台服务)
+特定于`cat`的子命令（如：`install`、`start`等）可参考：[后端服务](#后台服务)
 
 ### 运行时配置文件
 
@@ -217,7 +217,7 @@ server:  # 系统执行服务所需要的参数
 
 ## 后台服务
 
-虽然`lionv1`和`tigerv1`也可以作为后台服务，但是我使用了`catv1`进行了更高层次的抽象，使得在`Windows`和`Linux`上可以安装服务程序。
+虽然`lion`和`tiger`也可以作为后台服务，但是我使用了`cat`进行了更高层次的抽象，使得在`Windows`和`Linux`上可以安装服务程序。
 
 后台服务采用Go的第三方库`github.com/kardianos/service`实现，主要目的是实现`Windows`上的服务注册。
 但是理论上来说，`MacOS`和`Linux`（`systemd`）也能使用。
@@ -234,7 +234,7 @@ describe: 一个简单的Go测试服务  # 服务的秒数
 
 # 参数来源
 #  no      无运行时参数（默认行为）
-#  install 在安装时指定参数，例如：catv1 install a b c，其中 a b c 作为参数
+#  install 在安装时指定参数，例如：cat install a b c，其中 a b c 作为参数
 #  config  在本配置文件中的 argument-list 列表指定运行时参数
 argument-from: install
 # argument-from 为 config 时启用
@@ -247,7 +247,7 @@ argument-list: []
 env-from: no
 # env-from 为 install 时启用
 env-get-list: 
-  - a  # 安装程序（catv1 install）运行时，获取环境变量 a，并作为服务运行时的环境变量（例如安装时 a 的值为 b ，服务运行时也将得到环境变量 a 的值为 b）
+  - a  # 安装程序（cat install）运行时，获取环境变量 a，并作为服务运行时的环境变量（例如安装时 a 的值为 b ，服务运行时也将得到环境变量 a 的值为 b）
   - c
 # env-from 为 config 时启用
 env-set-list: 
@@ -261,29 +261,29 @@ env-set-list:
 ### 安装
 
 ```shell
-$ catv1 install <命令行参数列表>
+$ cat install <命令行参数列表>
 ```
 
 使用此命令可以在`Windows`中或`Linux`中注册一个服务.
 
-注意：安装后可执行程序`catv1`仍需保留在原来位置，不可移动。
+注意：安装后可执行程序`cat`仍需保留在原来位置，不可移动。
 
 ### 卸载
 
 ```shell
-$ catv1 uninstall
+$ cat uninstall
 ```
 
 或者
 
 ```shell
-$ catv1 remove
+$ cat remove
 ```
 
 ### 启动
 
 ```shell
-$ catv1 start
+$ cat start
 ```
 
 启动不需要指定命令行参数，命令行参数在`install`时即确定。
@@ -291,13 +291,13 @@ $ catv1 start
 ### 停止
 
 ```shell
-$ catv1 stop
+$ cat stop
 ```
 
 ### 重启
 
 ```shell
-$ catv1 restart
+$ cat restart
 ```
 
 ## 日后升级计划

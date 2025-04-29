@@ -5,8 +5,7 @@
 package check
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/prerun"
-	checkv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/check/v1"
+	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/check"
 	"github.com/spf13/cobra"
 )
 
@@ -20,13 +19,7 @@ var CMD = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 		cmd.SilenceErrors = true
-
-		err := prerun.PreRun()
-		if err != nil {
-			return err
-		}
-
-		return checkv1.MainV1(cmd, args, inputConfigFilePath, outputConfigFilePath)
+		return check.Main(cmd, args, inputConfigFilePath, outputConfigFilePath)
 	},
 }
 

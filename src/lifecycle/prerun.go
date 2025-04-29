@@ -2,23 +2,29 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package prerun
-
-// 必须明确导入 global 包 （虽然下面的import确实导入了 global 包，但此处重复写一次表示冗余，以免在某些情况下本包不适用 global 后，下方的导入被自动删除）
-import (
-	_ "github.com/SongZihuan/BackendServerTemplate/src/global"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/stdutils"
-)
+package lifecycle
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/stdutils"
+	"sync"
 )
 
+var _preRunOnce sync.Once
+var _preError error
+
 func PreRun() (exitCode error) {
+	_preRunOnce.Do(func() {
+		_preError = preRun()
+	})
+	return _preError
+}
+
+func preRun() (exitCode error) {
 	var err error
 
 	quiteMode := envutils.GetEnv(global.EnvPrefix, "QUITE")
@@ -54,10 +60,4 @@ func PreRun() (exitCode error) {
 	}
 
 	return nil
-}
-
-func PostRun() {
-	logger.CloseLogger()
-	logger.Recover()
-	stdutils.CloseNullFile()
 }

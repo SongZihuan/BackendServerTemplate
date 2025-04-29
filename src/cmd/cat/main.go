@@ -4,22 +4,22 @@
 
 package main
 
-// 必须明确导入 prerun 包 （虽然下面的import确实导入了 prerun 包，但此处重复写一次表示冗余，以免在某些情况下本包不适用 prerun 后，下方的导入被自动删除）
 import (
-	_ "github.com/SongZihuan/BackendServerTemplate/src/cmd/prerun"
-)
-
-import (
-	"github.com/SongZihuan/BackendServerTemplate/src/cmd/prerun"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
-	catv1 "github.com/SongZihuan/BackendServerTemplate/src/mainfunc/cat/v1"
+	"github.com/SongZihuan/BackendServerTemplate/src/lifecycle"
+	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/cat"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
+)
+
+// 必须明确导入 lifecycle 包 （虽然下面的import确实导入了 prerun 包，但此处重复写一次表示冗余，以免在某些情况下本包不适用 prerun 后，下方的导入被自动删除）
+import (
+	_ "github.com/SongZihuan/BackendServerTemplate/src/lifecycle"
 )
 
 const (
@@ -39,8 +39,8 @@ func main() {
 }
 
 func command() exitutils.ExitCode {
-	err := prerun.PreRun()
-	defer prerun.PostRun() // 此处defer放在err之前（因为RPreRun包含启动东西太多，虽然返回err，但不代表全部操作没成功，因此defer设置在这个位置，确保清理函数被调用。清理函数可以判断当前是否需要清理）
+	err := lifecycle.PreRun()
+	defer lifecycle.PostRun() // 此处defer放在err之前（因为RPreRun包含启动东西太多，虽然返回err，但不代表全部操作没成功，因此defer设置在这个位置，确保清理函数被调用。清理函数可以判断当前是否需要清理）
 	if err != nil {
 		return exitutils.ErrorToExit(err)
 	}
@@ -67,7 +67,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return catv1.MainV1(cmd, args, inputConfigFilePath)
+			return cat.Main(cmd, args, inputConfigFilePath)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -92,7 +92,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return catv1.MainV1Install(cmd, args)
+			return cat.MainInstall(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -117,7 +117,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return catv1.MainV1UnInstall(cmd, args)
+			return cat.MainUnInstall(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -140,7 +140,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return catv1.MainV1Start(cmd, args)
+			return cat.MainStart(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -163,7 +163,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return catv1.MainV1Stop(cmd, args)
+			return cat.MainStop(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -186,7 +186,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return catv1.MainV1Restart(cmd, args)
+			return cat.MainRestart(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false

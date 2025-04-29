@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package v1
+package restart
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
+func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
 	var err error
 
 	err = config.InitConfig(&config.ConfigOption{

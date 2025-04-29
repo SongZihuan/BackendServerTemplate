@@ -4,11 +4,19 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
-## [未发布]
+## [0.14.0] - 2025/04/29 Asia/Shanghai
 
 ### 新增
 
 - 添加`utils`包的单元测试。
+
+### 修改
+
+- 原于 `cmd` 包下的 `prerun` 包移动到 `src` 下，重命名为 `lifecycle` 包，并使用 `sync.Once` 确保其只执行一次。
+
+### 重构
+
+- 重命名 `lionv1`、 `tigerv1` 和 `catv1` 为 `lion`、 `tiger` 和 `cat` 。
 
 ## [0.13.0] - 2025/04/28 Asia/Shanghai
 

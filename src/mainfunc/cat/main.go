@@ -2,25 +2,16 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package v1
+package cat
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/kardianos/service"
 	"github.com/spf13/cobra"
-	"os"
 )
 
-func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
+func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
 	var err error
-
-	logfile, err := os.OpenFile("C:\\Users\\songz\\Code\\GoProject\\BackendServerTemplate\\test_self\\tmpcat.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		_ = logfile.Close()
-	}()
 
 	err = initServiceConfig()
 	if err != nil {
@@ -46,7 +37,7 @@ func MainV1(cmd *cobra.Command, args []string, inputConfigFilePath string) (exit
 	return prg.ExitCode()
 }
 
-func MainV1Install(cmd *cobra.Command, args []string) (exitCode error) {
+func MainInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
 	err = initInstallServiceConfig(args)
@@ -78,7 +69,7 @@ func MainV1Install(cmd *cobra.Command, args []string) (exitCode error) {
 	return exitutils.SuccessExit("Service Install Success")
 }
 
-func MainV1UnInstall(cmd *cobra.Command, args []string) (exitCode error) {
+func MainUnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
 	err = initServiceConfig()
@@ -110,7 +101,7 @@ func MainV1UnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	return exitutils.SuccessExit("Service Remove Success")
 }
 
-func MainV1Start(cmd *cobra.Command, args []string) (exitCode error) {
+func MainStart(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
 	err = initServiceConfig()
@@ -142,7 +133,7 @@ func MainV1Start(cmd *cobra.Command, args []string) (exitCode error) {
 	return exitutils.SuccessExit("Service Start Success")
 }
 
-func MainV1Stop(cmd *cobra.Command, args []string) (exitCode error) {
+func MainStop(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
 	err = initServiceConfig()
@@ -174,7 +165,7 @@ func MainV1Stop(cmd *cobra.Command, args []string) (exitCode error) {
 	return exitutils.SuccessExit("Service Stop Success")
 }
 
-func MainV1Restart(cmd *cobra.Command, args []string) (exitCode error) {
+func MainRestart(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
 	err = initServiceConfig()
