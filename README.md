@@ -27,6 +27,12 @@
 
 若您为项目做出了任何贡献，我们将会记录在 [贡献者名单](/CONTRIBUTORS.md) 上，若有任何遗漏可以随时通过 `Issue` 与我们取得联系。
 
+## 文档
+
+推荐阅读文档：[DeepWiki](https://deepwiki.com/SongZihuan/BackendServerTemplate) 。
+
+**Note:** `DeepWiki`根据仓库的源码文件自动生成`WiKi`文档，现在被列为本项目参考文档之一和推荐阅读文档。
+
 ## 入口
 
 入口文件在`src/cmd`下，目前分别有两个程序：`lionv1`和`tigerv1`。
