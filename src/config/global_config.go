@@ -84,7 +84,7 @@ func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		}
 	} else {
 		var err error
-		location, err = timeutils.LoadLocation(d.Timezone)
+		location, err = timeutils.LoadTimezone(d.Timezone)
 		if err != nil || location == nil {
 			location = global.UTCLocation
 		}

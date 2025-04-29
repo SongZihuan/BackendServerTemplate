@@ -7,6 +7,10 @@ package fileutils
 import "os"
 
 func IsFileOpen(file *os.File) bool {
+	if file == nil {
+		return false
+	}
+
 	// 获取文件描述符
 	fd := file.Fd()
 

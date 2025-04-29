@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func LoadLocation(name string) (*time.Location, error) {
+func LoadTimezone(name string) (*time.Location, error) {
 	return time.LoadLocation(name)
 }
 

@@ -64,20 +64,6 @@ func (s *StringBool) ToString() string {
 	return string(disable)
 }
 
-func (s *StringBool) ToStringDefaultEnable() string {
-	if s.IsEnable(true) {
-		return string(enable)
-	}
-	return string(disable)
-}
-
-func (s *StringBool) ToStringDefaultDisable() string {
-	if s.IsEnable(false) {
-		return string(enable)
-	}
-	return string(disable)
-}
-
 func (s *StringBool) ToBool(defaultVal ...bool) bool {
 	return s.IsEnable(defaultVal...)
 }

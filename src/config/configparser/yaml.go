@@ -36,7 +36,7 @@ func NewYamlProvider(opt *NewConfigParserProviderOption) *YamlProvider {
 
 	// 环境变量
 	p.viper.SetEnvPrefix(opt.EnvPrefix)
-	p.viper.SetEnvKeyReplacer(envutils.GetEnvReplaced())
+	p.viper.SetEnvKeyReplacer(envutils.EnvReplacer)
 	p.viper.AutomaticEnv()
 
 	if p.autoReload {

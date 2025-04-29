@@ -35,7 +35,7 @@ var name string = global.Name
 var inputConfigFilePath string = "config.yaml"
 
 func main() {
-	command().Init().Exit()
+	command().ClampAttribute().Exit()
 }
 
 func command() exitutils.ExitCode {
@@ -196,5 +196,5 @@ func command() exitutils.ExitCode {
 	}
 
 	cmd.AddCommand(version.CMD, license.CMD, report.CMD, check.CMD, install, uninstall, start, stop, restart)
-	return exitutils.ExitQuite(cmd.Execute())
+	return exitutils.ErrorToExitQuite(cmd.Execute())
 }

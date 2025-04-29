@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [未发布]
+
+### 新增
+
+- 添加`utils`包的单元测试。
+
 ## [0.13.0] - 2025/04/28 Asia/Shanghai
 
 ### 新增

@@ -5,9 +5,11 @@
 package global
 
 import (
+	"fmt"
 	resource "github.com/SongZihuan/BackendServerTemplate"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/timeutils"
+	"strings"
 	"time"
 )
 
@@ -21,7 +23,7 @@ var (
 	GitCommitHash      = resource.GitCommitHash
 	GitTag             = resource.GitTag
 	GitTagCommitHash   = resource.GitTagCommitHash
-	EnvPrefix          = envutils.EnvPrefix
+	EnvPrefix          = resource.EnvPrefix
 
 	// Name 继承自resource
 	// 注意：命令行参数或配置文件加载时可能会被更改
@@ -35,3 +37,16 @@ var (
 	LocalLocation = timeutils.GetLocalTimezone()
 	Location      = time.UTC
 )
+
+func init() {
+	if EnvPrefix == "" {
+		return
+	}
+
+	newEnvPrefix := envutils.ToEnvName(EnvPrefix)
+	if EnvPrefix != newEnvPrefix {
+		panic(fmt.Errorf("bad %s; good %s", EnvPrefix, newEnvPrefix))
+	} else if strings.HasSuffix(EnvPrefix, "_") {
+		panic("EnvPrefix End With '_'")
+	}
+}

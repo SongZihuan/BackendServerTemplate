@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func LoadLocation(name string) (*time.Location, error) {
+func LoadTimezone(name string) (*time.Location, error) {
 	loc, err1 := time.LoadLocation(name)
 	if err1 == nil && loc != nil {
 		return loc, nil

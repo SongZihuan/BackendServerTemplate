@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/utils/fileutils"
 	"os"
 )
 
@@ -18,11 +19,7 @@ type FileWriter struct {
 }
 
 func (f *FileWriter) Write(data *logformat.LogData) (n int, err error) {
-	if f.file == nil {
-		return 0, fmt.Errorf("file writer has been close")
-	}
-
-	if f.file.Fd() == ^(uintptr(0)) { // 检查文件描述符是否为 -1
+	if fileutils.IsFileOpen(f.file) {
 		return 0, fmt.Errorf("file writer has been close")
 	}
 

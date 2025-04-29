@@ -21,31 +21,36 @@ import (
 func PreRun() (exitCode error) {
 	var err error
 
-	quiteMode := envutils.GetEnv("QUITE")
+	quiteMode := envutils.GetEnv(global.EnvPrefix, "QUITE")
 	if quiteMode != "" {
 		err = stdutils.QuiteMode()
 		if err != nil {
 			stdutils.Recover()
-			return exitutils.InitFailedForQuiteModeModule(err.Error())
+			return exitutils.InitFailed("Quite Mode", err.Error())
 		}
 	}
 
 	if global.UTCLocation == nil {
-		return exitutils.InitFailedForTimeLocationModule("can not get utc location")
+		return exitutils.InitFailed("Time Location", "can not get utc location")
 	}
 
 	if global.LocalLocation == nil {
-		return exitutils.InitFailedForTimeLocationModule("can not get local location")
+		return exitutils.InitFailed("Time Location", "can not get local location")
 	}
 
 	err = consoleutils.SetConsoleCPSafe(consoleutils.CodePageUTF8)
 	if err != nil {
-		return exitutils.InitFailedForWin32ConsoleModule(err.Error())
+		return exitutils.InitFailed("Win32 Console API", err.Error())
 	}
 
 	err = logger.InitBaseLogger()
 	if err != nil {
-		return exitutils.InitFailedForLoggerModule(err.Error())
+		return exitutils.InitFailed("Logger", err.Error())
+	}
+
+	err = stdutils.OpenNullFile()
+	if err != nil {
+		return exitutils.InitFailed("File dev/null", err.Error())
 	}
 
 	return nil

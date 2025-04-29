@@ -31,6 +31,8 @@ func (e *EventData) GetCode() uint {
 func (*EventData) ConsoleEvent() {}
 
 // 定义控制台事件类型
+//
+//goland:noinspection GoSnakeCaseUsage
 var (
 	CTRL_C_EVENT Event = &EventData{
 		Name: "CTRL_C_EVENT",

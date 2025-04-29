@@ -31,7 +31,7 @@ var reload bool = false
 var ppid int = 0
 
 func main() {
-	command().Init().Exit()
+	command().ClampAttribute().Exit()
 }
 
 func command() exitutils.ExitCode {
@@ -104,5 +104,5 @@ func command() exitutils.ExitCode {
 
 	cmd.Flags().StringVarP(&inputConfigFilePath, "config", "c", inputConfigFilePath, "the file path of the configuration file")
 
-	return exitutils.ExitQuite(cmd.Execute())
+	return exitutils.ErrorToExitQuite(cmd.Execute())
 }
