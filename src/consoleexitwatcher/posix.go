@@ -11,11 +11,11 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
 )
 
-func NewWin32ConsoleExitChannel() (chan consoleutils.Event, chan any, error) {
-	var exitChannel = make(chan consoleutils.Event)
-	var waitExitChannel = make(chan any)
+var consoleexitchan = make(chan any)
+var consolewaitexitchan = make(chan any)
 
-	return exitChannel, waitExitChannel, nil
+func NewWin32ConsoleExitChannel() (chan any, chan any, error) {
+	return consoleexitchan, consolewaitexitchan, nil
 }
 
 func GetExitEvent() consoleutils.Event {
