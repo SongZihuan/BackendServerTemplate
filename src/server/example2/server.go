@@ -9,7 +9,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/goutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/strconvutils"
 	"sync"
