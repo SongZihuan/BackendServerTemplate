@@ -7,6 +7,8 @@ package logger
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/internal"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logpanic"
+	"time"
 )
 
 func IsReady() bool {
@@ -50,7 +52,7 @@ func Errorf(format string, args ...interface{}) {
 
 func Panicf(format string, args ...interface{}) {
 	if !internal.IsReady() {
-		panic(fmt.Sprintf(format, args...))
+		logpanic.Panic(time.Now(), fmt.Sprintf(format, args...))
 	}
 	internal.GlobalLogger.Panicf(format, args...)
 }
@@ -92,7 +94,7 @@ func Error(args ...interface{}) {
 
 func Panic(args ...interface{}) {
 	if !internal.IsReady() {
-		panic(fmt.Sprint(args...))
+		logpanic.Panic(time.Now(), fmt.Sprint(args...))
 	}
 	internal.GlobalLogger.Panic(args...)
 }
@@ -134,7 +136,7 @@ func ErrorWrite(msg string) {
 
 func PanicWrite(msg string) {
 	if !internal.IsReady() {
-		panic(msg)
+		logpanic.Panic(time.Now(), msg)
 	}
 	internal.GlobalLogger.PanicWrite(msg)
 }
