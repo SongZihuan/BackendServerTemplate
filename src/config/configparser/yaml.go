@@ -98,9 +98,3 @@ func (y *YamlProvider) ParserFile(target any) configerror.Error {
 
 	return nil
 }
-
-func _testYaml() {
-	var a ConfigParserProvider
-	a = &YamlProvider{}
-	_ = a
-}

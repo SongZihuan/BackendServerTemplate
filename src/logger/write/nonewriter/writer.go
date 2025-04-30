@@ -6,7 +6,6 @@ package nonewriter
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 )
 
 type NoneWriter struct {
@@ -22,12 +21,4 @@ func (f *NoneWriter) Close() error {
 
 func NewNoneWriter() *NoneWriter {
 	return new(NoneWriter)
-}
-
-func _testNoneWriter() {
-	var a write.WriteCloser
-	var b *NoneWriter
-
-	a = b
-	_ = a
 }

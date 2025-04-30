@@ -58,14 +58,3 @@ func FormatConsolePretty(data *LogData) string {
 	}
 	panic(fmt.Sprintf("unknown loglevel: %s", data.Level))
 }
-
-func _test_func() {
-	var a FormatFunc
-
-	a = FormatMachine
-	a = FormatFile
-	a = FormatConsole
-	a = FormatConsolePretty
-
-	_ = a
-}

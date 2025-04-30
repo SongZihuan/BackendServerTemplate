@@ -260,11 +260,3 @@ func (s *Controller) Stop() {
 func (s *Controller) IsRunning() bool {
 	return s.running.Load()
 }
-
-func _test() {
-	var a serverinterface.Server
-	var b *Controller
-
-	a = b
-	_ = a
-}

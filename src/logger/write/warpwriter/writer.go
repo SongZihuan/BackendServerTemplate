@@ -7,7 +7,6 @@ package warpwriter
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"io"
 )
 
@@ -29,12 +28,4 @@ func NewWarpWriter(w io.Writer, fn logformat.FormatFunc) *WarpWriter {
 		writer: w,
 		fn:     fn,
 	}
-}
-
-func _testWrapWriter() {
-	var a write.Writer
-	var b *WarpWriter
-
-	a = b
-	_ = a
 }

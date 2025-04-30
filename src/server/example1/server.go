@@ -9,7 +9,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/goutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/strconvutils"
 	"sync"
@@ -139,12 +138,4 @@ func (s *ServerExample1) Stop() {
 
 func (s *ServerExample1) IsRunning() bool {
 	return s.running.Load()
-}
-
-func _test() {
-	var a serverinterface.Server
-	var b *ServerExample1
-
-	a = b
-	_ = a
 }

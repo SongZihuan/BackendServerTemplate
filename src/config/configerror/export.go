@@ -30,11 +30,3 @@ func NewWarningf(format string, args ...any) Error {
 	logger.Errorf("config warning: %s", msg)
 	return &configError{msg: msg, isError: false}
 }
-
-func _test() { // 测试函数，确保 Error 符合 error
-	var a Error
-	var b error
-
-	b = a
-	_ = b
-}

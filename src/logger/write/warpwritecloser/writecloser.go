@@ -7,7 +7,6 @@ package warpwritecloser
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"io"
 )
 
@@ -29,12 +28,4 @@ func NewWarpWriteCloser(w io.WriteCloser, fn logformat.FormatFunc) *WarpWriteClo
 		writer: w,
 		fn:     fn,
 	}
-}
-
-func _testWrapWriteCloser() {
-	var a write.Writer
-	var b *WarpWriteCloser
-
-	a = b
-	_ = a
 }

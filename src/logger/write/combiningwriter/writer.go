@@ -82,11 +82,3 @@ func NewCombiningWriter(w ...write.Writer) *CombiningWriter {
 
 	return res
 }
-
-func _testCombiningWriter() {
-	var a write.WriteCloser
-	var b *CombiningWriter
-
-	a = b
-	_ = a
-}

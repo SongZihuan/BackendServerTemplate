@@ -98,9 +98,3 @@ func (j *JsonProvider) ParserFile(target any) configerror.Error {
 
 	return nil
 }
-
-func _testJson() {
-	var a ConfigParserProvider
-	a = &JsonProvider{}
-	_ = a
-}

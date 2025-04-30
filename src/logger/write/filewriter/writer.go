@@ -7,7 +7,6 @@ package filewriter
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/fileutils"
 	"os"
 )
@@ -55,12 +54,4 @@ func NewFileWriter(filepath string, fn logformat.FormatFunc) (*FileWriter, error
 	res.fn = fn
 
 	return res, nil
-}
-
-func _testFileWriter() {
-	var a write.WriteCloser
-	var b *FileWriter
-
-	a = b
-	_ = a
 }

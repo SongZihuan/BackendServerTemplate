@@ -10,6 +10,7 @@ import (
 	"testing"
 )
 
+// testNormalServiceConfig 此函数为公共函数，并非测试函数（不以Test开头）
 func testNormalServiceConfig(t *testing.T) {
 	if serviceConfig.Name == "" {
 		t.Errorf("Service name is empty")

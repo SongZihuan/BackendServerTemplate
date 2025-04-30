@@ -51,9 +51,3 @@ func (j *JsonProvider) WriteFile(filepath string, src any) configerror.Error {
 
 	return nil
 }
-
-func _testJson() {
-	var a ConfigOutputProvider
-	a = &JsonProvider{}
-	_ = a
-}

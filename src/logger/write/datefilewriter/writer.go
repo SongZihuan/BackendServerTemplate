@@ -112,11 +112,3 @@ func NewDateFileWriter(dirpath string, filenamePrefix string, fn logformat.Forma
 
 	return res, nil
 }
-
-func _testDateFileWriter() {
-	var a write.WriteCloser
-	var b *DateFileWriter
-
-	a = b
-	_ = a
-}

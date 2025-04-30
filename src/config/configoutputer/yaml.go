@@ -60,9 +60,3 @@ func (y *YamlProvider) WriteFile(filepath string, src any) configerror.Error {
 
 	return nil
 }
-
-func _testYaml() {
-	var a ConfigOutputProvider
-	a = &YamlProvider{}
-	_ = a
-}

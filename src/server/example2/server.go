@@ -136,11 +136,3 @@ func (s *ServerExample2) Stop() {
 func (s *ServerExample2) IsRunning() bool {
 	return s.running.Load()
 }
-
-func _test() {
-	var a serverinterface.Server
-	var b *ServerExample2
-
-	a = b
-	_ = a
-}
