@@ -8,14 +8,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
-	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
+	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/controller"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example2"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
-	"github.com/SongZihuan/BackendServerTemplate/src/signalwatcher"
+	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
 )
@@ -31,9 +31,9 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 		return exitutils.InitFailed("Config file read and parser", err.Error())
 	}
 
-	sigchan := signalwatcher.NewSignalExitChannel()
+	sigexitchan := sigexitwatcher.GetSignalExitChannelFromConfig()
 
-	consolechan, consolewaitexitchan, err := consolewatcher.NewWin32ConsoleExitChannel()
+	consoleexitchan, consolewaitexitchan, err := consoleexitwatcher.NewWin32ConsoleExitChannel()
 	if err != nil {
 		return exitutils.InitFailed("Win32 console channel", err.Error())
 	}
@@ -95,12 +95,12 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 			err = fmt.Errorf("stop by parent process, but pppid not set")
 			stopErr = err
 		}
-	case sig := <-sigchan:
-		logger.Warnf("stop by signal (%s)", sig.String())
+	case <-sigexitchan:
+		logger.Warnf("stop by signal (%s)", sigexitwatcher.GetExitSignal().String())
 		err = nil
 		stopErr = nil
-	case event := <-consolechan:
-		logger.Infof("stop by console event (%s)", event.String())
+	case <-consoleexitchan:
+		logger.Infof("stop by console event (%s)", consoleexitwatcher.GetExitEvent().String())
 		err = nil
 		stopErr = nil
 	case <-ctrl.GetCtx().Listen():

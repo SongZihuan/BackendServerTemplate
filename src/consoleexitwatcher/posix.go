@@ -4,7 +4,7 @@
 
 //go:build !windows
 
-package consolewatcher
+package consoleexitwatcher
 
 import "github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
 

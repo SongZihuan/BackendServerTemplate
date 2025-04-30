@@ -7,41 +7,39 @@ package cat
 import (
 	"errors"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
+	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example3"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
-	"github.com/SongZihuan/BackendServerTemplate/src/signalwatcher"
+	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/kardianos/service"
-	"os"
 )
 
 type Program struct {
-	sigchan    chan os.Signal
-	stopErr    error
-	ser        serverinterface.Server
-	exitCode   exitutils.ExitCode
-	configPath string
+	sigexitchan         chan any
+	consoleexitchan     chan any
+	consolewaitexitchan chan any
+	stopErr             error
+	ser                 serverinterface.Server
+	exitCode            exitutils.ExitCode
+	configPath          string
 }
 
 func NewProgram() *Program {
-	return &Program{
-		sigchan:    make(chan os.Signal), // 临时顶替（后续会重新复制）
-		stopErr:    nil,
-		ser:        nil,
-		exitCode:   exitutils.ExitCode(0),
-		configPath: "",
-	}
+	return NewRunProgram("")
 }
 
 func NewRunProgram(configPath string) *Program {
 	return &Program{
-		sigchan:    make(chan os.Signal), // 临时顶替（后续会重新复制）
-		stopErr:    nil,
-		ser:        nil,
-		exitCode:   exitutils.ExitCode(0),
-		configPath: configPath,
+		sigexitchan:         make(chan any), // 临时顶替（后续会重新复制）
+		consoleexitchan:     make(chan any), // 临时顶替（后续会重新复制）
+		consolewaitexitchan: make(chan any), // 临时顶替（后续会重新复制）
+		stopErr:             nil,
+		ser:                 nil,
+		exitCode:            exitutils.ExitCode(0),
+		configPath:          configPath,
 	}
 }
 
@@ -49,7 +47,7 @@ func (p *Program) Start(s service.Service) error {
 	var err error
 
 	if p.configPath == "" {
-		panic("The main process should not be called.")
+		logger.Panicf("The main process should not be called.")
 	}
 
 	err = config.InitConfig(&config.ConfigOption{
@@ -61,7 +59,13 @@ func (p *Program) Start(s service.Service) error {
 		return err
 	}
 
-	p.sigchan = signalwatcher.NewSignalExitChannel()
+	// 不使用 windows console, 因为注册为服务后运行是没有
+	p.consoleexitchan, p.consolewaitexitchan, err = consoleexitwatcher.NewWin32ConsoleExitChannel()
+	if err != nil {
+		return exitutils.InitFailed("Win32 console channel", err.Error())
+	}
+
+	p.sigexitchan = sigexitwatcher.GetSignalExitChannelFromConfig()
 
 	p.ser, _, err = example3.NewServerExample3(&example3.ServerExample3Option{
 		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
@@ -74,8 +78,12 @@ func (p *Program) Start(s service.Service) error {
 	go p.ser.Run()
 	go func() {
 		select {
-		case sig := <-p.sigchan:
-			logger.Warnf("Stop by signal (%s)", sig.String())
+		case <-p.sigexitchan:
+			logger.Warnf("Stop by signal (%s)", sigexitwatcher.GetExitSignal().String())
+			err = nil
+			p.stopErr = nil
+		case <-p.consoleexitchan:
+			logger.Infof("stop by console event (%s)", consoleexitwatcher.GetExitEvent().String())
 			err = nil
 			p.stopErr = nil
 		case <-p.ser.GetCtx().Listen():
@@ -101,7 +109,7 @@ func (p *Program) Start(s service.Service) error {
 
 func (p *Program) Stop(s service.Service) error {
 	if p.configPath == "" {
-		panic("The main process should not be called.")
+		logger.Panicf("The main process should not be called.")
 	}
 
 	p.ser.Stop()

@@ -6,10 +6,10 @@ package restart
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
-	"github.com/SongZihuan/BackendServerTemplate/src/consolewatcher"
+	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/signalwatcher"
+	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
 )
@@ -25,9 +25,9 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCo
 		return exitutils.InitFailed("Config file read and parser", err.Error())
 	}
 
-	sigchan := signalwatcher.NewSignalExitChannel()
+	sigexitchan := sigexitwatcher.GetSignalExitChannelFromConfig()
 
-	consolechan, consolewaitexitchan, err := consolewatcher.NewWin32ConsoleExitChannel()
+	consoleexitchan, consolewaitexitchan, err := consoleexitwatcher.NewWin32ConsoleExitChannel()
 	if err != nil {
 		return exitutils.InitFailed("Win32 console channel", err.Error())
 	}
@@ -41,12 +41,12 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCo
 		logger.Warnf("stop by sub process")
 		err = nil
 		stopErr = nil
-	case sig := <-sigchan:
-		logger.Warnf("stop by signal (%s)", sig.String())
+	case <-sigexitchan:
+		logger.Warnf("stop by signal (%s)", sigexitwatcher.GetExitSignal().String())
 		err = nil
 		stopErr = nil
-	case event := <-consolechan:
-		logger.Infof("stop by console event (%s)", event.String())
+	case <-consoleexitchan:
+		logger.Infof("stop by console event (%s)", consoleexitwatcher.GetExitEvent().String())
 		err = nil
 		stopErr = nil
 	}

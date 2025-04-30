@@ -78,20 +78,21 @@ func BindStdToConsole() error {
 }
 
 func SetConsoleCtrlHandler(handler func(event uint) bool, add bool) error {
+	return SetConsoleCtrlHandlerByCallback(syscall.NewCallback(func(event uint) uintptr {
+		if handler(event) {
+			return 1
+		}
+		return 0
+	}), add)
+}
+
+func SetConsoleCtrlHandlerByCallback(handler uintptr, add bool) error {
 	var _add uintptr = 0
 	if add {
 		_add = 1
 	}
 
-	ret, _, err := setConsoleCtrlHandler.Call(
-		syscall.NewCallback(func(event uint) uintptr {
-			if handler(event) {
-				return 1
-			}
-			return 0
-		}),
-		_add,
-	)
+	ret, _, err := setConsoleCtrlHandler.Call(handler, _add)
 	if ret == 0 {
 		if err == nil {
 			err = fmt.Errorf("unknown")
