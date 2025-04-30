@@ -14,3 +14,8 @@ func NewWin32ConsoleExitChannel() (chan consoleutils.Event, chan any, error) {
 
 	return exitChannel, waitExitChannel, nil
 }
+
+func GetExitEvent() consoleutils.Event {
+	logger.Panicf("not event")
+	return nil
+}
