@@ -10,7 +10,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
 	"github.com/spf13/cobra"
 )
 

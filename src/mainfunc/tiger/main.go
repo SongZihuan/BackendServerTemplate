@@ -13,7 +13,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/example1"
 	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/server"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
 	"github.com/spf13/cobra"
 )
 

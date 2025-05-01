@@ -8,8 +8,8 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/timeutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/timeutils"
 	"strings"
 	"time"
 )

@@ -13,8 +13,8 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/datefilewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/filewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/warpwriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/termutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/typeutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/termutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/typeutils"
 	"os"
 	"strings"
 )

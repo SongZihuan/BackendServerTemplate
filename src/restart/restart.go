@@ -7,8 +7,8 @@ package restart
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/osutils"
 	"os"
 	"os/exec"
 )

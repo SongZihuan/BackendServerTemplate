@@ -7,7 +7,7 @@ package filewriter
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/fileutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"os"
 )
 

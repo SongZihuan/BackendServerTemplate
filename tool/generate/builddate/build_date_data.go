@@ -7,7 +7,7 @@ package builddate
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"log"
 	"time"
 )

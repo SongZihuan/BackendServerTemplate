@@ -14,7 +14,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/tiger"
 	restartinfo "github.com/SongZihuan/BackendServerTemplate/src/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/spf13/cobra"
 )
 

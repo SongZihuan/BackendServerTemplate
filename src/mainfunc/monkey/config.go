@@ -7,9 +7,9 @@ package monkey
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/sliceutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/sliceutils"
 	"gopkg.in/yaml.v3"
 	"regexp"
 )

@@ -6,8 +6,8 @@ package main
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/global"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/gitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/gitutils"
 	"log"
 	"strings"
 	"sync"

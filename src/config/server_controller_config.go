@@ -7,8 +7,8 @@ package config
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/strconvutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/typeutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/strconvutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/typeutils"
 	"time"
 )
 

@@ -7,7 +7,7 @@ package logformat
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/osutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/osutils"
 	"os"
 	"os/user"
 	"strings"

@@ -9,8 +9,8 @@ package consoleexitwatcher
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/strconvutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/consoleutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/strconvutils"
 	"syscall"
 	"time"
 )

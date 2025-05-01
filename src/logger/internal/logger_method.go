@@ -10,7 +10,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logpanic"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/runtimeutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/runtimeutils"
 	"time"
 )
 

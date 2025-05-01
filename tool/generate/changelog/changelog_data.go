@@ -7,7 +7,7 @@ package changelog
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/git"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"log"
 	"os"
 	"strings"

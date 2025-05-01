@@ -7,10 +7,10 @@ package lifecycle
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/stdutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/consoleutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/stdutils"
 	"sync"
 )
 

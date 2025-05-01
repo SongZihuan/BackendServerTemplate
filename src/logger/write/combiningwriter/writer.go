@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/sliceutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/sliceutils"
 )
 
 type CombiningWriter struct {

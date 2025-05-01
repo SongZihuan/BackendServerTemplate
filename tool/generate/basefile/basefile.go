@@ -6,7 +6,7 @@ package basefile
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/global"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/fileutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"log"
 )
 

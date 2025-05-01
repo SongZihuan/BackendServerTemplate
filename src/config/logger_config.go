@@ -11,7 +11,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/combiningwriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/typeutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/typeutils"
 )
 
 type LoggerConfig struct {

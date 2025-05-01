@@ -6,7 +6,7 @@ package mod
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"log"
 	"os"
 	"regexp"

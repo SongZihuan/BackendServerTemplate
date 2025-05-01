@@ -5,7 +5,7 @@
 package monkey
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
 	"github.com/kardianos/service"
 	"github.com/spf13/cobra"
 )

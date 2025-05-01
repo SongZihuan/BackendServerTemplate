@@ -8,7 +8,7 @@ package consoleexitwatcher
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/consoleutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/consoleutils"
 )
 
 var consoleexitchan = make(chan any)

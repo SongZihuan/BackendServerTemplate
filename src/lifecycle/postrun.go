@@ -6,7 +6,7 @@ package lifecycle
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/stdutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/stdutils"
 	"sync"
 )
 

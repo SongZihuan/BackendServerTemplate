@@ -7,7 +7,7 @@ package report
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/formatutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/formatutils"
 	"github.com/spf13/cobra"
 	"io"
 	"os"

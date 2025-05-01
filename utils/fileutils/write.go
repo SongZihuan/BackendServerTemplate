@@ -5,7 +5,7 @@
 package fileutils
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"os"
 	"strings"
 )

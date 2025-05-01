@@ -6,7 +6,7 @@ package executils
 
 import (
 	"bytes"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"os"
 	"os/exec"
 )

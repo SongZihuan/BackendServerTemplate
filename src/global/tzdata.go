@@ -7,7 +7,7 @@
 package global
 
 import (
-	_ "github.com/SongZihuan/BackendServerTemplate/src/utils/timeutils/tzdata"
+	_ "github.com/SongZihuan/BackendServerTemplate/utils/timeutils/tzdata"
 )
 
 // 默认情况下加载 go 自带的时区包，除非使用 systemtzdata 明确使用系统的时区包

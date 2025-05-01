@@ -11,7 +11,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/monkey"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/spf13/cobra"
 )
 

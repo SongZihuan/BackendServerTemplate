@@ -5,7 +5,7 @@
 package termutils
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"github.com/mattn/go-isatty"
 	"io"
 	"os"

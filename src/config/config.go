@@ -10,7 +10,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/filesystemutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"os"
 	"path"
 )

@@ -8,8 +8,8 @@ package timeutils
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"os/exec"
 	"time"
 )

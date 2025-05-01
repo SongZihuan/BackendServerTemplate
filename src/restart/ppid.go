@@ -5,7 +5,7 @@
 package restart
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/processutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/processutils"
 	"time"
 )
 

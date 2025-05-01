@@ -7,8 +7,8 @@ package global
 import (
 	"fmt"
 	resource "github.com/SongZihuan/BackendServerTemplate"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/timeutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/timeutils"
 	"strings"
 	"time"
 )

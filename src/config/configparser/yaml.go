@@ -9,7 +9,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"reflect"

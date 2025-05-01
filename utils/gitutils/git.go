@@ -6,9 +6,9 @@ package gitutils
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/executils"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/filesystemutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/executils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"strings"
 	"sync"
 )

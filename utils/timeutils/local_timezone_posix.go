@@ -9,8 +9,8 @@ package timeutils
 import (
 	"bytes"
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/envutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"os"
 	"os/exec"
 	"time"

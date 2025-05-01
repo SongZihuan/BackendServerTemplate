@@ -7,7 +7,7 @@ package main
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/tiger"
 	"github.com/SongZihuan/BackendServerTemplate/src/lifecycle"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
 )
 
 // 必须明确导入 lifecycle 包 （虽然下面的import确实导入了 prerun 包，但此处重复写一次表示冗余，以免在某些情况下本包不适用 prerun 后，下方的导入被自动删除）

@@ -6,7 +6,7 @@ package formatutils
 
 import (
 	_ "embed"
-	"github.com/SongZihuan/BackendServerTemplate/tool/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"strings"
 	"testing"
 )

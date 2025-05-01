@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
-	"github.com/SongZihuan/BackendServerTemplate/src/utils/filesystemutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"github.com/spf13/cobra"
 )
 
