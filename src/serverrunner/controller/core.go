@@ -265,7 +265,10 @@ func (cc *ControllerCore) Controller() {}
 
 func (cc *ControllerCore) GetStopWaitTime() time.Duration {
 	stopWaitTime := time.Duration(0) // 自己也作为记录的一部分
-	for _, ser := range cc.child.server {
+	for name, ser := range cc.child.server {
+		if name == cc.self.name {
+			continue
+		}
 		stopWaitTime = max(stopWaitTime, ser.StopWaitTime())
 	}
 	return stopWaitTime
@@ -273,7 +276,10 @@ func (cc *ControllerCore) GetStopWaitTime() time.Duration {
 
 func (cc *ControllerCore) GetStartupWaitTime() time.Duration {
 	startupWaitTime := time.Duration(0)
-	for _, ser := range cc.child.server {
+	for name, ser := range cc.child.server {
+		if name == cc.self.name {
+			continue
+		}
 		startupWaitTime = max(startupWaitTime, ser.StartupWaitTime())
 	}
 	return startupWaitTime

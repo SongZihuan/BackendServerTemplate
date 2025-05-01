@@ -5,7 +5,7 @@
 package main
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/lion"
+	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/giraffe"
 	"github.com/SongZihuan/BackendServerTemplate/src/lifecycle"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 )
@@ -23,5 +23,5 @@ func main() {
 		return // 不可达
 	}
 
-	exitutils.ErrorToExitQuite(lion.GetMainCommand().Execute()).ClampAttribute().Exit()
+	exitutils.ErrorToExitQuite(giraffe.GetMainCommand().Execute()).ClampAttribute().Exit()
 }
