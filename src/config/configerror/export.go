@@ -32,5 +32,5 @@ func NewWarningf(format string, args ...any) Error {
 }
 
 func ShowWarningf(format string, args ...any) {
-	_ = NewWarningf(format, args)
+	_ = NewWarningf(format, args...)
 }
