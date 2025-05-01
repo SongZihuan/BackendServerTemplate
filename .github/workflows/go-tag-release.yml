@@ -113,9 +113,9 @@ jobs:
         run: |
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_tiger" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/tiger
 
-      - name: Build cat
+      - name: Build monkey
         run: |
-          GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_cat" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/cat
+          GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_monkey" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/monkey
 
       - name: Copy Release Info
         run: cp "${{ github.workspace }}/release_info.md.ignore" "${{ github.workspace }}/output/release_info.md"
@@ -182,11 +182,11 @@ jobs:
           set GOARCH=amd64
           go build -o "${{ github.workspace }}\output\windows_amd64_tiger.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/tiger
 
-      - name: Build cat
+      - name: Build monkey
         run:  |
           set GOOS=windows
           set GOARCH=amd64
-          go build -o "${{ github.workspace }}\output\windows_amd64_cat.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/cat
+          go build -o "${{ github.workspace }}\output\windows_amd64_monkey.exe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/monkey
 
       - name: List build directory
         run: |
@@ -240,7 +240,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "${{ github.workspace }}/output/update.patch,${{ github.workspace }}/output/linux_amd64_lion,${{ github.workspace }}/output/linux_amd64_tiger,${{ github.workspace }}/output/linux_amd64_cat,${{ github.workspace }}/output/windows_amd64_lion.exe,${{ github.workspace }}/output/windows_amd64_tiger.exe,${{ github.workspace }}/output/windows_amd64_cat.exe"
+          artifacts: "${{ github.workspace }}/output/update.patch,${{ github.workspace }}/output/linux_amd64_lion,${{ github.workspace }}/output/linux_amd64_tiger,${{ github.workspace }}/output/linux_amd64_monkey,${{ github.workspace }}/output/windows_amd64_lion.exe,${{ github.workspace }}/output/windows_amd64_tiger.exe,${{ github.workspace }}/output/windows_amd64_monkey.exe"
           artifactErrorsFailBuild: true
           allowUpdates: false
           bodyFile: "${{ github.workspace }}/output/release_info.md"

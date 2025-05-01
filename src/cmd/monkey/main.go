@@ -11,7 +11,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
 	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/lifecycle"
-	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/cat"
+	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/monkey"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
@@ -67,7 +67,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return cat.Main(cmd, args, inputConfigFilePath)
+			return monkey.Main(cmd, args, inputConfigFilePath)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -92,7 +92,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return cat.MainInstall(cmd, args)
+			return monkey.MainInstall(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -117,7 +117,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return cat.MainUnInstall(cmd, args)
+			return monkey.MainUnInstall(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -140,7 +140,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return cat.MainStart(cmd, args)
+			return monkey.MainStart(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -163,7 +163,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return cat.MainStop(cmd, args)
+			return monkey.MainStop(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
@@ -186,7 +186,7 @@ func command() exitutils.ExitCode {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			cmd.SilenceErrors = true
-			return cat.MainRestart(cmd, args)
+			return monkey.MainRestart(cmd, args)
 		},
 		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false

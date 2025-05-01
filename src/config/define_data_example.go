@@ -12,15 +12,15 @@ import (
 type ExampleData struct {
 }
 
-func (d *ExampleData) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
+func (d *ExampleData) init(filePath string, provider configparser.ConfigParserProvider) (cfgErr configerror.Error) {
 	return nil
 }
 
-func (d *ExampleData) setDefault(c *configInfo) (err configerror.Error) {
+func (d *ExampleData) setDefault(c *configInfo) (cfgErr configerror.Error) {
 	return nil
 }
 
-func (d *ExampleData) check(c *configInfo) (err configerror.Error) {
+func (d *ExampleData) check(c *configInfo) (cfgErr configerror.Error) {
 	return nil
 }
 
