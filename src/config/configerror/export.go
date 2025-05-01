@@ -30,3 +30,7 @@ func NewWarningf(format string, args ...any) Error {
 	logger.Errorf("config warning: %s", msg)
 	return &configError{msg: msg, isError: false}
 }
+
+func ShowWarningf(format string, args ...any) {
+	_ = NewWarningf(format, args)
+}

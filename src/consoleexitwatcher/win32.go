@@ -73,8 +73,8 @@ func getHandler(event uint) (res bool) {
 				logger.Errorf("win32 make new console failed: %s", err.Error())
 			}
 
-			logger.Warnf("终端暂时重启，等待程序清理完毕，请勿关闭当前终端！")
-			logger.Warnf("若不希望重启终端，可在配置文件处关闭。")
+			logger.Warnf("The terminal will be restarted temporarily, waiting for the program to be cleaned up. Please do not close the current terminal!")
+			logger.Warnf("If you do not want to restart the terminal, you can turn it off in the configuration file.")
 		}
 	case consoleutils.CTRL_C_EVENT.GetCode():
 		if config.Data().Win32Console.CtrlCExit.IsEnable(true) {
@@ -87,15 +87,15 @@ func getHandler(event uint) (res bool) {
 			close(consoleexitchan)
 		}
 	default:
-		logger.Errorf("未知事件: %d\n", event)
+		logger.Errorf("unknown event: %d\n", event)
 		return false
 	}
 
 	select {
 	case <-consolewaitexitchan:
-		logger.Warnf("Windows Console - 退出清理完成...")
+		logger.Warnf("Windows Console - Exit cleanup complete")
 	case <-time.After(4500 * time.Millisecond):
-		logger.Errorf("Windows Console - 退出清理超时... (%s)", strconvutils.TimeDurationToString(4500*time.Millisecond))
+		logger.Errorf("Windows Console - Exit cleanup timeout... (%s)", strconvutils.TimeDurationToString(4500*time.Millisecond))
 	}
 	return true
 }

@@ -26,22 +26,22 @@ type LoggerConfig struct {
 
 func (d *LoggerConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
 	cfgErr := d.HumanWarnWriter.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.HumanErrWriter.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.MachineWarnWriter.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.MachineErrWriter.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
@@ -60,22 +60,22 @@ func (d *LoggerConfig) setDefault(c *configInfo) (err configerror.Error) {
 	}
 
 	cfgErr := d.HumanWarnWriter.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.HumanErrWriter.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.MachineWarnWriter.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.MachineErrWriter.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
@@ -84,22 +84,22 @@ func (d *LoggerConfig) setDefault(c *configInfo) (err configerror.Error) {
 
 func (d *LoggerConfig) check(c *configInfo) (err configerror.Error) {
 	cfgErr := d.HumanWarnWriter.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.HumanErrWriter.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.MachineWarnWriter.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.MachineErrWriter.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
@@ -118,22 +118,22 @@ func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
 	}
 
 	humanWarn, cfgErr := d.HumanWarnWriter.process(c, false)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	humanErr, cfgErr := d.HumanErrWriter.process(c, false)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	machineWarn, cfgErr := d.MachineWarnWriter.process(c, true)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	machineErr, cfgErr := d.MachineErrWriter.process(c, true)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 

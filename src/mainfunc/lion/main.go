@@ -17,7 +17,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid int) (exitCode error) {
@@ -46,9 +45,12 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 	}
 
 	ctrl, _, err := server.NewServer(&server.ServerOption{
-		StopWaitTime:    10 * time.Second,
-		StartupWaitTime: 3 * time.Second,
-		ServerCore:      ctrlcore,
+		StopWaitTime:                     config.Data().Server.Controller.StopWaitTimeDuration,
+		StartupWaitTime:                  config.Data().Server.Controller.StartupWaitTimeDuration,
+		StopWaitTimeUseSpecifiedValue:    config.Data().Server.Controller.StopWaitTimeUseSpecifiedValue.IsEnable(false),
+		StartupWaitTimeUseSpecifiedValue: config.Data().Server.Controller.StartupWaitTimeUseSpecifiedValue.IsEnable(false),
+		LockThread:                       config.Data().Server.Example1.LockThread.IsEnable(false),
+		ServerCore:                       ctrlcore,
 	})
 	if err != nil {
 		return exitutils.InitFailed("Server Controller", err.Error())
@@ -60,8 +62,9 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 	}
 
 	_, err = ctrl.AddServerCore(&server.ServerOption{
-		StopWaitTime:    10 * time.Second,
-		StartupWaitTime: 3 * time.Second,
+		StopWaitTime:    config.Data().Server.Example1.StopWaitTimeDuration,
+		StartupWaitTime: config.Data().Server.Example1.StartupWaitTimeDuration,
+		LockThread:      config.Data().Server.Example1.LockThread.IsEnable(false),
 		ServerCore:      sercore1,
 	})
 	if err != nil {
@@ -74,8 +77,9 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 	}
 
 	_, err = ctrl.AddServerCore(&server.ServerOption{
-		StopWaitTime:    10 * time.Second,
-		StartupWaitTime: 3 * time.Second,
+		StopWaitTime:    config.Data().Server.Example2.StopWaitTimeDuration,
+		StartupWaitTime: config.Data().Server.Example2.StartupWaitTimeDuration,
+		LockThread:      config.Data().Server.Example2.LockThread.IsEnable(false),
 		ServerCore:      sercore2,
 	})
 	if err != nil {

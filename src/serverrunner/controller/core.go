@@ -146,7 +146,7 @@ func (cc *ControllerCore) Run() error {
 		} else if timeout {
 			logger.Warnf("start server %s by %s success. but check timeout", ser.Name(), cc.self.name)
 		} else {
-			logger.Errorf("start server %s by %s success", ser.Name(), cc.self.name)
+			logger.Warnf("start server %s by %s success", ser.Name(), cc.self.name)
 		}
 	}
 
@@ -254,9 +254,9 @@ func (cc *ControllerCore) Stop() {
 
 		select {
 		case <-time.After(cc.GetStopWaitTime()):
-			logger.Errorf("%s - 退出子任务超时... (%s)", cc.self.name, strconvutils.TimeDurationToString(cc.GetStopWaitTime()))
+			logger.Errorf("%s - Exit subtask timeout... (%s)", cc.self.name, strconvutils.TimeDurationToString(cc.GetStopWaitTime()))
 		case <-wgchan:
-			logger.Warnf("%s - 退出子任务完成...", cc.self.name)
+			logger.Warnf("%s - Exit subtask completed", cc.self.name)
 		}
 	}()
 }

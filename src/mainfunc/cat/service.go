@@ -13,7 +13,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/kardianos/service"
-	"time"
 )
 
 type Program struct {
@@ -72,8 +71,9 @@ func (p *Program) Start(s service.Service) error {
 	}
 
 	p.ser, _, err = server.NewServer(&server.ServerOption{
-		StopWaitTime:    10 * time.Second,
-		StartupWaitTime: 3 * time.Second,
+		StopWaitTime:    config.Data().Server.Example3.StopWaitTimeDuration,
+		StartupWaitTime: config.Data().Server.Example3.StartupWaitTimeDuration,
+		LockThread:      config.Data().Server.Example3.LockThread.IsEnable(false),
 		ServerCore:      sercore1,
 	})
 

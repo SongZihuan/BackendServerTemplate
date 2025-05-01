@@ -203,9 +203,9 @@ func (s *Server) wait() {
 
 	select {
 	case <-time.After(s.stopWaitTime):
-		logger.Errorf("%s - 任务超时关闭... (%s)", s.name, strconvutils.TimeDurationToString(s.stopWaitTime))
+		logger.Errorf("%s - Task timeout closed... (%s)", s.name, strconvutils.TimeDurationToString(s.stopWaitTime))
 	case <-wgchan:
-		logger.Warnf("%s - 任务退出完成... ", s.name)
+		logger.Warnf("%s - Task exit completed... ", s.name)
 	}
 }
 

@@ -15,7 +15,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid int) (exitCode error) {
@@ -44,8 +43,9 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 	}
 
 	ser, _, err := server.NewServer(&server.ServerOption{
-		StopWaitTime:    10 * time.Second,
-		StartupWaitTime: 3 * time.Second,
+		StopWaitTime:    config.Data().Server.Example1.StopWaitTimeDuration,
+		StartupWaitTime: config.Data().Server.Example1.StartupWaitTimeDuration,
+		LockThread:      config.Data().Server.Example1.LockThread.IsEnable(false),
 		ServerCore:      sercore1,
 	})
 

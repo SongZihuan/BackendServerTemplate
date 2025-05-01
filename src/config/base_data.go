@@ -19,27 +19,27 @@ type ConfigData struct {
 
 func (d *ConfigData) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
 	cfgErr := d.GlobalConfig.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Logger.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Signal.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Win32Console.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Server.init(filePath, provider)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
@@ -48,27 +48,27 @@ func (d *ConfigData) init(filePath string, provider configparser.ConfigParserPro
 
 func (d *ConfigData) setDefault(c *configInfo) (err configerror.Error) {
 	cfgErr := d.GlobalConfig.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Logger.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Signal.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Win32Console.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Server.setDefault(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
@@ -77,27 +77,27 @@ func (d *ConfigData) setDefault(c *configInfo) (err configerror.Error) {
 
 func (d *ConfigData) check(c *configInfo) (err configerror.Error) {
 	cfgErr := d.GlobalConfig.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Logger.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Signal.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Win32Console.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Server.check(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
@@ -106,27 +106,27 @@ func (d *ConfigData) check(c *configInfo) (err configerror.Error) {
 
 func (d *ConfigData) process(c *configInfo) (err configerror.Error) {
 	cfgErr := d.GlobalConfig.process(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Logger.process(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Signal.process(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Win32Console.process(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
 	cfgErr = d.Server.process(c)
-	if cfgErr != nil {
+	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
