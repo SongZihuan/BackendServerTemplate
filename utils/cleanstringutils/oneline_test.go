@@ -10,42 +10,42 @@ func TestGetStringOneLine(t *testing.T) {
 	t.Run("Text-OnlyLine", func(t *testing.T) {
 		text := "Hello"
 		if GetStringOneLine(text) != "Hello" {
-			t.Errorf("ClenFileData OnlyLine error")
+			t.Errorf("test GetStringOneLine errorr")
 		}
 	})
 
 	t.Run("Text-OnlyLine-WithSpace", func(t *testing.T) {
 		text := "Hello    "
 		if GetStringOneLine(text) != "Hello" {
-			t.Errorf("ClenFileData OnlyLine error")
+			t.Errorf("test GetStringOneLine errorr")
 		}
 	})
 
 	t.Run("Text-With-CRLF", func(t *testing.T) {
 		text := "Hello\r\n"
 		if GetStringOneLine(text) != "Hello" {
-			t.Errorf("ClenFileData OnlyLine error")
+			t.Errorf("test GetStringOneLine errorr")
 		}
 	})
 
 	t.Run("Text-With-More-CRLF", func(t *testing.T) {
 		text := "Hello\r\n\r\n\r\n"
 		if GetStringOneLine(text) != "Hello" {
-			t.Errorf("ClenFileData OnlyLine error")
+			t.Errorf("test GetStringOneLine errorr")
 		}
 	})
 
 	t.Run("Text-With-CRLF-WithSpace", func(t *testing.T) {
 		text := "Hello    \r\n"
 		if GetStringOneLine(text) != "Hello" {
-			t.Errorf("ClenFileData OnlyLine error")
+			t.Errorf("test GetStringOneLine errorr")
 		}
 	})
 
 	t.Run("Text-MoreLine", func(t *testing.T) {
 		text := "Hello\r\nWorld"
 		if GetStringOneLine(text) != "Hello" {
-			t.Errorf("ClenFileData OnlyLine error")
+			t.Errorf("test GetStringOneLine errorr")
 		}
 	})
 }
