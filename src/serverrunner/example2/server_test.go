@@ -5,13 +5,13 @@
 package example2
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/server"
 	"testing"
 )
 
 func TestServer(t *testing.T) {
-	var a serverinterface.Server
-	var b *ServerExample2
+	var a server.ServerCore
+	var b *ServerExample2Core
 
 	a = b
 	_ = a

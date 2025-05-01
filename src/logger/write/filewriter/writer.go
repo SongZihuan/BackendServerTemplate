@@ -18,7 +18,7 @@ type FileWriter struct {
 }
 
 func (f *FileWriter) Write(data *logformat.LogData) (n int, err error) {
-	if fileutils.IsFileOpen(f.file) {
+	if !fileutils.IsFileOpen(f.file) {
 		return 0, fmt.Errorf("file writer has been close")
 	}
 

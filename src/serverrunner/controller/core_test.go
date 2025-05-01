@@ -5,14 +5,17 @@
 package controller
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/server"
 	"testing"
 )
 
-func TestController(t *testing.T) {
-	var a serverinterface.Server
-	var b *Controller
+func TestControllerCore(t *testing.T) {
+	var a server.ControllerServerCore
+	var b server.ServerCore
+	var c *ControllerCore
 
-	a = b
+	a = c
+	b = c
 	_ = a
+	_ = b
 }

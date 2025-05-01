@@ -57,5 +57,5 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCo
 		return exitutils.RunError(stopErr.Error())
 	}
 
-	return exitutils.SuccessExit("all tasks are completed and the main go routine exits")
+	return exitutils.SuccessExit("all tasks are completed")
 }

@@ -76,28 +76,26 @@ func getHandler(event uint) (res bool) {
 			logger.Warnf("终端暂时重启，等待程序清理完毕，请勿关闭当前终端！")
 			logger.Warnf("若不希望重启终端，可在配置文件处关闭。")
 		}
-
-		select {
-		case <-consolewaitexitchan:
-			// pass
-		case <-time.After(4500 * time.Millisecond):
-			logger.Errorf("Windows Console - 退出清理超时... (%s)", strconvutils.TimeDurationToString(4500*time.Millisecond))
-		}
-		return true
 	case consoleutils.CTRL_C_EVENT.GetCode():
 		if config.Data().Win32Console.CtrlCExit.IsEnable(true) {
 			lastEvent = consoleutils.CTRL_C_EVENT
 			close(consoleexitchan)
 		}
-		return true
 	case consoleutils.CTRL_BREAK_EVENT.GetCode():
 		if config.Data().Win32Console.CtrlBreakExit.IsEnable(true) {
 			lastEvent = consoleutils.CTRL_BREAK_EVENT
 			close(consoleexitchan)
 		}
-		return true
 	default:
 		logger.Errorf("未知事件: %d\n", event)
 		return false
 	}
+
+	select {
+	case <-consolewaitexitchan:
+		logger.Warnf("Windows Console - 退出清理完成...")
+	case <-time.After(4500 * time.Millisecond):
+		logger.Errorf("Windows Console - 退出清理超时... (%s)", strconvutils.TimeDurationToString(4500*time.Millisecond))
+	}
+	return true
 }

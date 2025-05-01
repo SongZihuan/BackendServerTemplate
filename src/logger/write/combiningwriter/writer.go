@@ -22,6 +22,8 @@ func (c *CombiningWriter) Write(data *logformat.LogData) (n int, err error) {
 		return 0, fmt.Errorf("combining writer has been close")
 	}
 
+	fmt.Printf("CombiningWriter: %d\n", len(c.writer))
+
 	n = 0
 	errMsg := ""
 	for _, w := range c.writer {

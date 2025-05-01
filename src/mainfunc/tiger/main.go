@@ -10,10 +10,12 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/example1"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/server"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid int) (exitCode error) {
@@ -36,15 +38,26 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 
 	ppidchan := restart.PpidWatcher(ppid)
 
-	ser, _, err := example1.NewServerExample1(&example1.ServerExample1Option{
-		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
-	})
+	sercore1, err := example1.NewServerExample1Core(nil)
 	if err != nil {
 		return exitutils.InitFailed("Server Example1", err.Error())
 	}
 
-	logger.Infof("Start to run server example 1")
-	go ser.Run()
+	ser, _, err := server.NewServer(&server.ServerOption{
+		StopWaitTime:    10 * time.Second,
+		StartupWaitTime: 3 * time.Second,
+		ServerCore:      sercore1,
+	})
+
+	logger.Infof("Start to run server %s", ser.Name())
+	err, timeout := server.Run(ser)
+	if err != nil {
+		logger.Errorf("start server %s error: %s", ser.Name(), err.Error())
+	} else if timeout {
+		logger.Warnf("start server %s run success. but check timeout", ser.Name())
+	} else {
+		logger.Errorf("start server %s success", ser.Name())
+	}
 
 	var stopErr error
 
@@ -89,7 +102,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 		}
 	}
 
-	ser.Stop()
+	ser.StopAndWait()
 	close(consolewaitexitchan)
 
 	if stopErr != nil {
@@ -98,8 +111,8 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 
 	select {
 	case <-restart.RestartChan:
-		return exitutils.SuccessExit("all tasks are completed and the main go routine exits", exitutils.ExitCodeReload)
+		return exitutils.SuccessExit("restart program", exitutils.ExitCodeReload)
 	default:
-		return exitutils.SuccessExit("all tasks are completed and the main go routine exits")
+		return exitutils.SuccessExit("all tasks are completed")
 	}
 }

@@ -30,7 +30,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCo
 	prg := NewRunProgram(inputConfigFilePath)
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		return exitutils.InitFailed("Service New", err.Error())
+		return exitutils.InitFailed("system service init", err.Error())
 	}
 
 	_ = s.Run()
@@ -57,16 +57,16 @@ func MainInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	prg := NewProgram()
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		return exitutils.InitFailed("Service New", err.Error())
+		return exitutils.InitFailed("system service init", err.Error())
 	}
 
 	// 安装服务
 	err = s.Install()
 	if err != nil {
-		return exitutils.InitFailed("Service Install", err.Error())
+		return exitutils.InitFailed("system service install", err.Error())
 	}
 
-	return exitutils.SuccessExit("Service Install Success")
+	return exitutils.SuccessExit("system service install success")
 }
 
 func MainUnInstall(cmd *cobra.Command, args []string) (exitCode error) {
@@ -89,16 +89,16 @@ func MainUnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	prg := NewProgram()
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		return exitutils.InitFailed("Service New", err.Error())
+		return exitutils.InitFailed("system service init", err.Error())
 	}
 
 	// 卸载服务
 	err = s.Uninstall()
 	if err != nil {
-		return exitutils.InitFailed("Service Remove", err.Error())
+		return exitutils.InitFailed("system service remove", err.Error())
 	}
 
-	return exitutils.SuccessExit("Service Remove Success")
+	return exitutils.SuccessExit("system service remove success")
 }
 
 func MainStart(cmd *cobra.Command, args []string) (exitCode error) {
@@ -121,16 +121,16 @@ func MainStart(cmd *cobra.Command, args []string) (exitCode error) {
 	prg := NewProgram()
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		return exitutils.InitFailed("Service New", err.Error())
+		return exitutils.InitFailed("system service init", err.Error())
 	}
 
 	// 启动服务
 	err = s.Start()
 	if err != nil {
-		return exitutils.InitFailed("Service Start", err.Error())
+		return exitutils.InitFailed("system service start", err.Error())
 	}
 
-	return exitutils.SuccessExit("Service Start Success")
+	return exitutils.SuccessExit("system service start success")
 }
 
 func MainStop(cmd *cobra.Command, args []string) (exitCode error) {
@@ -153,16 +153,16 @@ func MainStop(cmd *cobra.Command, args []string) (exitCode error) {
 	prg := NewProgram()
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		return exitutils.InitFailed("Service New", err.Error())
+		return exitutils.InitFailed("system service init", err.Error())
 	}
 
 	// 停止服务
 	err = s.Stop()
 	if err != nil {
-		return exitutils.InitFailed("Service Stop", err.Error())
+		return exitutils.InitFailed("system service stop", err.Error())
 	}
 
-	return exitutils.SuccessExit("Service Stop Success")
+	return exitutils.SuccessExit("system service stop success")
 }
 
 func MainRestart(cmd *cobra.Command, args []string) (exitCode error) {
@@ -185,14 +185,14 @@ func MainRestart(cmd *cobra.Command, args []string) (exitCode error) {
 	prg := NewProgram()
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		return exitutils.InitFailed("Service New", err.Error())
+		return exitutils.InitFailed("system service init", err.Error())
 	}
 
 	// 重启服务
 	err = s.Restart()
 	if err != nil {
-		return exitutils.InitFailed("Service Restart", err.Error())
+		return exitutils.InitFailed("system service restart", err.Error())
 	}
 
-	return exitutils.SuccessExit("Service Restart Success")
+	return exitutils.SuccessExit("system service restart success")
 }

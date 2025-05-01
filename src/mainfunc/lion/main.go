@@ -10,12 +10,14 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/controller"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/example2"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/controller"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/example1"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/example2"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/server"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid int) (exitCode error) {
@@ -38,37 +40,57 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 
 	ppidchan := restart.PpidWatcher(ppid)
 
-	ctrl, err := controller.NewController(&controller.ControllerOption{
-		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
+	ctrlcore, err := controller.NewControllerCore(nil)
+	if err != nil {
+		return exitutils.InitFailed("Server Controller Core", err.Error())
+	}
+
+	ctrl, _, err := server.NewServer(&server.ServerOption{
+		StopWaitTime:    10 * time.Second,
+		StartupWaitTime: 3 * time.Second,
+		ServerCore:      ctrlcore,
 	})
 	if err != nil {
 		return exitutils.InitFailed("Server Controller", err.Error())
 	}
 
-	ser1, _, err := example1.NewServerExample1(&example1.ServerExample1Option{
-		LockThread: true,
-	})
+	sercore1, err := example1.NewServerExample1Core(nil)
 	if err != nil {
 		return exitutils.InitFailed("Server Example1", err.Error())
 	}
 
-	err = ctrl.AddServer(ser1)
+	_, err = ctrl.AddServerCore(&server.ServerOption{
+		StopWaitTime:    10 * time.Second,
+		StartupWaitTime: 3 * time.Second,
+		ServerCore:      sercore1,
+	})
 	if err != nil {
 		return exitutils.InitFailed("Add Server Example1", err.Error())
 	}
 
-	ser2, _, err := example2.NewServerExample2(nil)
+	sercore2, err := example2.NewServerExample2Core(nil)
 	if err != nil {
 		return exitutils.InitFailed("Server Example2", err.Error())
 	}
 
-	err = ctrl.AddServer(ser2)
+	_, err = ctrl.AddServerCore(&server.ServerOption{
+		StopWaitTime:    10 * time.Second,
+		StartupWaitTime: 3 * time.Second,
+		ServerCore:      sercore2,
+	})
 	if err != nil {
 		return exitutils.InitFailed("Add Server Example2", err.Error())
 	}
 
-	logger.Infof("Start to run server controller")
-	go ctrl.Run()
+	logger.Infof("Start to run server %s", ctrl.Name())
+	err, timeout := server.Run(ctrl)
+	if err != nil {
+		logger.Errorf("start server %s error: %s", ctrl.Name(), err.Error())
+	} else if timeout {
+		logger.Warnf("start server %s run success. but check timeout", ctrl.Name())
+	} else {
+		logger.Errorf("start server %s success", ctrl.Name())
+	}
 
 	var stopErr error
 
@@ -113,7 +135,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 		}
 	}
 
-	ctrl.Stop()
+	ctrl.StopAndWait()
 	close(consolewaitexitchan)
 
 	if stopErr != nil {
@@ -122,8 +144,8 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 
 	select {
 	case <-restart.RestartChan:
-		return exitutils.SuccessExit("all tasks are completed and the main go routine exits", exitutils.ExitCodeReload)
+		return exitutils.SuccessExit("restart program", exitutils.ExitCodeReload)
 	default:
-		return exitutils.SuccessExit("all tasks are completed and the main go routine exits")
+		return exitutils.SuccessExit("all tasks are completed")
 	}
 }

@@ -224,7 +224,7 @@ func (l *Logger) Recover() {
 	msg := ""
 	now := time.Now().In(global.Location)
 
-	if _, ok := err.(*logpanic.PanicData); ok {
+	if _, ok := err.(*logpanic.PanicData); ok { // 如果是: PanicData，则表示已经输出日志，不需要再输出
 		return
 	}
 

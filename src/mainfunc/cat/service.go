@@ -8,11 +8,12 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/example3"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/example3"
+	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/server"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/kardianos/service"
+	"time"
 )
 
 type Program struct {
@@ -20,7 +21,7 @@ type Program struct {
 	consoleexitchan     chan any
 	consolewaitexitchan chan any
 	stopErr             error
-	ser                 serverinterface.Server
+	ser                 *server.Server
 	exitCode            exitutils.ExitCode
 	configPath          string
 }
@@ -65,15 +66,27 @@ func (p *Program) Start(s service.Service) error {
 
 	p.sigexitchan = sigexitwatcher.GetSignalExitChannelFromConfig()
 
-	p.ser, _, err = example3.NewServerExample3(&example3.ServerExample3Option{
-		StopWaitTime: config.Data().Server.StopWaitTimeDuration,
-	})
+	sercore1, err := example3.NewServerExample3Core(nil)
 	if err != nil {
 		return exitutils.InitFailed("Server Example1", err.Error())
 	}
 
-	logger.Infof("Start to run server example 3")
-	go p.ser.Run()
+	p.ser, _, err = server.NewServer(&server.ServerOption{
+		StopWaitTime:    10 * time.Second,
+		StartupWaitTime: 3 * time.Second,
+		ServerCore:      sercore1,
+	})
+
+	logger.Infof("Start to run server %s", p.ser.Name())
+	err, timeout := server.Run(p.ser)
+	if err != nil {
+		logger.Errorf("start server %s error: %s", p.ser.Name(), err.Error())
+	} else if timeout {
+		logger.Warnf("start server %s run success. but check timeout", p.ser.Name())
+	} else {
+		logger.Errorf("start server %s success", p.ser.Name())
+	}
+
 	go func() {
 		select {
 		case <-p.sigexitchan:
@@ -115,7 +128,7 @@ func (p *Program) Stop(s service.Service) error {
 		p.exitCode = exitutils.RunError(p.stopErr.Error())
 		return p.stopErr
 	}
-	p.exitCode = exitutils.SuccessExit("all tasks are completed and the main go routine exits")
+	p.exitCode = exitutils.SuccessExit("all tasks are completed")
 	return nil
 }
 
