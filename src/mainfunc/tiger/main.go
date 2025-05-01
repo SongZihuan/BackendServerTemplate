@@ -5,14 +5,12 @@
 package tiger
 
 import (
-	"errors"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/restart"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
@@ -81,7 +79,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 		stopErr = nil
 	case <-ser.GetCtx().Listen():
 		err = ser.GetCtx().Error()
-		if err == nil || errors.Is(err, servercontext.StopAllTask) {
+		if err == nil {
 			logger.Infof("stop by server")
 			err = nil
 			stopErr = nil

@@ -5,7 +5,6 @@
 package lion
 
 import (
-	"errors"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
@@ -14,7 +13,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/server/controller"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example1"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example2"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
 	"github.com/spf13/cobra"
@@ -105,7 +103,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 		stopErr = nil
 	case <-ctrl.GetCtx().Listen():
 		err = ctrl.GetCtx().Error()
-		if err == nil || errors.Is(err, servercontext.StopAllTask) {
+		if err == nil {
 			logger.Infof("stop by controller")
 			err = nil
 			stopErr = nil

@@ -5,12 +5,10 @@
 package cat
 
 import (
-	"errors"
 	"github.com/SongZihuan/BackendServerTemplate/src/config"
 	"github.com/SongZihuan/BackendServerTemplate/src/consoleexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/example3"
-	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/serverinterface"
 	"github.com/SongZihuan/BackendServerTemplate/src/sigexitwatcher"
 	"github.com/SongZihuan/BackendServerTemplate/src/utils/exitutils"
@@ -88,7 +86,7 @@ func (p *Program) Start(s service.Service) error {
 			p.stopErr = nil
 		case <-p.ser.GetCtx().Listen():
 			err = p.ser.GetCtx().Error()
-			if err == nil || errors.Is(err, servercontext.StopAllTask) {
+			if err == nil {
 				logger.Infof("Stop by server")
 				err = nil
 				p.stopErr = nil

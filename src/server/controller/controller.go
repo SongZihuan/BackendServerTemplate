@@ -5,7 +5,6 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/server/servercontext"
@@ -131,7 +130,7 @@ func (s *Controller) Run() {
 	if s.lockThread {
 		err := goutils.LockOSThread()
 		if err != nil {
-			s.ctx.RunError(err)
+			s.ctx.FinishError(err)
 			return
 		}
 	}
@@ -167,6 +166,12 @@ func (s *Controller) Run() {
 
 SelectCycle:
 	for {
+		if len(s.context) == 0 {
+			break
+		} else if _, ok := s.context[s.name]; ok && len(s.context) == 1 {
+			break SelectCycle
+		}
+
 		cases := make([]reflect.SelectCase, 0, len(s.context))
 		serverName := make([]string, 0, len(s.context))
 
@@ -191,49 +196,61 @@ SelectCycle:
 		chosen, _, _ := reflect.Select(cases)
 		stopServerName := serverName[chosen]
 
-		if stopServerName != s.name {
-			ctx, ok := s.context[stopServerName]
-			if !ok {
-				logger.Errorf("unknown server stop: %s", stopServerName)
-				break SelectCycle
-			} else {
-				switch ctx.Reason() {
-				default:
-					fallthrough
-				case servercontext.StopReasonStop:
-					logger.Infof("server %s stop", stopServerName)
-					break SelectCycle
-				case servercontext.StopReasonFinish:
-					// 不会停止其他任务
-					logger.Infof("server %s run finished", stopServerName)
-					delete(s.context, stopServerName)
-					delete(s.server, stopServerName)
-					continue SelectCycle
-				case servercontext.StopReasonError:
-					err := ctx.Error()
-					if errors.Is(err, servercontext.StopAllTask) {
-						logger.Infof("server %s run finished (stop all task)", stopServerName)
-						s.ctx.RunError(err)
-					} else if err != nil {
-						logger.Infof("server %s stop with error: %s", stopServerName, err.Error())
-						s.ctx.FinishAndStopAllTask()
-					} else {
-						logger.Infof("server %s stop with error: unknown", stopServerName)
-						s.ctx.RunError(err)
-					}
-					break SelectCycle
-				}
-			}
-		} else {
+		if stopServerName == s.name {
 			break SelectCycle
 		}
+
+		ctx, ok := s.context[stopServerName]
+		if !ok {
+			logger.Errorf("unknown server stop: %s", stopServerName)
+			continue SelectCycle
+		}
+
+		switch ctx.Reason() {
+		default:
+			logger.Panicf("error server context reason: %d", ctx.Reason())
+		case servercontext.StopReasonStop:
+			err := ctx.Error()
+			if err == nil {
+				logger.Infof("server %s stop", stopServerName)
+			} else {
+				logger.Infof("server %s stop with error: %s", stopServerName, err.Error())
+			}
+		case servercontext.StopReasonStopAllTask:
+			err := ctx.Error()
+			if err == nil {
+				logger.Infof("server %s stop (all task stop)", stopServerName)
+			} else {
+				logger.Infof("server %s stop with error: %s (all task stop)", stopServerName, err.Error())
+			}
+			s.ctx.FinishErrorAndStopAllTask(err) // 会自动判断err是否为nil
+		case servercontext.StopReasonFinish:
+			// 不会停止其他任务
+			err := ctx.Error()
+			if err == nil {
+				logger.Infof("server %s finish", stopServerName)
+			} else {
+				logger.Infof("server %s finish with error: %s", stopServerName, err.Error())
+			}
+		case servercontext.StopReasonFinishAndStopAllTask:
+			err := ctx.Error()
+			if err == nil {
+				logger.Infof("server %s finish (all task stop)", stopServerName)
+			} else {
+				logger.Infof("server %s finish with error: %s (all task stop)", stopServerName, err.Error())
+			}
+			s.ctx.FinishErrorAndStopAllTask(err) // 会自动判断err是否为nil
+		}
+
+		delete(s.context, stopServerName)
+		delete(s.server, stopServerName)
+		continue SelectCycle
 	}
 
 	for name, ctx := range s.context {
 		if name == s.name {
 			continue
 		}
-
 		ctx.StopTask()
 	}
 }

@@ -5,18 +5,16 @@
 package servercontext
 
 import (
-	"fmt"
 	"sync"
 )
 
 type StopReason int
 
-var StopAllTask = fmt.Errorf("stop all task")
-
 const (
 	StopReasonStop StopReason = iota + 1
+	StopReasonStopAllTask
 	StopReasonFinish
-	StopReasonError
+	StopReasonFinishAndStopAllTask
 )
 
 type ServerContext struct {
@@ -51,6 +49,57 @@ func (c *ServerContext) StopTask() {
 	close(c.stopchan)
 }
 
+// StopTaskError 表示外部环境终止任务并伴随错误
+func (c *ServerContext) StopTaskError(err error) {
+	if err == nil {
+		c.StopTask()
+		return
+	}
+
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if c.isStop() {
+		return
+	}
+
+	c.reason = StopReasonStop
+	c.err = err
+	close(c.stopchan)
+}
+
+// StopAllTask 表示外部环境终止全部任务
+func (c *ServerContext) StopAllTask() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if c.isStop() {
+		return
+	}
+
+	c.reason = StopReasonStopAllTask
+	close(c.stopchan)
+}
+
+// StopAllTaskError 表示外部环境终止全部任务并伴随错误
+func (c *ServerContext) StopAllTaskError(err error) {
+	if err == nil {
+		c.StopAllTask()
+		return
+	}
+
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if c.isStop() {
+		return
+	}
+
+	c.reason = StopReasonStopAllTask
+	c.err = err
+	close(c.stopchan)
+}
+
 // Finish 表示任务内部环境完成任务
 func (c *ServerContext) Finish() {
 	c.mutex.Lock()
@@ -73,13 +122,12 @@ func (c *ServerContext) FinishAndStopAllTask() {
 		return
 	}
 
-	c.err = StopAllTask
-	c.reason = StopReasonError
+	c.reason = StopReasonFinishAndStopAllTask
 	close(c.stopchan)
 }
 
-// RunError 表示任务内部环境运行遇到错误
-func (c *ServerContext) RunError(err error) {
+// FinishError 表示任务内部环境运行遇到错误
+func (c *ServerContext) FinishError(err error) {
 	if err == nil {
 		c.Finish()
 		return
@@ -93,7 +141,26 @@ func (c *ServerContext) RunError(err error) {
 	}
 
 	c.err = err
-	c.reason = StopReasonError
+	c.reason = StopReasonFinish
+	close(c.stopchan)
+}
+
+// FinishErrorAndStopAllTask 表示任务内部环境运行遇到错误，并退出全部服务
+func (c *ServerContext) FinishErrorAndStopAllTask(err error) {
+	if err == nil {
+		c.FinishAndStopAllTask()
+		return
+	}
+
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if c.isStop() {
+		return
+	}
+
+	c.err = err
+	c.reason = StopReasonFinishAndStopAllTask
 	close(c.stopchan)
 }
 

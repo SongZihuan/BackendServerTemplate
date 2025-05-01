@@ -85,7 +85,7 @@ func (s *ServerExample1) Run() {
 	if s.lockThread {
 		err := goutils.LockOSThread()
 		if err != nil {
-			s.ctx.RunError(err)
+			s.ctx.FinishError(err)
 			return
 		}
 	}
