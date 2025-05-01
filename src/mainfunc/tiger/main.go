@@ -56,7 +56,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 	} else if timeout {
 		logger.Warnf("start server %s run success. but check timeout", ser.Name())
 	} else {
-		logger.Errorf("start server %s success", ser.Name())
+		logger.Warnf("start server %s success", ser.Name())
 	}
 
 	var stopErr error

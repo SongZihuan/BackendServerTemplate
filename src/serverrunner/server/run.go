@@ -19,7 +19,7 @@ func Run(r Runner) (err error, timeout bool) {
 		if ok && err != nil {
 			return err, false // 视为启动失败
 		}
-		return nil, true
+		return nil, false
 	case <-time.After(startupTime):
 		return nil, true
 	}
@@ -40,7 +40,7 @@ func RunWithWorkGroup(r Runner, wg *sync.WaitGroup) (err error, timeout bool) {
 		if ok && err != nil {
 			return err, false // 视为启动失败
 		}
-		return nil, true
+		return nil, false
 	case <-time.After(startupTime):
 		return nil, true
 	}

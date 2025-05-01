@@ -84,7 +84,7 @@ func (p *Program) Start(s service.Service) error {
 	} else if timeout {
 		logger.Warnf("start server %s run success. but check timeout", p.ser.Name())
 	} else {
-		logger.Errorf("start server %s success", p.ser.Name())
+		logger.Warnf("start server %s success", p.ser.Name())
 	}
 
 	go func() {
