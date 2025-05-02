@@ -5,29 +5,48 @@
 package filewriter
 
 import (
+	"context"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
+	"github.com/gofrs/flock"
 	"os"
 	"sync"
+	"time"
 )
 
 type FileWriter struct {
-	filePath string
-	file     *os.File
-	fn       logformat.FormatFunc
-	lock     sync.Mutex
+	filePath     string
+	file         *os.File
+	fileLockPath string
+	fileLock     *flock.Flock
+	fn           logformat.FormatFunc
+	lock         sync.Mutex
 }
 
-func (f *FileWriter) Write(data *logformat.LogData) (n int, err error) {
+func (f *FileWriter) Write(data *logformat.LogData) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
 	if !fileutils.IsFileOpen(f.file) {
-		return 0, fmt.Errorf("file writer has been close")
+		return
 	}
 
-	return fmt.Fprintf(f.file, "%s\n", f.fn(data))
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancelFunc()
+
+	ok, err := f.fileLock.TryLockContext(ctx, 1*time.Second)
+	if err != nil || !ok {
+		return
+	}
+	defer func() {
+		_ = f.fileLock.Unlock()
+		_ = os.Remove(f.fileLockPath)
+	}()
+
+	_, _ = fmt.Fprintf(f.file, "%s\n", f.fn(data))
+
+	return
 }
 
 func (f *FileWriter) Close() error {
@@ -58,7 +77,9 @@ func NewFileWriter(filepath string, fn logformat.FormatFunc) (*FileWriter, error
 	}
 
 	res.filePath = filepath
+	res.fileLockPath = res.filePath + ".lock"
 	res.file = file
+	res.fileLock = flock.New(res.fileLockPath)
 	res.fn = fn
 
 	return res, nil

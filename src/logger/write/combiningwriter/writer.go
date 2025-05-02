@@ -17,31 +17,17 @@ type CombiningWriter struct {
 	close  bool
 }
 
-func (c *CombiningWriter) Write(data *logformat.LogData) (n int, err error) {
+func (c *CombiningWriter) Write(data *logformat.LogData) {
 	if c.close {
-		return 0, fmt.Errorf("combining writer has been close")
+		return
 	}
 
-	n = 0
-	errMsg := ""
 	for _, w := range c.writer {
 		if w == nil {
 			continue
 		}
-
-		nTmp, errTmp := w.Write(data)
-		if errTmp != nil {
-			errMsg += errTmp.Error() + ";"
-		}
-
-		n = min(n, nTmp)
+		go w.Write(data)
 	}
-
-	if errMsg == "" {
-		return n, nil
-	}
-
-	return n, fmt.Errorf(errMsg)
 }
 
 func (c *CombiningWriter) Close() error {

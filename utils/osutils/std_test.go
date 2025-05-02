@@ -2,18 +2,21 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package write
+package osutils
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"io"
+	"os"
+	"testing"
 )
 
-type Writer interface {
-	Write(data *logformat.LogData)
+func TestStdout(t *testing.T) {
+	var a Syncer
+	a = os.Stdout
+	_ = a
 }
 
-type WriteCloser interface {
-	Writer
-	io.Closer
+func TestStderr(t *testing.T) {
+	var a Syncer
+	a = os.Stderr
+	_ = a
 }

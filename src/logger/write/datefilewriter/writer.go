@@ -5,11 +5,13 @@
 package datefilewriter
 
 import (
+	"context"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
+	"github.com/gofrs/flock"
 	"os"
 	"path"
 	"sync"
@@ -20,18 +22,22 @@ type DateFileWriter struct {
 	dirPath        string
 	filenamePrefix string
 	filenameSuffix string
+	fileName       string
+	filePath       string
 	file           *os.File
+	fileLockPath   string
+	fileLock       *flock.Flock
 	close          bool
 	fn             logformat.FormatFunc
 	lock           sync.Mutex
 }
 
-func (f *DateFileWriter) Write(data *logformat.LogData) (n int, err error) {
+func (f *DateFileWriter) Write(data *logformat.LogData) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
 	if f.close {
-		return 0, fmt.Errorf("date file writer has been close")
+		return
 	}
 
 	suffix := time.Now().Format(time.DateOnly)
@@ -39,15 +45,27 @@ func (f *DateFileWriter) Write(data *logformat.LogData) (n int, err error) {
 		_ = f.closeFile()
 		err := f.openFile(suffix)
 		if err != nil {
-			return 0, err
+			return
 		}
 	}
 
 	if !fileutils.IsFileOpen(f.file) {
-		return 0, fmt.Errorf("file writer has been close")
+		return
 	}
 
-	return fmt.Fprintf(f.file, "%s\n", f.fn(data))
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancelFunc()
+
+	ok, err := f.fileLock.TryLockContext(ctx, 1*time.Second)
+	if err != nil || !ok {
+		return
+	}
+	defer func() {
+		_ = f.fileLock.Unlock()
+		_ = os.Remove(f.fileLockPath)
+	}()
+
+	_, _ = fmt.Fprintf(f.file, "%s\n", f.fn(data))
 }
 
 func (f *DateFileWriter) closeFile() error {
@@ -67,16 +85,18 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 		return fmt.Errorf("last file has not been closse")
 	}
 
-	filename := fmt.Sprintf("%s.%s.log", f.filenamePrefix, newSuffix)
-	filePath := path.Join(f.dirPath, filename)
+	f.fileName = fmt.Sprintf("%s.%s.log", f.filenamePrefix, newSuffix)
+	f.filePath = path.Join(f.dirPath, f.fileName)
+	f.fileLockPath = f.filePath + ".lock"
 
-	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY|os.O_SYNC, 0644)
+	file, err := os.OpenFile(f.filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY|os.O_SYNC, 0644)
 	if err != nil {
 		return err
 	}
 
 	f.file = file
 	f.filenameSuffix = newSuffix
+	f.fileLock = flock.New(f.fileLockPath)
 
 	return nil
 }

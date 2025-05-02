@@ -7,6 +7,7 @@ package warpwritecloser
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
+	"github.com/SongZihuan/BackendServerTemplate/utils/osutils"
 	"io"
 	"sync"
 )
@@ -17,15 +18,20 @@ type WarpWriteCloser struct {
 	lock   sync.Mutex
 }
 
-func (w *WarpWriteCloser) Write(data *logformat.LogData) (n int, err error) {
+func (w *WarpWriteCloser) Write(data *logformat.LogData) {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
 	if w.writer == nil {
-		return 0, fmt.Errorf("writer has been close")
+		return
 	}
 
-	return fmt.Fprintf(w.writer, "%s\n", w.fn(data))
+	_, _ = fmt.Fprintf(w.writer, "%s\n", w.fn(data))
+
+	syncer, ok := w.writer.(osutils.Syncer)
+	if ok {
+		_ = syncer.Sync()
+	}
 }
 
 func (w *WarpWriteCloser) Close() error {

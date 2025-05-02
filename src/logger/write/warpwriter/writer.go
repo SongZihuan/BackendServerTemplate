@@ -7,6 +7,7 @@ package warpwriter
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
+	"github.com/SongZihuan/BackendServerTemplate/utils/osutils"
 	"io"
 	"sync"
 )
@@ -17,15 +18,20 @@ type WarpWriter struct {
 	lock   sync.Mutex
 }
 
-func (w *WarpWriter) Write(data *logformat.LogData) (n int, err error) {
+func (w *WarpWriter) Write(data *logformat.LogData) {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
 	if w.writer == nil {
-		return 0, fmt.Errorf("writer is nil")
+		return
 	}
 
-	return fmt.Fprintf(w.writer, "%s\n", w.fn(data))
+	_, _ = fmt.Fprintf(w.writer, "%s\n", w.fn(data))
+
+	syncer, ok := w.writer.(osutils.Syncer)
+	if ok {
+		_ = syncer.Sync()
+	}
 }
 
 func NewWarpWriter(w io.Writer, fn logformat.FormatFunc) *WarpWriter {

@@ -11,9 +11,7 @@ import (
 type NoneWriter struct {
 }
 
-func (f *NoneWriter) Write(_ *logformat.LogData) (n int, err error) {
-	return 0, nil
-}
+func (f *NoneWriter) Write(_ *logformat.LogData) {}
 
 func (f *NoneWriter) Close() error {
 	return nil
