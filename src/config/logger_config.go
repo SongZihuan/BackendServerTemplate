@@ -18,10 +18,10 @@ type LoggerConfig struct {
 	LogLevel loglevel.LoggerLevel `json:"log-level" yaml:"log-level" mapstructure:"log-level"`
 	LogTag   typeutils.StringBool `json:"log-tag" yaml:"log-tag" mapstructure:"log-tag"`
 
-	HumanWarnWriter   LoggerWriterConfig `json:"human-warn-writer" yaml:"human-warn-writer" mapstructure:"human-warn-writer"`
-	HumanErrWriter    LoggerWriterConfig `json:"human-error-writer" yaml:"human-error-writer" mapstructure:"human-error-writer"`
-	MachineWarnWriter LoggerWriterConfig `json:"machine-warn-writer" yaml:"machine-warn-writer" mapstructure:"machine-warn-writer"`
-	MachineErrWriter  LoggerWriterConfig `json:"machine-error-writer" yaml:"machine-error-writer" mapstructure:"machine-error-writer"`
+	HumanWarnWriter   LoggerWriterHumanConfig   `json:"human-warn-writer" yaml:"human-warn-writer" mapstructure:"human-warn-writer"`
+	HumanErrWriter    LoggerWriterHumanConfig   `json:"human-error-writer" yaml:"human-error-writer" mapstructure:"human-error-writer"`
+	MachineWarnWriter LoggerWriterMachineConfig `json:"machine-warn-writer" yaml:"machine-warn-writer" mapstructure:"machine-warn-writer"`
+	MachineErrWriter  LoggerWriterMachineConfig `json:"machine-error-writer" yaml:"machine-error-writer" mapstructure:"machine-error-writer"`
 }
 
 func (d *LoggerConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
@@ -117,22 +117,22 @@ func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		return configerror.NewErrorf("set log tag error: %s", err.Error())
 	}
 
-	humanWarn, cfgErr := d.HumanWarnWriter.process(c, false)
+	humanWarn, cfgErr := d.HumanWarnWriter.process(c)
 	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
-	humanErr, cfgErr := d.HumanErrWriter.process(c, false)
+	humanErr, cfgErr := d.HumanErrWriter.process(c)
 	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
-	machineWarn, cfgErr := d.MachineWarnWriter.process(c, true)
+	machineWarn, cfgErr := d.MachineWarnWriter.process(c)
 	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}
 
-	machineErr, cfgErr := d.MachineErrWriter.process(c, true)
+	machineErr, cfgErr := d.MachineErrWriter.process(c)
 	if cfgErr != nil && cfgErr.IsError() {
 		return cfgErr
 	}

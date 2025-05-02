@@ -19,7 +19,7 @@ import (
 	"strings"
 )
 
-type LoggerWriterConfig struct {
+type LoggerWriterHumanConfig struct {
 	ANSI                typeutils.StringBool `json:"ansi" yaml:"ansi" mapstructure:"ansi"`
 	WriteToStd          string               `json:"write-to-std" yaml:"write-to-std" mapstructure:"write-to-std"` // stdout stderr all no
 	WriteToFile         string               `json:"write-to-file" yaml:"write-to-file" mapstructure:"write-to-file"`
@@ -27,11 +27,11 @@ type LoggerWriterConfig struct {
 	WriteWithDatePrefix string               `json:"write-with-date-prefix" yaml:"write-with-date-prefix" mapstructure:"write-with-date-prefix"`
 }
 
-func (d *LoggerWriterConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
+func (d *LoggerWriterHumanConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
 	return nil
 }
 
-func (d *LoggerWriterConfig) setDefault(c *configInfo) (err configerror.Error) {
+func (d *LoggerWriterHumanConfig) setDefault(c *configInfo) (err configerror.Error) {
 	d.ANSI.SetDefaultEnable()
 
 	d.WriteToStd = strings.ToLower(d.WriteToStd)
@@ -43,29 +43,21 @@ func (d *LoggerWriterConfig) setDefault(c *configInfo) (err configerror.Error) {
 	return nil
 }
 
-func (d *LoggerWriterConfig) check(c *configInfo) (err configerror.Error) {
+func (d *LoggerWriterHumanConfig) check(c *configInfo) (err configerror.Error) {
 	if d.WriteToStd != "stdout" && d.WriteToStd != "stderr" && d.WriteToStd != "no" && d.WriteToStd != "stdout+stderr" && d.WriteToStd != "stderr+stdout" && d.WriteToStd != "" {
 		return configerror.NewErrorf("bad write-to-std: %s", d.WriteToStd)
 	}
 	return nil
 }
 
-func (d *LoggerWriterConfig) process(c *configInfo, machine bool) (writerList []write.Writer, cfgErr configerror.Error) {
+func (d *LoggerWriterHumanConfig) process(c *configInfo) (writerList []write.Writer, cfgErr configerror.Error) {
 	writerList = make([]write.Writer, 0, 10)
 
-	var consoleFn, fileFn, dateFn logformat.FormatFunc
-	if machine {
-		consoleFn = logformat.FormatMachine
-		fileFn = logformat.FormatMachine
-		dateFn = logformat.FormatMachine
+	var consoleFn logformat.FormatFunc
+	if d.ANSI.IsEnable(true) && termutils.IsTermAdvanced(os.Stdout) && termutils.IsTermAdvanced(os.Stderr) {
+		consoleFn = logformat.FormatConsolePretty
 	} else {
-		if d.ANSI.IsEnable(true) && termutils.IsTermAdvanced(os.Stdout) && termutils.IsTermAdvanced(os.Stderr) {
-			consoleFn = logformat.FormatConsolePretty
-		} else {
-			consoleFn = logformat.FormatConsole
-		}
-		fileFn = logformat.FormatFile
-		dateFn = logformat.FormatFile
+		consoleFn = logformat.FormatConsole
 	}
 
 	switch d.WriteToStd {
@@ -82,7 +74,7 @@ func (d *LoggerWriterConfig) process(c *configInfo, machine bool) (writerList []
 	}
 
 	if d.WriteToFile != "" {
-		fileWriter, err := filewriter.NewFileWriter(d.WriteToFile, fileFn)
+		fileWriter, err := filewriter.NewFileWriter(d.WriteToFile, logformat.FormatFile)
 		if err != nil {
 			return nil, configerror.NewErrorf("new file writer (on %s) error error: %s", d.WriteToFile, err.Error())
 		}
@@ -91,7 +83,7 @@ func (d *LoggerWriterConfig) process(c *configInfo, machine bool) (writerList []
 	}
 
 	if d.WriteToDirWithDate != "" {
-		dateFileWriter, err := datefilewriter.NewDateFileWriter(d.WriteToDirWithDate, d.WriteWithDatePrefix, dateFn)
+		dateFileWriter, err := datefilewriter.NewDateFileWriter(d.WriteToDirWithDate, d.WriteWithDatePrefix, logformat.FormatFile)
 		if err != nil {
 			return nil, configerror.NewErrorf("new date file writer (on %s) error error: %s", d.WriteToDirWithDate, err.Error())
 		}

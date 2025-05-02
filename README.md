@@ -321,7 +321,3 @@ $ monkey stop
 ```shell
 $ monkey restart
 ```
-
-## 日后升级计划
-
-1. 单元测试

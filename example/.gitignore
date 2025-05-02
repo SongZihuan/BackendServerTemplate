@@ -1,0 +1,8 @@
+*
+*.log
+*.lock
+*.yaml
+
+!.gitignore
+!README.md
+!config.example.yaml

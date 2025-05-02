@@ -1,0 +1,71 @@
+name: Backend-Server-Template
+mode: debug
+time-zone: local
+
+logger:
+    log-level: debug
+    log-tag: enable
+    
+    human-warn-writer:
+        ansi: enable
+        write-to-std: stdout
+        write-to-file: ./example/warn.log
+        write-to-dir-with-date: ./example
+        write-with-date-prefix: warn-date
+        
+    human-error-writer:
+        ansi: enable
+        write-to-std: stderr
+        write-to-file: ./example/error.log
+        write-to-dir-with-date: ./example
+        write-with-date-prefix: error-date
+        
+    machine-warn-writer:
+        write-to-std: ""
+        write-to-file: ./example/warn-machine.log
+        write-to-dir-with-date: ""
+        write-with-date-prefix: ""
+        
+    machine-error-writer:
+        write-to-std: ""
+        write-to-file: ./example/error-machine.log
+        write-to-dir-with-date: ""
+        write-with-date-prefix: ""
+        
+signal:
+    use-on: not-win32
+    sigint-exit: enable
+    sigterm-exit: enable
+    sighup-exit: enable
+    sigquit-exit: enable
+
+win32-console:
+    use-on: only-win32
+    ctrl-c-exit: enable
+    ctrl-break-exit: enable
+    console-close-recovery: disable
+
+server:
+    name: Jim
+
+    example1:
+        stop-wait-time: 10s
+        startup-wait-time: 3s
+        lock-thread: disable
+
+    example2:
+        stop-wait-time: 10s
+        startup-wait-time: 3s
+        lock-thread: disable
+
+    example3:
+        stop-wait-time: 10s
+        startup-wait-time: 3s
+        lock-thread: disable
+
+    controller:
+        stop-wait-time: 10s
+        stop-wait-time-use-specified-value: disable
+        startup-wait-time: 3s
+        startup-wait-time-use-specified-value: disable
+        lock-thread: disable
