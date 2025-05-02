@@ -12,6 +12,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"os"
 	"path"
+	"sync"
 	"time"
 )
 
@@ -22,9 +23,13 @@ type DateFileWriter struct {
 	file           *os.File
 	close          bool
 	fn             logformat.FormatFunc
+	lock           sync.Mutex
 }
 
 func (f *DateFileWriter) Write(data *logformat.LogData) (n int, err error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+
 	if f.close {
 		return 0, fmt.Errorf("date file writer has been close")
 	}
@@ -65,7 +70,7 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 	filename := fmt.Sprintf("%s.%s.log", f.filenamePrefix, newSuffix)
 	filePath := path.Join(f.dirPath, filename)
 
-	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY|os.O_SYNC, 0644)
 	if err != nil {
 		return err
 	}
@@ -77,6 +82,9 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 }
 
 func (f *DateFileWriter) Close() error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+
 	defer func() {
 		f.file = nil
 		f.close = true

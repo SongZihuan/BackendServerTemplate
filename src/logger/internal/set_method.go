@@ -13,6 +13,9 @@ import (
 )
 
 func (l *Logger) SetLevel(level loglevel.LoggerLevel) error {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
 	logLevel, ok := levelMap[level]
 	if !ok {
 		return fmt.Errorf("invalid log level: %s", level)
@@ -25,11 +28,17 @@ func (l *Logger) SetLevel(level loglevel.LoggerLevel) error {
 }
 
 func (l *Logger) SetLogTag(logTag bool) error {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
 	l.logTag = logTag
 	return nil
 }
 
 func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
 	if w == nil {
 		w = warpwriter.NewWarpWriter(os.Stdout, nil)
 	}
@@ -40,6 +49,9 @@ func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
 }
 
 func (l *Logger) SetErrWriter(w write.Writer) (write.Writer, error) {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
 	if w == nil {
 		w = warpwriter.NewWarpWriter(os.Stderr, nil)
 	}
@@ -49,7 +61,37 @@ func (l *Logger) SetErrWriter(w write.Writer) (write.Writer, error) {
 	return last, nil
 }
 
+func (l *Logger) CloseWriter() error {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
+	err1 := l.closeWarnWriter()
+	err2 := l.closeErrWriter()
+
+	if err1 != nil {
+		return err1
+	} else if err2 != nil {
+		return err2
+	}
+
+	return nil
+}
+
 func (l *Logger) CloseWarnWriter() error {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
+	return l.closeWarnWriter()
+}
+
+func (l *Logger) CloseErrWriter() error {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
+	return l.closeErrWriter()
+}
+
+func (l *Logger) closeWarnWriter() error {
 	if l.warnWriter == nil {
 		return fmt.Errorf("warn writer not set")
 	}
@@ -62,7 +104,7 @@ func (l *Logger) CloseWarnWriter() error {
 	return w.Close()
 }
 
-func (l *Logger) CloseErrWriter() error {
+func (l *Logger) closeErrWriter() error {
 	if l.errWriter == nil {
 		return fmt.Errorf("error writer not set")
 	}

@@ -14,11 +14,10 @@ import (
 	"time"
 )
 
-func (l *Logger) Tagf(format string, args ...interface{}) {
-	l.TagSkipf(1, format, args...)
-}
-
 func (l *Logger) TagSkipf(skip int, format string, args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if !l.logTag {
 		return
 	}
@@ -32,6 +31,9 @@ func (l *Logger) TagSkipf(skip int, format string, args ...interface{}) {
 }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelDebug {
 		return
 	}
@@ -42,6 +44,9 @@ func (l *Logger) Debugf(format string, args ...interface{}) {
 }
 
 func (l *Logger) Infof(format string, args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelInfo {
 		return
 	}
@@ -52,6 +57,9 @@ func (l *Logger) Infof(format string, args ...interface{}) {
 }
 
 func (l *Logger) Warnf(format string, args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelWarn {
 		return
 	}
@@ -62,6 +70,9 @@ func (l *Logger) Warnf(format string, args ...interface{}) {
 }
 
 func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelError {
 		return
 	}
@@ -72,6 +83,9 @@ func (l *Logger) Errorf(format string, args ...interface{}) {
 }
 
 func (l *Logger) Panicf(format string, args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelPanic {
 		return
 	}
@@ -83,11 +97,10 @@ func (l *Logger) Panicf(format string, args ...interface{}) {
 	logpanic.Panic(now, msg)
 }
 
-func (l *Logger) Tag(args ...interface{}) {
-	l.TagSkip(1, args...)
-}
-
 func (l *Logger) TagSkip(skip int, args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if !l.logTag {
 		return
 	}
@@ -101,6 +114,9 @@ func (l *Logger) TagSkip(skip int, args ...interface{}) {
 }
 
 func (l *Logger) Debug(args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelDebug {
 		return
 	}
@@ -111,6 +127,9 @@ func (l *Logger) Debug(args ...interface{}) {
 }
 
 func (l *Logger) Info(args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelInfo {
 		return
 	}
@@ -121,6 +140,9 @@ func (l *Logger) Info(args ...interface{}) {
 }
 
 func (l *Logger) Warn(args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelWarn {
 		return
 	}
@@ -131,6 +153,9 @@ func (l *Logger) Warn(args ...interface{}) {
 }
 
 func (l *Logger) Error(args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelError {
 		return
 	}
@@ -141,6 +166,9 @@ func (l *Logger) Error(args ...interface{}) {
 }
 
 func (l *Logger) Panic(args ...interface{}) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelPanic {
 		return
 	}
@@ -152,11 +180,10 @@ func (l *Logger) Panic(args ...interface{}) {
 	logpanic.Panic(now, msg)
 }
 
-func (l *Logger) TagWrite(msg string) {
-	l.TagSkipWrite(1, msg)
-}
-
 func (l *Logger) TagSkipWrite(skip int, content string) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if !l.logTag {
 		return
 	}
@@ -169,6 +196,9 @@ func (l *Logger) TagSkipWrite(skip int, content string) {
 }
 
 func (l *Logger) DebugWrite(msg string) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelDebug {
 		return
 	}
@@ -178,6 +208,9 @@ func (l *Logger) DebugWrite(msg string) {
 }
 
 func (l *Logger) InfoWrite(msg string) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelInfo {
 		return
 	}
@@ -187,6 +220,9 @@ func (l *Logger) InfoWrite(msg string) {
 }
 
 func (l *Logger) WarnWrite(msg string) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelWarn {
 		return
 	}
@@ -196,6 +232,9 @@ func (l *Logger) WarnWrite(msg string) {
 }
 
 func (l *Logger) ErrorWrite(msg string) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelError {
 		return
 	}
@@ -205,6 +244,9 @@ func (l *Logger) ErrorWrite(msg string) {
 }
 
 func (l *Logger) PanicWrite(msg string) {
+	l.lock.RLock()
+	defer l.lock.RUnlock()
+
 	if l.logLevel >= levelPanic {
 		return
 	}
@@ -235,6 +277,9 @@ func (l *Logger) Recover() {
 	} else {
 		msg = fmt.Sprintf("%v", err)
 	}
+
+	l.lock.RLock()
+	defer l.lock.RUnlock()
 
 	_, _ = l.warnWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
 }

@@ -9,15 +9,20 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"os"
+	"sync"
 )
 
 type FileWriter struct {
 	filePath string
 	file     *os.File
 	fn       logformat.FormatFunc
+	lock     sync.Mutex
 }
 
 func (f *FileWriter) Write(data *logformat.LogData) (n int, err error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+
 	if !fileutils.IsFileOpen(f.file) {
 		return 0, fmt.Errorf("file writer has been close")
 	}
@@ -26,6 +31,9 @@ func (f *FileWriter) Write(data *logformat.LogData) (n int, err error) {
 }
 
 func (f *FileWriter) Close() error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+
 	if f.file == nil {
 		return nil
 	}
@@ -44,7 +52,7 @@ func NewFileWriter(filepath string, fn logformat.FormatFunc) (*FileWriter, error
 		fn = logformat.FormatFile
 	}
 
-	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY|os.O_SYNC, 0644)
 	if err != nil {
 		return nil, err
 	}

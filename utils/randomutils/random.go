@@ -11,8 +11,6 @@ import (
 
 const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
 
-// GenerateRandomString generates a random string of the specified length
-// containing lowercase letters ('a'-'z') and digits ('0'-'9').
 func GenerateRandomString(length int, _charset string) string {
 	if _charset == "" {
 		_charset = charset

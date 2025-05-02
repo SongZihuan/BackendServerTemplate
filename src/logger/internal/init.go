@@ -43,6 +43,6 @@ func IsReady() bool {
 }
 
 func CloseLogger() {
-	_ = GlobalLogger.CloseWarnWriter()
-	_ = GlobalLogger.CloseErrWriter()
+	_ = GlobalLogger.CloseWriter()
+	GlobalLogger = nil
 }
