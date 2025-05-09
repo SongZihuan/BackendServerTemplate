@@ -9,8 +9,9 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/combiningwriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/nonewriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/combiningwriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/nonewriter"
 	"github.com/SongZihuan/BackendServerTemplate/utils/typeutils"
 )
 
@@ -18,31 +19,23 @@ type LoggerConfig struct {
 	LogLevel loglevel.LoggerLevel `json:"log-level" yaml:"log-level" mapstructure:"log-level"`
 	LogTag   typeutils.StringBool `json:"log-tag" yaml:"log-tag" mapstructure:"log-tag"`
 
-	HumanWarnWriter   LoggerWriterHumanConfig   `json:"human-warn-writer" yaml:"human-warn-writer" mapstructure:"human-warn-writer"`
-	HumanErrWriter    LoggerWriterHumanConfig   `json:"human-error-writer" yaml:"human-error-writer" mapstructure:"human-error-writer"`
-	MachineWarnWriter LoggerWriterMachineConfig `json:"machine-warn-writer" yaml:"machine-warn-writer" mapstructure:"machine-warn-writer"`
-	MachineErrWriter  LoggerWriterMachineConfig `json:"machine-error-writer" yaml:"machine-error-writer" mapstructure:"machine-error-writer"`
+	WarnWriter []*LoggerWriterConfig `json:"warn-writer" yaml:"warn-writer" mapstructure:"warn-writer"`
+	ErrWriter  []*LoggerWriterConfig `json:"err-writer" yaml:"err-writer" mapstructure:"err-writer"`
 }
 
 func (d *LoggerConfig) init(filePath string, provider configparser.ConfigParserProvider) (err configerror.Error) {
-	cfgErr := d.HumanWarnWriter.init(filePath, provider)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+	for _, w := range d.WarnWriter {
+		err = w.init(filePath, provider)
+		if err != nil && err.IsError() {
+			return err
+		}
 	}
 
-	cfgErr = d.HumanErrWriter.init(filePath, provider)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
-
-	cfgErr = d.MachineWarnWriter.init(filePath, provider)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
-
-	cfgErr = d.MachineErrWriter.init(filePath, provider)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+	for _, w := range d.ErrWriter {
+		err = w.init(filePath, provider)
+		if err != nil && err.IsError() {
+			return err
+		}
 	}
 
 	return nil
@@ -59,54 +52,42 @@ func (d *LoggerConfig) setDefault(c *configInfo) (err configerror.Error) {
 		}
 	}
 
-	cfgErr := d.HumanWarnWriter.setDefault(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+	for _, w := range d.WarnWriter {
+		err = w.setDefault(c)
+		if err != nil && err.IsError() {
+			return err
+		}
 	}
 
-	cfgErr = d.HumanErrWriter.setDefault(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
-
-	cfgErr = d.MachineWarnWriter.setDefault(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
-
-	cfgErr = d.MachineErrWriter.setDefault(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+	for _, w := range d.ErrWriter {
+		err = w.setDefault(c)
+		if err != nil && err.IsError() {
+			return err
+		}
 	}
 
 	return nil
 }
 
 func (d *LoggerConfig) check(c *configInfo) (err configerror.Error) {
-	cfgErr := d.HumanWarnWriter.check(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+	for _, w := range d.WarnWriter {
+		err = w.check(c)
+		if err != nil && err.IsError() {
+			return err
+		}
 	}
 
-	cfgErr = d.HumanErrWriter.check(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
-
-	cfgErr = d.MachineWarnWriter.check(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
-
-	cfgErr = d.MachineErrWriter.check(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+	for _, w := range d.ErrWriter {
+		err = w.check(c)
+		if err != nil && err.IsError() {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
+func (d *LoggerConfig) process(c *configInfo) configerror.Error {
 	err := logger.SetLevel(d.LogLevel)
 	if err != nil {
 		return configerror.NewErrorf("set log level error: %s", err.Error())
@@ -117,28 +98,26 @@ func (d *LoggerConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		return configerror.NewErrorf("set log tag error: %s", err.Error())
 	}
 
-	humanWarn, cfgErr := d.HumanWarnWriter.process(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+	logWarn := make([]logwriter.Writer, 0, len(d.WarnWriter))
+	logErr := make([]logwriter.Writer, 0, len(d.ErrWriter))
+
+	for _, w := range d.WarnWriter {
+		writer, cfgErr := w.process(c)
+		if cfgErr != nil && cfgErr.IsError() {
+			return cfgErr
+		}
+
+		logWarn = append(logWarn, writer)
 	}
 
-	humanErr, cfgErr := d.HumanErrWriter.process(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
+	for _, w := range d.ErrWriter {
+		writer, cfgErr := w.process(c)
+		if cfgErr != nil && cfgErr.IsError() {
+			return cfgErr
+		}
 
-	machineWarn, cfgErr := d.MachineWarnWriter.process(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
+		logErr = append(logErr, writer)
 	}
-
-	machineErr, cfgErr := d.MachineErrWriter.process(c)
-	if cfgErr != nil && cfgErr.IsError() {
-		return cfgErr
-	}
-
-	logWarn := append(humanWarn, machineWarn...)
-	logErr := append(humanErr, machineErr...)
 
 	if len(logWarn) == 0 {
 		_, err := logger.SetWarnWriter(nonewriter.NewNoneWriter())

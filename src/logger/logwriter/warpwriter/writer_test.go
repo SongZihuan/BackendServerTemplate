@@ -2,16 +2,16 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package combiningwriter
+package warpwriter
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"testing"
 )
 
-func TestCombiningWriter(t *testing.T) {
-	var a write.WriteCloser
-	var b *CombiningWriter
+func TestWrapWriteCloser(t *testing.T) {
+	var a logwriter.Writer
+	var b *WarpWriteCloser
 
 	a = b
 	_ = a

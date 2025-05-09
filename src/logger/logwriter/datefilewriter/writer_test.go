@@ -5,12 +5,12 @@
 package datefilewriter
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"testing"
 )
 
 func TestDateFileWriter(t *testing.T) {
-	var a write.WriteCloser
+	var a logwriter.Writer
 	var b *DateFileWriter
 
 	a = b

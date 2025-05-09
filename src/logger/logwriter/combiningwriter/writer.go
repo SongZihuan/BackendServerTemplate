@@ -7,17 +7,21 @@ package combiningwriter
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"github.com/SongZihuan/BackendServerTemplate/utils/sliceutils"
+	"sync"
 )
 
 type CombiningWriter struct {
-	writer []write.Writer
-	closer []write.WriteCloser
+	writer []logwriter.Writer
 	close  bool
+	mutex  sync.Mutex
 }
 
 func (c *CombiningWriter) Write(data *logformat.LogData) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	if c.close {
 		return
 	}
@@ -31,12 +35,15 @@ func (c *CombiningWriter) Write(data *logformat.LogData) {
 }
 
 func (c *CombiningWriter) Close() error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	defer func() {
 		c.close = true
 	}()
 
 	errMsg := ""
-	for _, w := range c.closer {
+	for _, w := range c.writer {
 		if w == nil {
 			continue
 		}
@@ -54,16 +61,10 @@ func (c *CombiningWriter) Close() error {
 	return fmt.Errorf(errMsg)
 }
 
-func NewCombiningWriter(w ...write.Writer) *CombiningWriter {
+func NewCombiningWriter(w ...logwriter.Writer) *CombiningWriter {
 	var res = new(CombiningWriter)
 
 	res.writer = sliceutils.CopySlice(w)
-	res.closer = make([]write.WriteCloser, 0, len(w))
-	for _, i := range w {
-		if wc, ok := i.(write.WriteCloser); ok {
-			res.closer = append(res.closer, wc)
-		}
-	}
 	res.close = false
 
 	return res

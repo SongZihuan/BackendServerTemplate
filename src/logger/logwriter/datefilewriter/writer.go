@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/gofrs/flock"
@@ -29,12 +29,12 @@ type DateFileWriter struct {
 	fileLock       *flock.Flock
 	close          bool
 	fn             logformat.FormatFunc
-	lock           sync.Mutex
+	mutex          sync.Mutex
 }
 
 func (f *DateFileWriter) Write(data *logformat.LogData) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 
 	if f.close {
 		return
@@ -73,10 +73,6 @@ func (f *DateFileWriter) closeFile() error {
 		f.file = nil
 	}()
 
-	if f.file != nil {
-		return f.file.Close()
-	}
-
 	return nil
 }
 
@@ -85,7 +81,7 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 		return fmt.Errorf("last file has not been closse")
 	}
 
-	f.fileName = fmt.Sprintf("%s.%s.log", f.filenamePrefix, newSuffix)
+	f.fileName = fmt.Sprintf("%s%s.log", f.filenamePrefix, newSuffix) // prefix和suffix之间不需要分隔符，prefix包含分隔符
 	f.filePath = path.Join(f.dirPath, f.fileName)
 	f.fileLockPath = f.filePath + ".lock"
 
@@ -102,8 +98,8 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 }
 
 func (f *DateFileWriter) Close() error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 
 	defer func() {
 		f.file = nil
@@ -118,16 +114,20 @@ func (f *DateFileWriter) Close() error {
 }
 
 func NewDateFileWriter(dirpath string, filenamePrefix string, fn logformat.FormatFunc) (*DateFileWriter, error) {
-	var writer write.WriteCloser
+	var writer logwriter.Writer
 	var res = new(DateFileWriter)
 
 	if filesystemutils.IsFile(dirpath) {
 		return nil, fmt.Errorf("dir not exists")
 	}
 
-	err := os.MkdirAll(dirpath, 0644)
+	err := os.MkdirAll(dirpath, 0755)
 	if err != nil {
 		return nil, err
+	}
+
+	if filenamePrefix != "" {
+		filenamePrefix += "."
 	}
 
 	res.dirPath = dirpath

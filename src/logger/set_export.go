@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/internal"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 )
 
 func SetLevel(level loglevel.LoggerLevel) error {
@@ -25,14 +25,14 @@ func SetLogTag(logTag bool) error {
 	return internal.GlobalLogger.SetLogTag(logTag)
 }
 
-func SetWarnWriter(w write.Writer) (write.Writer, error) {
+func SetWarnWriter(w logwriter.Writer) (logwriter.Writer, error) {
 	if !internal.IsReady() {
 		return nil, fmt.Errorf("logger not ready")
 	}
 	return internal.GlobalLogger.SetWarnWriter(w)
 }
 
-func SetErrWriter(w write.Writer) (write.Writer, error) {
+func SetErrWriter(w logwriter.Writer) (logwriter.Writer, error) {
 	if !internal.IsReady() {
 		return nil, fmt.Errorf("logger not ready")
 	}

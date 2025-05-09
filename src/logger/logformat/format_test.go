@@ -9,7 +9,7 @@ import "testing"
 func TestFormat(t *testing.T) {
 	var a FormatFunc
 
-	a = FormatMachine
+	a = FormatJson
 	a = FormatFile
 	a = FormatConsole
 	a = FormatConsolePretty

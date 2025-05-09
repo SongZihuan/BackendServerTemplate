@@ -7,8 +7,8 @@ package internal
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write/warpwriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/warpwriter"
 	"os"
 )
 
@@ -35,7 +35,7 @@ func (l *Logger) SetLogTag(logTag bool) error {
 	return nil
 }
 
-func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
+func (l *Logger) SetWarnWriter(w logwriter.Writer) (logwriter.Writer, error) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
@@ -48,7 +48,7 @@ func (l *Logger) SetWarnWriter(w write.Writer) (write.Writer, error) {
 	return last, nil
 }
 
-func (l *Logger) SetErrWriter(w write.Writer) (write.Writer, error) {
+func (l *Logger) SetErrWriter(w logwriter.Writer) (logwriter.Writer, error) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
@@ -96,7 +96,7 @@ func (l *Logger) closeWarnWriter() error {
 		return fmt.Errorf("warn writer not set")
 	}
 
-	w, ok := l.warnWriter.(write.WriteCloser)
+	w, ok := l.warnWriter.(logwriter.Writer)
 	if !ok {
 		return nil
 	}
@@ -109,7 +109,7 @@ func (l *Logger) closeErrWriter() error {
 		return fmt.Errorf("error writer not set")
 	}
 
-	w, ok := l.errWriter.(write.WriteCloser)
+	w, ok := l.errWriter.(logwriter.Writer)
 	if !ok {
 		return nil
 	}

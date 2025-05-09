@@ -2,16 +2,16 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package warpwritecloser
+package filewriter
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"testing"
 )
 
-func TestWrapWriteCloser(t *testing.T) {
-	var a write.Writer
-	var b *WarpWriteCloser
+func TestFileWriter(t *testing.T) {
+	var a logwriter.Writer
+	var b *FileWriter
 
 	a = b
 	_ = a

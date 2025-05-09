@@ -11,6 +11,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/gofrs/flock"
 	"os"
+	"path"
 	"sync"
 	"time"
 )
@@ -21,12 +22,12 @@ type FileWriter struct {
 	fileLockPath string
 	fileLock     *flock.Flock
 	fn           logformat.FormatFunc
-	lock         sync.Mutex
+	mutex        sync.Mutex
 }
 
 func (f *FileWriter) Write(data *logformat.LogData) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 
 	if !fileutils.IsFileOpen(f.file) {
 		return
@@ -50,8 +51,8 @@ func (f *FileWriter) Write(data *logformat.LogData) {
 }
 
 func (f *FileWriter) Close() error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 
 	if f.file == nil {
 		return nil
@@ -69,6 +70,12 @@ func NewFileWriter(filepath string, fn logformat.FormatFunc) (*FileWriter, error
 
 	if fn == nil {
 		fn = logformat.FormatFile
+	}
+
+	dir := path.Dir(filepath)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		return nil, err
 	}
 
 	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY|os.O_SYNC, 0644)

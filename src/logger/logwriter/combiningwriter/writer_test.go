@@ -2,16 +2,16 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package nonewriter
+package combiningwriter
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"testing"
 )
 
-func TestNoneWriter(t *testing.T) {
-	var a write.WriteCloser
-	var b *NoneWriter
+func TestCombiningWriter(t *testing.T) {
+	var a logwriter.Writer
+	var b *CombiningWriter
 
 	a = b
 	_ = a

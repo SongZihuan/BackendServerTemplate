@@ -6,7 +6,7 @@ package internal
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"sync"
 )
 
@@ -17,7 +17,7 @@ type Logger struct {
 	level      loglevel.LoggerLevel
 	logLevel   loggerLevel
 	logTag     bool
-	warnWriter write.Writer
-	errWriter  write.Writer
+	warnWriter logwriter.Writer
+	errWriter  logwriter.Writer
 	args0Name  string
 }

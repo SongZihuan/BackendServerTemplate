@@ -159,34 +159,38 @@ timestamp: 1744731217
 logger:
     log-level: debug  # 日志记录等级：debug（输出debug和以上的） < info （输出info和以上的）< warn < error < panic < none（什么都不输出）
     log-tag: enable  # 是否输出tag调试日志。
-    
-    human-warn-writer:  # 人类可读的 debug、tag、info、warn 日志的输出器
-        ansi: enable  # 当输出到console时，若console支持，是否启用ANSI转义序列优化显示的内容
-        write-to-std: stdout  # 输出到标准输出或标准错误输出（为空则不启用）
-        write-to-file: ""  # 输出到固定文件（append）模式
-        write-to-dir-with-date: ""  # 输出到指定目录，并按日期分割，此处为输出路径
-        write-with-date-prefix: ""  # 配合 write-to-dir-with-date ，表示文件的输出前缀
-        
-    human-error-writer:  # 人类可读的 error、panic 日志的输出器，含义同上
-        ansi: enable
-        write-to-std: stdout
-        write-to-file: ""
-        write-to-dir-with-date: ""
-        write-with-date-prefix: ""
 
-    machine-warn-writer:  # 机器可读的 debug、tag、info、warn 日志的输出器，含义同上
-      ansi: enable
-      write-to-std: stdout
-      write-to-file: ""
-      write-to-dir-with-date: ""
-      write-with-date-prefix: ""
-      
-    machine-error-writer:  # 机器可读的 error、panic 日志的输出器，含义同上
-      ansi: enable
-      write-to-std: stdout
-      write-to-file: ""
-      write-to-dir-with-date: ""
-      write-with-date-prefix: ""
+    warn-writer:  # debug、info、warning的输出器
+      - type: stander  # 输出类型（stander - 标准输出）
+        format: console-try-pretty  # 格式：console（比file模式缩减内容，用于控制台快速查看信息）、console-pretty（在 console 基础上开启 ANSI 转义序列）、console-try-pretty（类似于 console-pretty，但是会检测终端是否支持ANSI，若不支持则不启用ANSI）
+        output-path: stdout  # 输出位置（对于type为stander来说，只能为stdout和stderr）
+      - type: file  # 输出类型（file - 文件）
+        format: file  # 格式：文件类型（比console多更多复杂的记录）
+        output-path: /path/to/warn.log  # 存储日志的文件（若文件或路径不存在会尝试创建）
+      - type: date-file  # 输出类型（date-file - 按日期切割日志）
+        format: file  # 同上
+        output-path: /path/to/log  # 存储日志的文件夹（若不存在会尝试创建）
+        file-prefix: warn-date  # 日志文件的文件名前缀，例：warn-date.2025-05-10.log
+      - type: date-file  # 同上
+        format: json  # json格式，一行json为一条日志，一般用于机器读取
+        output-path: /path/to/log  # 同时
+        file-prefix: warn-date-machine  # 同时
+
+    err-writer:  # error、panic 的输出器
+        - type: stander
+          format: try-pretty
+          output-path: stderr
+        - type: file
+          format: file
+          output-path: C:\Users\songz\Code\GoProject\BackendServerTemplate\test_self\error.log
+        - type: date-file
+          format: file
+          output-path: C:\Users\songz\Code\GoProject\BackendServerTemplate\test_self
+          file-prefix: error-date
+        - type: date-file
+          format: json
+          output-path: C:\Users\songz\Code\GoProject\BackendServerTemplate\test_self
+          file-prefix: error-date-machine
 
 signal: # 信号除了机制（管理接收程序退出信号）。sigkill 等信号是不可捕获的，是强制退出的，因此此处无法控制这类信号。虽然windows本身不具有Linux这种信号机制，但是Go在信号方面做了一层模拟，使得控制它ctrl+c可以转换为相应信号。
     use-on: not-win32  # 启动模式：any表示全平台、only-win32表示仅windows平台、not-win32表示除windows以外所有平台，never表示任何平台均不启用。

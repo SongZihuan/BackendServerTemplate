@@ -13,7 +13,7 @@ import (
 
 type FormatFunc func(data *LogData) string
 
-func FormatMachine(data *LogData) string {
+func FormatJson(data *LogData) string {
 	d, err := json.Marshal(data)
 	if err != nil {
 		return fmt.Sprintf("{\"errmgs\":\"%s\"}", err.Error())

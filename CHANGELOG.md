@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [未发布]
+
+### 修改
+
+- 调整配置文件设置日志输出器的设置方式。
+
 ## [0.15.0] 2025/05/02 Asia/Shanghai
 
 ### 新增
