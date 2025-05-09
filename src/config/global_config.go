@@ -71,6 +71,10 @@ func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		global.Name = name
 	}
 
+	if global.Name == "" {
+		global.Name = "unknown"
+	}
+
 	var location *time.Location
 	if strings.ToLower(d.Timezone) == "utc" {
 		location = global.UTCLocation
