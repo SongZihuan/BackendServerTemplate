@@ -11,7 +11,7 @@ import (
 
 func TestWrapWriteCloser(t *testing.T) {
 	var a logwriter.Writer
-	var b *WarpWriteCloser
+	var b *WarpWrite
 
 	a = b
 	_ = a

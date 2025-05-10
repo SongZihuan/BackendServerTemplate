@@ -4,7 +4,7 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
-## [未发布]
+## [0.16.0] 2025/05/10 Asia/Shanghai
 
 ### 新增
 
