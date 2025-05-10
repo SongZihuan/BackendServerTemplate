@@ -5,7 +5,6 @@
 package internal
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"sync"
 )
@@ -14,10 +13,6 @@ var GlobalLogger *Logger = nil
 
 type Logger struct {
 	lock       sync.RWMutex
-	level      loglevel.LoggerLevel
-	logLevel   loggerLevel
-	logTag     bool
 	warnWriter logwriter.Writer
 	errWriter  logwriter.Writer
-	args0Name  string
 }

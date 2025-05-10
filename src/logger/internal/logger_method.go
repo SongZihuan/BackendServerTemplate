@@ -18,81 +18,57 @@ func (l *Logger) TagSkipf(skip int, format string, args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if !l.logTag {
-		return
-	}
-
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
 	content := fmt.Sprintf(format, args...)
 	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.PseudoLevelTag, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.PseudoLevelTag, msg, now))
 }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelDebug {
-		return
-	}
-
 	msg := fmt.Sprintf(format, args...)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelDebug, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelDebug, msg, now))
 }
 
 func (l *Logger) Infof(format string, args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelInfo {
-		return
-	}
-
 	msg := fmt.Sprintf(format, args...)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelInfo, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelInfo, msg, now))
 }
 
 func (l *Logger) Warnf(format string, args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelWarn {
-		return
-	}
-
 	msg := fmt.Sprintf(format, args...)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelWarn, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelWarn, msg, now))
 }
 
 func (l *Logger) Errorf(format string, args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelError {
-		return
-	}
-
 	msg := fmt.Sprintf(format, args...)
 	now := time.Now().In(global.Location)
-	go l.errWriter.Write(logformat.GetLogData(loglevel.LevelError, msg, now))
+	l.errWriter.Write(logformat.GetLogData(loglevel.LevelError, msg, now))
 }
 
 func (l *Logger) Panicf(format string, args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelPanic {
-		return
-	}
-
 	msg := fmt.Sprintf(format, args...)
 	now := time.Now().In(global.Location)
-	go l.errWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
+	<-l.errWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
 
 	logpanic.Panic(now, msg)
 }
@@ -101,81 +77,59 @@ func (l *Logger) TagSkip(skip int, args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if !l.logTag {
-		return
-	}
-
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
 	content := fmt.Sprint(args...)
 	now := time.Now().In(global.Location)
 	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.PseudoLevelTag, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.PseudoLevelTag, msg, now))
 }
 
 func (l *Logger) Debug(args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelDebug {
-		return
-	}
-
 	msg := fmt.Sprint(args...)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelDebug, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelDebug, msg, now))
 }
 
 func (l *Logger) Info(args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelInfo {
-		return
-	}
-
 	msg := fmt.Sprint(args...)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelInfo, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelInfo, msg, now))
 }
 
 func (l *Logger) Warn(args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelWarn {
-		return
-	}
-
 	msg := fmt.Sprint(args...)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelWarn, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelWarn, msg, now))
 }
 
 func (l *Logger) Error(args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelError {
-		return
-	}
-
 	msg := fmt.Sprint(args...)
 	now := time.Now().In(global.Location)
-	go l.errWriter.Write(logformat.GetLogData(loglevel.LevelError, msg, now))
+	l.errWriter.Write(logformat.GetLogData(loglevel.LevelError, msg, now))
 }
 
 func (l *Logger) Panic(args ...interface{}) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelPanic {
-		return
-	}
-
 	msg := fmt.Sprint(args...)
 	now := time.Now().In(global.Location)
-	go l.errWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
+
+	// 此处必须使用 <- 确保输出完成，然后才能 panic
+	<-l.errWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
 
 	logpanic.Panic(now, msg)
 }
@@ -184,75 +138,51 @@ func (l *Logger) TagSkipWrite(skip int, content string) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if !l.logTag {
-		return
-	}
-
 	funcName, file, _, line := runtimeutils.GetCallingFunctionInfo(skip + 1)
 
 	msg := fmt.Sprintf("%s %s %s:%d", content, funcName, file, line)
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.PseudoLevelTag, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.PseudoLevelTag, msg, now))
 }
 
 func (l *Logger) DebugWrite(msg string) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelDebug {
-		return
-	}
-
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelDebug, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelDebug, msg, now))
 }
 
 func (l *Logger) InfoWrite(msg string) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelInfo {
-		return
-	}
-
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelInfo, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelInfo, msg, now))
 }
 
 func (l *Logger) WarnWrite(msg string) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelWarn {
-		return
-	}
-
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelWarn, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelWarn, msg, now))
 }
 
 func (l *Logger) ErrorWrite(msg string) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelError {
-		return
-	}
-
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelError, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelError, msg, now))
 }
 
 func (l *Logger) PanicWrite(msg string) {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	if l.logLevel >= levelPanic {
-		return
-	}
-
 	now := time.Now().In(global.Location)
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
+	<-l.warnWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
 
 	logpanic.Panic(now, msg)
 }
@@ -281,5 +211,5 @@ func (l *Logger) Recover() {
 	l.lock.RLock()
 	defer l.lock.RUnlock()
 
-	go l.warnWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
+	l.warnWriter.Write(logformat.GetLogData(loglevel.LevelPanic, msg, now))
 }

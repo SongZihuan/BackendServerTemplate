@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package logwriter
+package write
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
@@ -10,6 +10,10 @@ import (
 )
 
 type Writer interface {
-	Write(data *logformat.LogData) chan any
+	Write(data *logformat.LogData)
+}
+
+type WriteCloser interface {
+	Writer
 	io.Closer
 }

@@ -2,14 +2,17 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package logwriter
+package warpwriter
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"io"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
+	"testing"
 )
 
-type Writer interface {
-	Write(data *logformat.LogData) chan any
-	io.Closer
+func TestWrapWriter(t *testing.T) {
+	var a write.Writer
+	var b *WarpWriter
+
+	a = b
+	_ = a
 }

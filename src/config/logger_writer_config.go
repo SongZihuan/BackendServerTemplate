@@ -8,12 +8,14 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/datefilewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/filewriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/warpwriter"
 	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/termutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/typeutils"
 	"io"
 	"os"
 	"strings"
@@ -34,6 +36,9 @@ const (
 )
 
 type LoggerWriterConfig struct {
+	LogLevel loglevel.LoggerLevel `json:"log-level" yaml:"log-level" mapstructure:"log-level"`
+	LogTag   typeutils.StringBool `json:"log-tag" yaml:"log-tag" mapstructure:"log-tag"`
+
 	Type   string `json:"type"`
 	Format string `json:"format" yaml:"format" mapstructure:"format"`
 
@@ -51,6 +56,24 @@ func (d *LoggerWriterConfig) init(filePath string, provider configparser.ConfigP
 }
 
 func (d *LoggerWriterConfig) setDefault(c *configInfo) (cfgErr configerror.Error) {
+	if d.LogLevel == "" {
+		d.LogLevel = c.data.Logger.LogLevel
+	}
+
+	if d.LogLevel == "" && c.data.GlobalConfig.IsRelease() {
+		d.LogLevel = loglevel.LevelInfo
+	} else if d.LogLevel == "" {
+		d.LogLevel = loglevel.LevelDebug
+	}
+
+	d.LogLevel = d.LogLevel.ToLower()
+
+	if c.data.Logger.LogTag.IsEnable(false) {
+		d.LogTag.SetDefaultEnable()
+	} else {
+		d.LogTag.SetDefaultDisable()
+	}
+
 	if d.Type == "" {
 		d.Type = "stander"
 	}
@@ -85,6 +108,12 @@ func (d *LoggerWriterConfig) setDefault(c *configInfo) (cfgErr configerror.Error
 }
 
 func (d *LoggerWriterConfig) check(c *configInfo) (cfgErr configerror.Error) {
+	if !d.LogLevel.OK() {
+		return configerror.NewErrorf("log level error: %s", d.LogLevel)
+	} else if d.LogLevel == loglevel.PseudoLevelTag {
+		return configerror.NewErrorf("log level error: %s", loglevel.PseudoLevelTag)
+	}
+
 	switch d.Type {
 	case LoggerWriterTypeStander:
 		if d.OutputPath != "stdout" && d.OutputPath != "stderr" {
@@ -123,42 +152,42 @@ func (d *LoggerWriterConfig) process(c *configInfo) (writer logwriter.Writer, cf
 
 		switch d.Format {
 		case LoggerFormatTypeConsole:
-			d.Writer = warpwriter.NewWarpWriter(w, logformat.FormatConsole)
+			d.Writer = warpwriter.NewWarpWriter(d.LogLevel, d.LogTag.IsEnable(false), w, logformat.FormatConsole)
 		case LoggerFormatTypeConsolePretty:
-			d.Writer = warpwriter.NewWarpWriter(w, logformat.FormatConsolePretty)
+			d.Writer = warpwriter.NewWarpWriter(d.LogLevel, d.LogTag.IsEnable(false), w, logformat.FormatConsolePretty)
 		case LoggerFormatTypeConsoleTryPretty:
 			if termutils.IsTermAdvanced(w) {
-				d.Writer = warpwriter.NewWarpWriter(w, logformat.FormatConsolePretty)
+				d.Writer = warpwriter.NewWarpWriter(d.LogLevel, d.LogTag.IsEnable(false), w, logformat.FormatConsolePretty)
 			} else {
-				d.Writer = warpwriter.NewWarpWriter(w, logformat.FormatConsole)
+				d.Writer = warpwriter.NewWarpWriter(d.LogLevel, d.LogTag.IsEnable(false), w, logformat.FormatConsole)
 			}
 		case LoggerFormatTypeFile:
-			d.Writer = warpwriter.NewWarpWriter(w, logformat.FormatFile)
+			d.Writer = warpwriter.NewWarpWriter(d.LogLevel, d.LogTag.IsEnable(false), w, logformat.FormatFile)
 		case LoggerFormatTypeJSON:
-			d.Writer = warpwriter.NewWarpWriter(w, logformat.FormatJson)
+			d.Writer = warpwriter.NewWarpWriter(d.LogLevel, d.LogTag.IsEnable(false), w, logformat.FormatJson)
 		}
 	case LoggerWriterTypeFile:
 		switch d.Format {
 		case LoggerFormatTypeConsole, LoggerFormatTypeConsoleTryPretty:
-			w, err := filewriter.NewFileWriter(d.OutputPath, logformat.FormatConsole)
+			w, err := filewriter.NewFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, logformat.FormatConsole)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}
 			d.Writer = w
 		case LoggerFormatTypeConsolePretty:
-			w, err := filewriter.NewFileWriter(d.OutputPath, logformat.FormatConsolePretty)
+			w, err := filewriter.NewFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, logformat.FormatConsolePretty)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}
 			d.Writer = w
 		case LoggerFormatTypeFile:
-			w, err := filewriter.NewFileWriter(d.OutputPath, logformat.FormatFile)
+			w, err := filewriter.NewFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, logformat.FormatFile)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}
 			d.Writer = w
 		case LoggerFormatTypeJSON:
-			w, err := filewriter.NewFileWriter(d.OutputPath, logformat.FormatJson)
+			w, err := filewriter.NewFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, logformat.FormatJson)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}
@@ -167,25 +196,25 @@ func (d *LoggerWriterConfig) process(c *configInfo) (writer logwriter.Writer, cf
 	case LoggerWriterTypeDateFile:
 		switch d.Format {
 		case LoggerFormatTypeConsole, LoggerFormatTypeConsoleTryPretty:
-			w, err := datefilewriter.NewDateFileWriter(d.OutputPath, d.FilePrefix, logformat.FormatConsole)
+			w, err := datefilewriter.NewDateFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, d.FilePrefix, logformat.FormatConsole)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}
 			d.Writer = w
 		case LoggerFormatTypeConsolePretty:
-			w, err := datefilewriter.NewDateFileWriter(d.OutputPath, d.FilePrefix, logformat.FormatConsolePretty)
+			w, err := datefilewriter.NewDateFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, d.FilePrefix, logformat.FormatConsolePretty)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}
 			d.Writer = w
 		case LoggerFormatTypeFile:
-			w, err := datefilewriter.NewDateFileWriter(d.OutputPath, d.FilePrefix, logformat.FormatFile)
+			w, err := datefilewriter.NewDateFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, d.FilePrefix, logformat.FormatFile)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}
 			d.Writer = w
 		case LoggerFormatTypeJSON:
-			w, err := datefilewriter.NewDateFileWriter(d.OutputPath, d.FilePrefix, logformat.FormatJson)
+			w, err := datefilewriter.NewDateFileWriter(d.LogLevel, d.LogTag.IsEnable(false), d.OutputPath, d.FilePrefix, logformat.FormatJson)
 			if err != nil {
 				return nil, configerror.NewErrorf("create filewriter error: %s", err.Error())
 			}

@@ -5,31 +5,23 @@
 package internal
 
 import (
-	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/warpwriter"
 	"os"
 )
 
-func InitLogger(level loglevel.LoggerLevel, logTag bool, warnWriter, errWriter logwriter.Writer) error {
-	logLevel, ok := levelMap[level]
-	if !ok {
-		return fmt.Errorf("invalid log level: %s", level)
-	}
-
+func InitLogger(level loglevel.LoggerLevel, tag bool, warnWriter, errWriter logwriter.Writer) error {
 	if warnWriter == nil {
-		warnWriter = warpwriter.NewWarpWriter(os.Stdout, nil)
+		warnWriter = warpwriter.NewWarpWriter(level, tag, os.Stdout, logformat.FormatConsole)
 	}
 
 	if errWriter == nil {
-		errWriter = warpwriter.NewWarpWriter(os.Stderr, nil)
+		errWriter = warpwriter.NewWarpWriter(level, tag, os.Stderr, logformat.FormatConsole)
 	}
 
 	logger := &Logger{
-		level:      level,
-		logLevel:   logLevel,
-		logTag:     logTag,
 		warnWriter: warnWriter,
 		errWriter:  errWriter,
 	}

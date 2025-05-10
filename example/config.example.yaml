@@ -6,31 +6,37 @@ logger:
     log-level: debug
     log-tag: enable
     
-    human-warn-writer:
-        ansi: enable
-        write-to-std: stdout
-        write-to-file: ./example/warn.log
-        write-to-dir-with-date: ./example
-        write-with-date-prefix: warn-date
-        
-    human-error-writer:
-        ansi: enable
-        write-to-std: stderr
-        write-to-file: ./example/error.log
-        write-to-dir-with-date: ./example
-        write-with-date-prefix: error-date
-        
-    machine-warn-writer:
-        write-to-std: ""
-        write-to-file: ./example/warn-machine.log
-        write-to-dir-with-date: ""
-        write-with-date-prefix: ""
-        
-    machine-error-writer:
-        write-to-std: ""
-        write-to-file: ./example/error-machine.log
-        write-to-dir-with-date: ""
-        write-with-date-prefix: ""
+    warn-writer:
+        - type: stander
+          format: console-try-pretty
+          output-path: stdout
+        - type: file
+          format: file
+          output-path: ./example/warn.log
+        - type: date-file
+          format: file
+          output-path: ./example
+          file-prefix: warn-date
+        - type: date-file
+          format: json
+          output-path: ./example
+          file-prefix: warn-date-machine
+
+    err-writer:
+        - type: stander
+          format: console-try-pretty
+          output-path: stderr
+        - type: file
+          format: file
+          output-path: ./example/error.log
+        - type: date-file
+          format: file
+          output-path: ./example
+          file-prefix: error-date
+        - type: date-file
+          format: json
+          output-path: ./example
+          file-prefix: error-date-machine
         
 signal:
     use-on: not-win32

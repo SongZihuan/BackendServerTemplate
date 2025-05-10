@@ -11,7 +11,11 @@ import (
 type NoneWriter struct {
 }
 
-func (f *NoneWriter) Write(_ *logformat.LogData) {}
+func (f *NoneWriter) Write(_ *logformat.LogData) chan any {
+	res := make(chan any)
+	close(res)
+	return res
+}
 
 func (f *NoneWriter) Close() error {
 	return nil

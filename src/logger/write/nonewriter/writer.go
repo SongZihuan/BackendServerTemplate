@@ -2,14 +2,21 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package logwriter
+package nonewriter
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"io"
 )
 
-type Writer interface {
-	Write(data *logformat.LogData) chan any
-	io.Closer
+type NoneWriter struct {
+}
+
+func (f *NoneWriter) Write(_ *logformat.LogData) {}
+
+func (f *NoneWriter) Close() error {
+	return nil
+}
+
+func NewNoneWriter() *NoneWriter {
+	return new(NoneWriter)
 }

@@ -8,8 +8,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/write"
 	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/gofrs/flock"
@@ -20,8 +19,6 @@ import (
 )
 
 type DateFileWriter struct {
-	level          loglevel.LoggerLevel
-	tag            bool
 	dirPath        string
 	filenamePrefix string
 	filenameSuffix string
@@ -32,32 +29,12 @@ type DateFileWriter struct {
 	fileLock       *flock.Flock
 	close          bool
 	fn             logformat.FormatFunc
-	mutex          sync.Mutex
+	lock           sync.Mutex
 }
 
-func (w *DateFileWriter) Write(data *logformat.LogData) chan any {
-	res := make(chan any)
-
-	// 此处 w.level 是只读的，因此可以不上锁操作
-	if (w.level.Int() > data.Level.Int()) || (data.Level == loglevel.PseudoLevelTag && !w.tag) {
-		close(res)
-		return res
-	}
-
-	w.mutex.Lock()
-	defer w.mutex.Unlock()
-
-	go func() {
-		w.write(data)
-		close(res)
-	}()
-
-	return res
-}
-
-func (f *DateFileWriter) write(data *logformat.LogData) {
-	f.mutex.Lock()
-	defer f.mutex.Unlock()
+func (f *DateFileWriter) Write(data *logformat.LogData) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 
 	if f.close {
 		return
@@ -96,6 +73,10 @@ func (f *DateFileWriter) closeFile() error {
 		f.file = nil
 	}()
 
+	if f.file != nil {
+		return f.file.Close()
+	}
+
 	return nil
 }
 
@@ -104,7 +85,7 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 		return fmt.Errorf("last file has not been closse")
 	}
 
-	f.fileName = fmt.Sprintf("%s%s.log", f.filenamePrefix, newSuffix) // prefix和suffix之间不需要分隔符，prefix包含分隔符
+	f.fileName = fmt.Sprintf("%s.%s.log", f.filenamePrefix, newSuffix)
 	f.filePath = path.Join(f.dirPath, f.fileName)
 	f.fileLockPath = f.filePath + ".lock"
 
@@ -121,8 +102,8 @@ func (f *DateFileWriter) openFile(newSuffix string) error {
 }
 
 func (f *DateFileWriter) Close() error {
-	f.mutex.Lock()
-	defer f.mutex.Unlock()
+	f.lock.Lock()
+	defer f.lock.Unlock()
 
 	defer func() {
 		f.file = nil
@@ -136,25 +117,19 @@ func (f *DateFileWriter) Close() error {
 	return nil
 }
 
-func NewDateFileWriter(level loglevel.LoggerLevel, tag bool, dirpath string, filenamePrefix string, fn logformat.FormatFunc) (*DateFileWriter, error) {
-	var writer logwriter.Writer
+func NewDateFileWriter(dirpath string, filenamePrefix string, fn logformat.FormatFunc) (*DateFileWriter, error) {
+	var writer write.WriteCloser
 	var res = new(DateFileWriter)
 
 	if filesystemutils.IsFile(dirpath) {
 		return nil, fmt.Errorf("dir not exists")
 	}
 
-	err := os.MkdirAll(dirpath, 0755)
+	err := os.MkdirAll(dirpath, 0644)
 	if err != nil {
 		return nil, err
 	}
 
-	if filenamePrefix != "" {
-		filenamePrefix += "."
-	}
-
-	res.level = level
-	res.tag = tag
 	res.dirPath = dirpath
 	res.filenamePrefix = filenamePrefix
 	res.close = false

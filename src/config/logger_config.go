@@ -42,14 +42,18 @@ func (d *LoggerConfig) init(filePath string, provider configparser.ConfigParserP
 }
 
 func (d *LoggerConfig) setDefault(c *configInfo) (err configerror.Error) {
-	if d.LogLevel == "" {
-		if c.data.GlobalConfig.IsRelease() {
-			d.LogLevel = loglevel.LevelInfo
-			d.LogTag.SetDefaultDisable()
-		} else {
-			d.LogLevel = loglevel.LevelDebug
-			d.LogTag.SetDefaultEnable()
-		}
+	if d.LogLevel == "" && c.data.GlobalConfig.IsRelease() {
+		d.LogLevel = loglevel.LevelInfo
+	} else if d.LogLevel == "" {
+		d.LogLevel = loglevel.LevelDebug
+	}
+
+	d.LogLevel = d.LogLevel.ToLower()
+
+	if c.data.GlobalConfig.IsRelease() {
+		d.LogTag.SetDefaultDisable()
+	} else {
+		d.LogTag.SetDefaultEnable()
 	}
 
 	for _, w := range d.WarnWriter {
@@ -70,6 +74,12 @@ func (d *LoggerConfig) setDefault(c *configInfo) (err configerror.Error) {
 }
 
 func (d *LoggerConfig) check(c *configInfo) (err configerror.Error) {
+	if !d.LogLevel.OK() {
+		return configerror.NewErrorf("log level error: %s", d.LogLevel)
+	} else if d.LogLevel == loglevel.PseudoLevelTag {
+		return configerror.NewErrorf("log level error: %s", loglevel.PseudoLevelTag)
+	}
+
 	for _, w := range d.WarnWriter {
 		err = w.check(c)
 		if err != nil && err.IsError() {
@@ -88,16 +98,6 @@ func (d *LoggerConfig) check(c *configInfo) (err configerror.Error) {
 }
 
 func (d *LoggerConfig) process(c *configInfo) configerror.Error {
-	err := logger.SetLevel(d.LogLevel)
-	if err != nil {
-		return configerror.NewErrorf("set log level error: %s", err.Error())
-	}
-
-	err = logger.SetLogTag(d.LogTag.IsEnable(false))
-	if err != nil {
-		return configerror.NewErrorf("set log tag error: %s", err.Error())
-	}
-
 	logWarn := make([]logwriter.Writer, 0, len(d.WarnWriter))
 	logErr := make([]logwriter.Writer, 0, len(d.ErrWriter))
 

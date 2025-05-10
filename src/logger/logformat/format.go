@@ -51,9 +51,9 @@ func FormatConsole(data *LogData) string {
 }
 
 func FormatConsolePretty(data *LogData) string {
-	if data.LogLevel == loglevel.LevelWarn || data.LogLevel == loglevel.LevelInfo || data.LogLevel == loglevel.LevelDebug {
+	if data.Level == loglevel.LevelWarn || data.Level == loglevel.LevelInfo || data.Level == loglevel.LevelDebug {
 		return fmt.Sprintf("\u001B[1;3;37;44m %s %s \u001B[0m|\033[1;37;42m %s \033[0m| \u001B[1;3;4m%s\u001B[0m | \u001B[1;3;4m%d\u001B[0m |\u001B[1;7m %s \u001B[0m", data.Date, data.Zone, data.Level, data.Exec, data.Pid, data.Msg)
-	} else if data.LogLevel == loglevel.PseudoLevelTag || data.LogLevel == loglevel.LevelError || data.LogLevel == loglevel.LevelPanic {
+	} else if data.Level == loglevel.PseudoLevelTag || data.Level == loglevel.LevelError || data.Level == loglevel.LevelPanic {
 		return fmt.Sprintf("\u001B[1;3;37;44m %s %s \u001B[0m|\033[1;37;41m %s \033[0m| \u001B[1;3;4m%s\u001B[0m | \u001B[1;3;4m%d\u001B[0m |\u001B[1;7m %s \u001B[0m", data.Date, data.Zone, data.Level, data.Exec, data.Pid, data.Msg)
 	}
 	panic(fmt.Sprintf("unknown loglevel: %s", data.Level))

@@ -15,8 +15,7 @@ import (
 )
 
 type LogData struct {
-	LogLevel      loglevel.LoggerLevel `json:"-"`
-	Level         string               `json:"level"`
+	Level         loglevel.LoggerLevel `json:"level"`
 	Now           time.Time            `json:"-"`
 	Date          string               `json:"date"`
 	Zone          string               `json:"zone"`
@@ -39,8 +38,7 @@ func GetLogData(level loglevel.LoggerLevel, msg string, now time.Time) *LogData 
 
 	now = now.In(global.Location)
 
-	res.LogLevel = level
-	res.Level = strings.ToUpper(string(level))
+	res.Level = level
 	res.Now = now
 	res.Date = now.Format(time.DateTime)
 	res.Zone = global.Location.String()

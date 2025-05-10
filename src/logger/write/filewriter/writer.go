@@ -8,49 +8,25 @@ import (
 	"context"
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logformat"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/gofrs/flock"
 	"os"
-	"path"
 	"sync"
 	"time"
 )
 
 type FileWriter struct {
-	level        loglevel.LoggerLevel
-	tag          bool
 	filePath     string
 	file         *os.File
 	fileLockPath string
 	fileLock     *flock.Flock
 	fn           logformat.FormatFunc
-	mutex        sync.Mutex
+	lock         sync.Mutex
 }
 
-func (w *FileWriter) Write(data *logformat.LogData) chan any {
-	res := make(chan any)
-
-	// 此处 w.level 是只读的，因此可以不上锁操作
-	if (w.level.Int() > data.Level.Int()) || (data.Level == loglevel.PseudoLevelTag && !w.tag) {
-		close(res)
-		return res
-	}
-
-	w.mutex.Lock()
-	defer w.mutex.Unlock()
-
-	go func() {
-		w.write(data)
-		close(res)
-	}()
-
-	return res
-}
-
-func (f *FileWriter) write(data *logformat.LogData) {
-	f.mutex.Lock()
-	defer f.mutex.Unlock()
+func (f *FileWriter) Write(data *logformat.LogData) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 
 	if !fileutils.IsFileOpen(f.file) {
 		return
@@ -74,8 +50,8 @@ func (f *FileWriter) write(data *logformat.LogData) {
 }
 
 func (f *FileWriter) Close() error {
-	f.mutex.Lock()
-	defer f.mutex.Unlock()
+	f.lock.Lock()
+	defer f.lock.Unlock()
 
 	if f.file == nil {
 		return nil
@@ -88,17 +64,11 @@ func (f *FileWriter) Close() error {
 	return f.file.Close()
 }
 
-func NewFileWriter(level loglevel.LoggerLevel, tag bool, filepath string, fn logformat.FormatFunc) (*FileWriter, error) {
+func NewFileWriter(filepath string, fn logformat.FormatFunc) (*FileWriter, error) {
 	var res = new(FileWriter)
 
 	if fn == nil {
 		fn = logformat.FormatFile
-	}
-
-	dir := path.Dir(filepath)
-	err := os.MkdirAll(dir, 0755)
-	if err != nil {
-		return nil, err
 	}
 
 	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY|os.O_SYNC, 0644)
@@ -106,8 +76,6 @@ func NewFileWriter(level loglevel.LoggerLevel, tag bool, filepath string, fn log
 		return nil, err
 	}
 
-	res.level = level
-	res.tag = tag
 	res.filePath = filepath
 	res.fileLockPath = res.filePath + ".lock"
 	res.file = file

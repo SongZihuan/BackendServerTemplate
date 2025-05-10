@@ -6,41 +6,16 @@ package internal
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter"
-	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/warpwriter"
-	"os"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger/logwriter/nonewriter"
 )
-
-func (l *Logger) SetLevel(level loglevel.LoggerLevel) error {
-	l.lock.Lock()
-	defer l.lock.Unlock()
-
-	logLevel, ok := levelMap[level]
-	if !ok {
-		return fmt.Errorf("invalid log level: %s", level)
-	}
-
-	l.level = level
-	l.logLevel = logLevel
-
-	return nil
-}
-
-func (l *Logger) SetLogTag(logTag bool) error {
-	l.lock.Lock()
-	defer l.lock.Unlock()
-
-	l.logTag = logTag
-	return nil
-}
 
 func (l *Logger) SetWarnWriter(w logwriter.Writer) (logwriter.Writer, error) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
 	if w == nil {
-		w = warpwriter.NewWarpWriter(os.Stdout, nil)
+		w = nonewriter.NewNoneWriter()
 	}
 
 	last := l.warnWriter
@@ -53,7 +28,7 @@ func (l *Logger) SetErrWriter(w logwriter.Writer) (logwriter.Writer, error) {
 	defer l.lock.Unlock()
 
 	if w == nil {
-		w = warpwriter.NewWarpWriter(os.Stderr, nil)
+		w = nonewriter.NewNoneWriter()
 	}
 
 	last := l.errWriter
