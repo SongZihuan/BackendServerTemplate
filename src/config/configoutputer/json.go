@@ -16,7 +16,7 @@ type JsonProvider struct {
 	Ident string
 }
 
-func NewJsonProvider(opt *NewConfigOutputProviderOption) *JsonProvider {
+func NewJsonProvider(opt *NewConfigOutputProviderOption) ConfigOutputProvider {
 	if opt == nil {
 		opt = new(NewConfigOutputProviderOption)
 	}

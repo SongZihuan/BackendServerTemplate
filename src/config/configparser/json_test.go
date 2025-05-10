@@ -11,3 +11,9 @@ func TestJson(t *testing.T) {
 	a = &JsonProvider{}
 	_ = a
 }
+
+func TestNewJsonFunc(t *testing.T) {
+	var a NewProvider
+	a = NewJsonProvider
+	_ = a
+}

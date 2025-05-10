@@ -9,13 +9,20 @@ import (
 	"strings"
 )
 
+const point = "."
+
+var FileExtToProvider = map[string]NewProvider{
+	point + "yaml": NewYamlProvider,
+	point + "yml":  NewYamlProvider,
+	point + "json": NewJsonProvider,
+	point + "js":   NewJsonProvider,
+}
+
 func NewConfigParserProvider(configPath string, opt *NewConfigParserProviderOption) (ConfigParserProvider, error) {
-	switch {
-	case strings.HasSuffix(configPath, ".yaml") || strings.HasSuffix(configPath, ".yml"):
-		return NewYamlProvider(opt), nil
-	case strings.HasSuffix(configPath, ".json") || strings.HasSuffix(configPath, ".js"):
-		return NewJsonProvider(opt), nil
-	default:
-		return nil, fmt.Errorf("config file type unknown")
+	for ext, provider := range FileExtToProvider {
+		if strings.HasSuffix(configPath, ext) {
+			return provider(opt), nil
+		}
 	}
+	return nil, fmt.Errorf("config file type unknown")
 }

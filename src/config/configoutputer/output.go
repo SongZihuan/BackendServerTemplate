@@ -14,3 +14,5 @@ type ConfigOutputProvider interface {
 type NewConfigOutputProviderOption struct {
 	Ident int
 }
+
+type NewProvider func(opt *NewConfigOutputProviderOption) ConfigOutputProvider

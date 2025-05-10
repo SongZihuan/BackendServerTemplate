@@ -16,3 +16,5 @@ type NewConfigParserProviderOption struct {
 	EnvPrefix  string
 	AutoReload bool
 }
+
+type NewProvider func(opt *NewConfigParserProviderOption) ConfigParserProvider

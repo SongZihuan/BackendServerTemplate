@@ -12,22 +12,14 @@ import (
 	"reflect"
 )
 
-type YamlProvider struct {
-	Ident int
-}
+type YamlProvider struct{}
 
-func NewYamlProvider(opt *NewConfigOutputProviderOption) *YamlProvider {
+func NewYamlProvider(opt *NewConfigOutputProviderOption) ConfigOutputProvider {
 	if opt == nil {
 		opt = new(NewConfigOutputProviderOption)
 	}
 
-	if opt.Ident <= 0 {
-		opt.Ident = 4
-	}
-
-	return &YamlProvider{
-		Ident: opt.Ident,
-	}
+	return &YamlProvider{}
 }
 
 func (y *YamlProvider) CanUTF8() bool {

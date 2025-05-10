@@ -23,7 +23,7 @@ type JsonProvider struct {
 	restart    sync.Once
 }
 
-func NewJsonProvider(opt *NewConfigParserProviderOption) *JsonProvider {
+func NewJsonProvider(opt *NewConfigParserProviderOption) ConfigParserProvider {
 	if opt == nil {
 		opt = new(NewConfigParserProviderOption)
 	}

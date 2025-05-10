@@ -23,7 +23,7 @@ type YamlProvider struct {
 	restart    sync.Once
 }
 
-func NewYamlProvider(opt *NewConfigParserProviderOption) *YamlProvider {
+func NewYamlProvider(opt *NewConfigParserProviderOption) ConfigParserProvider {
 	if opt == nil {
 		opt = new(NewConfigParserProviderOption)
 	}

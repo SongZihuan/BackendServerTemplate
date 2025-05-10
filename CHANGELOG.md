@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [0.17.0] 2025/05/10 Asia/Shanghai
+
+### 修改
+
+- 使用 `map` 记录配置文件后缀和对应 `provider` 的关系。
+
 ## [0.16.0] 2025/05/10 Asia/Shanghai
 
 ### 新增

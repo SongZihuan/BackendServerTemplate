@@ -11,3 +11,9 @@ func TestYaml(t *testing.T) {
 	a = &YamlProvider{}
 	_ = a
 }
+
+func TestNewYamlFunc(t *testing.T) {
+	var a NewProvider
+	a = NewYamlProvider
+	_ = a
+}
