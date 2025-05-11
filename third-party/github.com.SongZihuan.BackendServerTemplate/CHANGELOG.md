@@ -4,6 +4,13 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [未发布]
+
+### 修改
+
+- 拆分 `tool` 中的工具包。
+- `tool` 中的日志输出使用工具包 `genlog` 来完成。
+
 ## [0.17.0] 2025/05/10 Asia/Shanghai
 
 ### 修改

@@ -2,20 +2,20 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package main
+package patch
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/tool/global"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/gitutils"
-	"log"
 	"strings"
 	"sync"
 )
 
 const filePatchFile = "update.patch" + global.FileIgnoreExt
 
-var onceGitInfo sync.Once
+var oncePatchInfo sync.Once
 var toCommit string = ""
 var fromCommit string = ""
 
@@ -39,21 +39,21 @@ var excludes = []string{
 	"dev-git-hooks/",
 }
 
-func InitGitData() (err error) {
-	onceGitInfo.Do(func() {
-		err = initGitData()
+func InitPatchData() (err error) {
+	oncePatchInfo.Do(func() {
+		err = initPatchData()
 	})
 	return err
 }
 
-func initGitData() (err error) {
+func initPatchData() (err error) {
 	if !gitutils.HasGit() {
-		log.Println("generate patch: `.git` not found, get git info skip")
+		genlog.GenLog(" `.git` not found, get git info skip")
 		return nil
 	}
 
-	log.Println("generate patch: get git info")
-	defer log.Println("generate patch: get git info finish")
+	genlog.GenLog(" get git info")
+	defer genlog.GenLog(" get git info finish")
 
 	defer func() {
 		if err != nil {
@@ -68,44 +68,44 @@ func initGitData() (err error) {
 	if err != nil {
 		return err
 	}
-	log.Printf("generate patch: get git tag list length: %d\n", len(tagList))
+	genlog.GenLogf("get git tag list length: %d\n", len(tagList))
 
 	if len(tagList) == 0 {
 		toCommit, err = gitutils.GetLastCommit()
 		if err != nil {
 			return err
 		}
-		log.Printf("generate patch: get git to commit: %s\n", toCommit)
+		genlog.GenLogf("get git to commit: %s\n", toCommit)
 
 		fromCommit, err = gitutils.GetFirstCommit()
 		if err != nil {
 			return err
 		}
-		log.Printf("generate patch: get git from commit: %s\n", fromCommit)
+		genlog.GenLogf("get git from commit: %s\n", fromCommit)
 	} else if len(tagList) == 1 {
 		toCommit, err = gitutils.GetTagCommit(tagList[0])
 		if err != nil {
 			return err
 		}
-		log.Printf("generate patch: get git to commist (from tag '%s') : %s\n", tagList[0], toCommit)
+		genlog.GenLogf("get git to commist (from tag '%s') : %s\n", tagList[0], toCommit)
 
 		fromCommit, err = gitutils.GetFirstCommit()
 		if err != nil {
 			return err
 		}
-		log.Printf("generate patch: get git from commit: %s\n", fromCommit)
+		genlog.GenLogf("get git from commit: %s\n", fromCommit)
 	} else if len(tagList) >= 2 {
 		toCommit, err = gitutils.GetTagCommit(tagList[0])
 		if err != nil {
 			return err
 		}
-		log.Printf("generate patch: get git to commist (from tag '%s') : %s\n", tagList[0], toCommit)
+		genlog.GenLogf("get git to commist (from tag '%s') : %s\n", tagList[0], toCommit)
 
 		fromCommit, err = gitutils.GetTagCommit(tagList[1])
 		if err != nil {
 			return err
 		}
-		log.Printf("generate patch: get git from commist (from tag '%s') : %s\n", tagList[1], toCommit)
+		genlog.GenLogf("get git from commist (from tag '%s') : %s\n", tagList[1], toCommit)
 	} else {
 		panic("unreachable")
 	}
@@ -114,7 +114,7 @@ func initGitData() (err error) {
 }
 
 func CreatePatch() error {
-	err := InitGitData()
+	err := InitPatchData()
 	if err != nil {
 		return err
 	}
@@ -123,11 +123,11 @@ func CreatePatch() error {
 		return nil
 	}
 
-	log.Println("generate patch: create patch file")
-	defer log.Println("generate patch: create patch file")
+	genlog.GenLog(" create patch file")
+	defer genlog.GenLog(" create patch file")
 
 	if fromCommit == toCommit {
-		log.Println("generate patch: only one commit, skip to create patch file")
+		genlog.GenLog(" only one commit, skip to create patch file")
 		return fileutils.WriteEmpty(filePatchFile)
 	}
 

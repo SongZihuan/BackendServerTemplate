@@ -6,8 +6,8 @@ package mod
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -36,8 +36,8 @@ func GetGoModuleName() (string, error) {
 }
 
 func getGoModuleName() (string, error) {
-	log.Println("generate: find the go mod name")
-	defer log.Println("generate: find the go mod name finish")
+	genlog.GenLog("find the go mod name")
+	defer genlog.GenLog("find the go mod name finish")
 
 	dat, err := os.ReadFile(FileGoMod)
 	if err != nil {
@@ -57,7 +57,7 @@ func getGoModuleName() (string, error) {
 		return "", fmt.Errorf("go.mod error: '%s' is not a valid go module name", moduleName)
 	}
 
-	log.Printf("generate: go mod name get: %s\n", moduleName)
+	genlog.GenLogf("go mod name get: %s\n", moduleName)
 	return moduleName, nil
 }
 

@@ -6,12 +6,12 @@ package git
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/mod"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/mod"
 	"github.com/SongZihuan/BackendServerTemplate/tool/global"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/gitutils"
-	"log"
 	"os"
 	"strings"
 	"sync"
@@ -37,12 +37,12 @@ func InitGitData() (err error) {
 
 func initGitData() (err error) {
 	if !gitutils.HasGit() {
-		log.Println("generate: `.git` not found, get git info skip")
+		genlog.GenLog("`.git` not found, get git info skip")
 		return nil
 	}
 
-	log.Println("generate: get git info")
-	defer log.Println("generate: get git info finish")
+	genlog.GenLog("get git info")
+	defer genlog.GenLog("get git info finish")
 
 	defer func() {
 		if err != nil {
@@ -59,13 +59,13 @@ func initGitData() (err error) {
 	if err != nil {
 		return err
 	}
-	log.Printf("generate: get git last commit: %s\n", lastCommit)
+	genlog.GenLogf("get git last commit: %s\n", lastCommit)
 
 	firstCommit, err = gitutils.GetFirstCommit()
 	if err != nil {
 		return err
 	}
-	log.Printf("generate: get git first commit: %s\n", firstCommit)
+	genlog.GenLogf("get git first commit: %s\n", firstCommit)
 
 	tagList, err := gitutils.GetTagListWithFilter(func(s string) bool {
 		return strings.HasPrefix(s, "v")
@@ -73,36 +73,36 @@ func initGitData() (err error) {
 	if err != nil {
 		return err
 	}
-	log.Printf("generate: get git tag list length: %d\n", len(tagList))
+	genlog.GenLogf("get git tag list length: %d\n", len(tagList))
 
 	if len(tagList) > 0 {
 		lastTag = tagList[0]
-		log.Printf("generate: get git last tag: %s\n", lastTag)
+		genlog.GenLogf("get git last tag: %s\n", lastTag)
 
 		lastTagCommit, err = gitutils.GetTagCommit(lastTag)
 		if err != nil {
 			return err
 		}
-		log.Printf("generate: get git last tag commist: %s\n", lastTagCommit)
+		genlog.GenLogf("get git last tag commist: %s\n", lastTagCommit)
 	} else {
 		lastTag = ""
 		lastTagCommit = ""
-		log.Println("generate: skip to get git last tag and last tag commit")
+		genlog.GenLog("skip to get git last tag and last tag commit")
 	}
 
 	if len(tagList) > 1 {
 		secondToLastTag = tagList[1]
-		log.Printf("generate: get git second to last tag: %s\n", secondToLastTag)
+		genlog.GenLogf("get git second to last tag: %s\n", secondToLastTag)
 
 		secondToLastTagCommit, err = gitutils.GetTagCommit(secondToLastTag)
 		if err != nil {
 			return err
 		}
-		log.Printf("generate: get git second to last tag commit: %s\n", secondToLastTagCommit)
+		genlog.GenLogf("get git second to last tag commit: %s\n", secondToLastTagCommit)
 	} else {
 		secondToLastTag = ""
 		secondToLastTagCommit = ""
-		log.Println("generate: skip to get git second to last tag and second to last tag commit")
+		genlog.GenLog("skip to get git second to last tag and second to last tag commit")
 
 	}
 
@@ -115,24 +115,24 @@ func Version() string {
 }
 
 func WriteGitData() (err error) {
-	log.Println("generate: write git data")
-	defer log.Println("generate: write git data finish")
+	genlog.GenLog("write git data")
+	defer genlog.GenLog("write git data finish")
 
 	_ = InitGitData()
 
-	log.Printf("generate: write %s to file %s\n", lastCommit, basefile.FileCommitDateTxt)
+	genlog.GenLogf("write %s to file %s\n", lastCommit, basefile.FileCommitDateTxt)
 	err = fileutils.Write(basefile.FileCommitDateTxt, lastCommit)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("generate: write %s to file %s\n", lastTag, basefile.FileTagDataTxt)
+	genlog.GenLogf("write %s to file %s\n", lastTag, basefile.FileTagDataTxt)
 	err = fileutils.Write(basefile.FileTagDataTxt, lastTag)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("generate: write %s to file %s\n", lastTagCommit, basefile.FileTagCommitData)
+	genlog.GenLogf("write %s to file %s\n", lastTagCommit, basefile.FileTagCommitData)
 	err = fileutils.Write(basefile.FileTagCommitData, lastTagCommit)
 	if err != nil {
 		return err
@@ -176,16 +176,16 @@ func IsGitHub() bool {
 	onceIsGithub.Do(func() {
 		moduleName, err := mod.GetGoModuleName()
 		if err != nil {
-			log.Println("generate: the module is not on github, because module name not found")
+			genlog.GenLog("the module is not on github, because module name not found")
 			isGithub = false
 			return
 		}
 
 		if strings.HasPrefix(moduleName, "github.com/") {
-			log.Println("generate: the module is on github")
+			genlog.GenLog("the module is on github")
 			isGithub = true
 		} else {
-			log.Println("generate: the module is not on github")
+			genlog.GenLog("the module is not on github")
 			isGithub = false
 		}
 	})
@@ -194,21 +194,21 @@ func IsGitHub() bool {
 
 func WriteGitIgnore() error {
 	if !gitutils.HasGit() {
-		log.Printf("generate: `.git` not found, write %s skip\n", basefile.FileGitIgnore)
+		genlog.GenLogf("`.git` not found, write %s skip\n", basefile.FileGitIgnore)
 		return nil
 	}
 
-	log.Printf("generate: write %s file\n", basefile.FileGitIgnore)
-	defer log.Printf("generate: write %s file finish\n", basefile.FileGitIgnore)
+	genlog.GenLogf("write %s file\n", basefile.FileGitIgnore)
+	defer genlog.GenLogf("write %s file finish\n", basefile.FileGitIgnore)
 
 	s, err := os.Stat(basefile.FileGitIgnore)
 	if err != nil {
-		log.Printf("generaate: file %s not exists, create new one\n", basefile.FileGitIgnore)
+		genlog.GenLogf("file %s not exists, create new one\n", basefile.FileGitIgnore)
 		return newGitIgnore()
 	}
 
 	if s.IsDir() {
-		log.Printf("generaate: %s is dir\n", basefile.FileGitIgnore)
+		genlog.GenLogf("%s is dir\n", basefile.FileGitIgnore)
 		return fmt.Errorf("%s is dir", basefile.FileGitIgnore)
 	}
 
@@ -221,11 +221,11 @@ func WriteGitIgnore() error {
 	if err != nil {
 		return err
 	} else if res {
-		log.Printf("generaate: file %s check ok\n", basefile.FileGitIgnore)
+		genlog.GenLogf("file %s check ok\n", basefile.FileGitIgnore)
 		return nil
 	}
 
-	log.Printf("generaate: auto ignore '%s', write to file %s\n", global.GitIgnoreExtFlag, basefile.FileGitIgnore)
+	genlog.GenLogf("auto ignore '%s', write to file %s\n", global.GitIgnoreExtFlag, basefile.FileGitIgnore)
 	return appendGitIgnore()
 }
 

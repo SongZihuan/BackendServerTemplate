@@ -6,10 +6,10 @@ package releaseinfo
 
 import (
 	_ "embed"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/changelog"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/git"
-	"log"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/changelog"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/git"
 	"os"
 	"text/template"
 )
@@ -33,8 +33,8 @@ func init() {
 }
 
 func WriteReleaseData() error {
-	log.Println("generate: write release info data data")
-	defer log.Println("generate: write write release info data finish")
+	genlog.GenLog("write release info data data")
+	defer genlog.GenLog("write write release info data finish")
 
 	file, err := os.OpenFile(basefile.FileReleaseInfoMD, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
@@ -50,13 +50,13 @@ func WriteReleaseData() error {
 
 	gcl := git.GetGitHubCompareMD()
 
-	log.Printf("generate: release info version: %s\n", v)
+	genlog.GenLogf("release info version: %s\n", v)
 	if gcl != "" {
-		log.Printf("generate: release info github changelog: %s\n", gcl)
+		genlog.GenLogf("release info github changelog: %s\n", gcl)
 	} else {
-		log.Println("generate: release info github changelog: without")
+		genlog.GenLog("release info github changelog: without")
 	}
-	log.Printf("generate: release info changelog length=%d\n", len(cl))
+	genlog.GenLogf("release info changelog length=%d\n", len(cl))
 
 	return releaseTemplate.Execute(file, templateData{
 		Version:       git.Version(),

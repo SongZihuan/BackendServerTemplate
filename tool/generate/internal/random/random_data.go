@@ -5,18 +5,18 @@
 package random
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/randomutils"
-	"log"
 )
 
 func WriteRandomData() error {
-	log.Println("generate: write random number (length=40) data")
-	defer log.Println("generate: write random number (length=40) data finish")
+	genlog.GenLog("write random number (length=40) data")
+	defer genlog.GenLog("write random number (length=40) data finish")
 
 	val := randomutils.GenerateRandomString(40, "")
 
-	log.Printf("generate: write %s to file %s\n", val, basefile.FileRandomData)
+	genlog.GenLogf("write %s to file %s\n", val, basefile.FileRandomData)
 	return fileutils.Write(basefile.FileRandomData, val)
 }

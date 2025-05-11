@@ -94,9 +94,6 @@ jobs:
       - name: Go generate
         run: GOOS=linux GOARCH=amd64 go generate ./...
 
-      - name: Go generate patch
-        run: GOOS=linux GOARCH=amd64 go run github.com/SongZihuan/BackendServerTemplate/tool/patch
-
       - name: List source directory
         run: |
           ls -l "${{ github.workspace }}"
@@ -120,12 +117,6 @@ jobs:
       - name: Build giraffe
         run: |
           GOOS=linux GOARCH=amd64 go build -o "${{ github.workspace }}/output/linux_amd64_giraffe" -trimpath -ldflags='-s -w -extldflags "-static"' github.com/SongZihuan/BackendServerTemplate/src/cmd/giraffe
-
-      - name: Copy Release Info
-        run: cp "${{ github.workspace }}/release_info.md.ignore" "${{ github.workspace }}/output/release_info.md"
-
-      - name: Copy Patch File
-        run: cp "${{ github.workspace }}/update.patch.ignore" "${{ github.workspace }}/output/update.patch"
 
       - name: List build directory
         run: |
@@ -243,6 +234,11 @@ jobs:
           name: windows_amd64_executable_files
           path: ${{ github.workspace }}/output
 
+      - name: Generate Release file
+        run: |
+          go run github.com/SongZihuan/BackendServerTemplate/tool/generate/release
+          mv "${{ github.workspace }}/release_info.md.ignore" "${{ github.workspace }}/release_info.md"
+
       - name: List directory
         run: ls -l ${{ github.workspace }}/output
 
@@ -250,10 +246,10 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "${{ github.workspace }}/output/update.patch,${{ github.workspace }}/output/linux_amd64_lion,${{ github.workspace }}/output/linux_amd64_tiger,${{ github.workspace }}/output/linux_amd64_monkey,${{ github.workspace }}/output/linux_amd64_giraffe,${{ github.workspace }}/output/windows_amd64_lion.exe,${{ github.workspace }}/output/windows_amd64_tiger.exe,${{ github.workspace }}/output/windows_amd64_monkey.exe,${{ github.workspace }}/output/windows_amd64_giraffe.exe"
+          artifacts: "${{ github.workspace }}/output/linux_amd64_lion,${{ github.workspace }}/output/linux_amd64_tiger,${{ github.workspace }}/output/linux_amd64_monkey,${{ github.workspace }}/output/linux_amd64_giraffe,${{ github.workspace }}/output/windows_amd64_lion.exe,${{ github.workspace }}/output/windows_amd64_tiger.exe,${{ github.workspace }}/output/windows_amd64_monkey.exe,${{ github.workspace }}/output/windows_amd64_giraffe.exe"
           artifactErrorsFailBuild: true
           allowUpdates: false
-          bodyFile: "${{ github.workspace }}/output/release_info.md"
+          bodyFile: "${{ github.workspace }}/release_info.md"
           generateReleaseNotes: false
           makeLatest: "legacy"
           tag: "${{  github.ref  }} "

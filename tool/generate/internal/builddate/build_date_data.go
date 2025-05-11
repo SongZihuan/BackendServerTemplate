@@ -6,9 +6,9 @@ package builddate
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
-	"log"
 	"time"
 )
 
@@ -17,9 +17,9 @@ var buildTime = time.Now()
 func WriteBuildDateData() error {
 	val := fmt.Sprint(buildTime.Unix())
 
-	log.Printf("generate: write build data: %s UTC (timestaamp: %s)\n", buildTime.UTC().Format(time.DateTime), val)
-	defer log.Println("generate: write build data finish")
+	genlog.GenLogf("write build data: %s UTC (timestaamp: %s)\n", buildTime.UTC().Format(time.DateTime), val)
+	defer genlog.GenLog("write build data finish")
 
-	log.Printf("generate: write %s to file %s\n", val, basefile.FileBuildDateTxt)
+	genlog.GenLogf("write %s to file %s\n", val, basefile.FileBuildDateTxt)
 	return fileutils.Write(basefile.FileBuildDateTxt, val)
 }
