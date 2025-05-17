@@ -5,7 +5,6 @@
 package monkey
 
 import (
-	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
@@ -13,7 +12,6 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
 	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/monkey"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 const (
