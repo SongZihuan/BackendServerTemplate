@@ -78,3 +78,19 @@ func CheckFileByLine(filePath string, fn func(string) bool) (bool, error) {
 
 	return false, nil
 }
+
+// ForEachLine 检查文件每一行。
+// 传入 fn 的字符串不以 \n 结尾，空字符串也会传入
+func ForEachLine(filePath string, fn func(string)) error {
+	dat, err := os.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	fileLine := strings.Split(cleanstringutils.GetString(string(dat)), "\n")
+	for _, l := range fileLine {
+		fn(l)
+	}
+
+	return nil
+}

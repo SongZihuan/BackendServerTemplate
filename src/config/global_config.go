@@ -5,10 +5,9 @@
 package config
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
-	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/timeutils"
 	"strings"
 	"time"
@@ -23,7 +22,6 @@ const (
 )
 
 type GlobalConfig struct {
-	Name     string  `json:"name" yaml:"name" mapstructure:"name"`
 	Mode     RunMode `json:"mode" yaml:"mode" mapstructure:"mode"`
 	Timezone string  `json:"time-zone" yaml:"time-zone" mapstructure:"time-zone"`
 
@@ -50,7 +48,7 @@ func (d *GlobalConfig) setDefault(c *configInfo) configerror.Error {
 		d.Timezone = strings.ToLower(d.Timezone)
 	}
 
-	d.Time = time.Now().In(global.UTCLocation)
+	d.Time = time.Now().In(rtdata.GetUTC())
 	d.UTCDate = d.Time.Format(time.DateTime)
 	d.Timestamp = d.Time.Unix()
 
@@ -66,31 +64,22 @@ func (d *GlobalConfig) check(c *configInfo) configerror.Error {
 }
 
 func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
-	name := cleanstringutils.GetStringOneLine(d.Name)
-	if (!global.NameFlagChanged || global.Name == "") && name != "" {
-		global.Name = name
-	}
-
-	if global.Name == "" {
-		global.Name = "unknown"
-	}
-
 	var location *time.Location
 	if strings.ToLower(d.Timezone) == "utc" {
-		location = global.UTCLocation
+		location = rtdata.GetUTC()
 		if location == nil {
 			location = timeutils.GetLocalTimezone()
 		}
 	} else if strings.ToLower(d.Timezone) == "local" {
 		location = timeutils.GetLocalTimezone()
 		if location == nil {
-			location = global.UTCLocation
+			location = rtdata.GetUTC()
 		}
 	} else {
 		var err error
 		location, err = timeutils.LoadTimezone(d.Timezone)
 		if err != nil || location == nil {
-			location = global.UTCLocation
+			location = rtdata.GetUTC()
 		}
 
 		if location != nil {
@@ -105,7 +94,10 @@ func (d *GlobalConfig) process(c *configInfo) (cfgErr configerror.Error) {
 		return configerror.NewErrorf("can not get location UTC, Local or %s", d.Timezone)
 	}
 
-	global.Location = location
+	err := rtdata.SetLocation(location)
+	if err != nil {
+		return configerror.NewErrorf("can not get location %s", d.Timezone)
+	}
 
 	return nil
 }

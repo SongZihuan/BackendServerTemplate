@@ -5,18 +5,18 @@
 package giraffe
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/lion"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/tiger"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/spf13/cobra"
 )
 
 func GetMainCommand() *cobra.Command {
-	cmd := GetCommand(global.Name)
+	cmd := GetCommand(rtdata.GetName())
 	cmd.AddCommand(version.CMD, license.CMD, report.CMD, check.CMD)
 	return cmd
 }

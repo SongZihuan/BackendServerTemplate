@@ -5,42 +5,63 @@
 package server
 
 import (
-	"sync"
 	"time"
 )
 
 func Run(r Runner) (err error, timeout bool) {
-	errchan := make(chan error, 1)
+	startupErr := make(chan RunStartupError, 1)
 	startupTime := r.StartupWaitTime()
-	go r.Run(errchan)
+
+	go r.Run(startupErr)
 
 	select {
-	case err, ok := <-errchan:
+	case err, ok := <-startupErr:
 		if ok && err != nil {
-			return err, false // 视为启动失败
+			cleanTime := err.CleanTime()
+
+			select {
+			case <-err.Wait():
+				// pass
+			case <-time.After(cleanTime):
+				// pass
+			}
+
+			return err.Error(), false // 视为启动失败
 		}
-		return nil, false
+		return nil, false // 启动成功（因为通道关闭但没传递错误）
 	case <-time.After(startupTime):
 		return nil, true
 	}
 }
 
-func RunWithWorkGroup(r Runner, wg *sync.WaitGroup) (err error, timeout bool) {
-	errchan := make(chan error, 1)
+func RunByController(r Runner, cctx ControllerContext) (err error, timeout bool) {
+	cctx.StartupRun()
+
+	startupErr := make(chan RunStartupError, 1)
 	startupTime := r.StartupWaitTime()
 
-	wg.Add(1)
 	go func() {
-		defer wg.Done()
-		r.Run(errchan)
+		cctx.StartRun()
+		defer cctx.FinishRun()
+
+		r.Run(startupErr)
 	}()
 
 	select {
-	case err, ok := <-errchan:
+	case err, ok := <-startupErr:
 		if ok && err != nil {
-			return err, false // 视为启动失败
+			cleanTime := err.CleanTime()
+
+			select {
+			case <-err.Wait():
+				// pass
+			case <-time.After(cleanTime):
+				// pass
+			}
+
+			return err.Error(), false // 视为启动失败
 		}
-		return nil, false
+		return nil, false // 启动成功（因为通道关闭但没传递错误）
 	case <-time.After(startupTime):
 		return nil, true
 	}

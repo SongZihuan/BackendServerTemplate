@@ -19,9 +19,10 @@ const (
 	exitCodeDefaultError   = 1 // 默认值：错误
 
 	// 特殊错误值
-	exitCodeInitFailedError  = 2   // 初始化错误
-	exitCodeRunError         = 3   // 运行时错误
-	exitCodeRunErrorQuite    = 4   // 运行时错误（安静关闭）
+	exitCodeInitFailedError  = 2 // 初始化错误
+	exitCodeRunError         = 3 // 运行时错误
+	exitCodeRunErrorQuite    = 4 // 运行时错误（安静关闭）
+	exitCodeStartUpError     = 5
 	exitCodeReload           = 252 // 重启信号
 	exitCodeWithUnknownError = 253 // 未知错误
 	// 254: 原定为 `Logger` 错误的退出码，现已取消。

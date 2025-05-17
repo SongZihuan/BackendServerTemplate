@@ -5,48 +5,36 @@
 package main
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/global"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/exitreturn"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/git"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/mod"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/releaseinfo"
+	"github.com/spf13/cobra"
 	"os"
 )
+
+var rootCommand = &cobra.Command{
+	Use:   "release-generate",
+	Short: "generate release info",
+	RunE:  runNormal,
+}
 
 func main() {
 	os.Exit(command())
 }
 
-func command() (exitcode int) {
-	var err error
+func command() int {
+	genlog.InitGenLog("generate release", os.Stdout)
 
-	genlog.InitGenLog("generate release", nil)
-
-	genlog.GenLog("start to run")
-	defer func() {
-		genlog.GenLogf("run stop [code: %d]", exitcode)
-	}()
-
-	_, err = mod.GetGoModuleName() // 提前一步帕胺的
+	err := global.GenerateReleaseInit()
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = basefile.TouchReleaseFile()
+	rootCommand.AddCommand(normalCommand, specialCommand)
+	err = rootCommand.Execute()
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = git.InitGitData()
-	if err != nil {
-		return exitreturn.ReturnError(err)
-	}
-
-	err = releaseinfo.WriteReleaseData()
-	if err != nil {
-		return exitreturn.ReturnError(err)
-	}
-
-	return exitreturn.ReturnSuccess()
+	return exitreturn.GetExitCode()
 }

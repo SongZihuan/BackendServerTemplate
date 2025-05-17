@@ -4,110 +4,47 @@
 
 package basefile
 
-import (
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
-	"github.com/SongZihuan/BackendServerTemplate/tool/global"
-	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
+import "strings"
+
+// 资源文件（仅touch，不输出）
+const (
+	FileVersion     = "./VERSION"
+	FileLicense     = "./LICENSE"
+	FileReport      = "./REPORT"
+	FileBuildConfig = "./BUILD.yaml"
+)
+
+// 生成文件
+const (
+	FileReleaseInfoMD = "./release" + BuildMarkdownExt
+	FileBuildDateGob  = "./buildinfo/build" + BuildDataExt
 )
 
 const (
-	FileVersion    = "./VERSION"
-	FileLicense    = "./LICENSE"
-	FileReport     = "./REPORT"
-	FileName       = "./NAME"
-	FileEnvPrefix  = "./ENV_PREFIX"
-	FileSystemYaml = "./SERVICE.yaml"
-
-	FileBuildDateTxt  = "./build_date.dat" + global.FileIgnoreExt
-	FileCommitDateTxt = "./commit_data.dat" + global.FileIgnoreExt
-	FileTagDataTxt    = "./tag_data.dat" + global.FileIgnoreExt
-	FileTagCommitData = "./tag_commit_data.dat" + global.FileIgnoreExt
-	FileRandomData    = "./random_data.dat" + global.FileIgnoreExt
-
-	FileReleaseInfoMD = "./release_info.md" + global.FileIgnoreExt
-
 	FileGitIgnore = "./.gitignore"
 )
 
-func TouchBaseFile() (err error) {
-	genlog.GenLog("touch base file")
-	defer genlog.GenLog("touch base file finish")
+const (
+	IgnoreExt        = ".ignore" // 一般的被忽略文件
+	PatchExt         = ".patch"  // 补丁文件（默认情况下忽略）
+	BuildMarkdownExt = ".ot.md"  // 自动生成的一次性Markdown文件
+	BuildDataExt     = ".otd"    // 自动生成的一次性编译信息文件
+)
 
-	genlog.GenLogf("touch file %s\n", FileVersion)
-	err = fileutils.Touch(FileVersion)
-	if err != nil {
-		return err
-	}
+const GitIgnoreStar = "*"
 
-	genlog.GenLogf("touch file %s\n", FileLicense)
-	err = fileutils.Touch(FileLicense)
-	if err != nil {
-		return err
-	}
+var (
+	GitIgnoreIgnoreExt        = GitIgnoreStar + IgnoreExt
+	GitIgnorePatchExt         = GitIgnoreStar + PatchExt
+	GitIgnoreBuildMarkdownExt = GitIgnoreStar + BuildMarkdownExt
+	GitIgnoreBuildDataExt     = GitIgnoreStar + BuildDataExt
+	GitIgnoreBuildConfigFile  = strings.TrimPrefix(FileBuildConfig, "./")
+)
 
-	genlog.GenLogf("touch file %s\n", FileReport)
-	err = fileutils.Touch(FileReport)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileName)
-	err = fileutils.Touch(FileName)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileEnvPrefix)
-	err = fileutils.Touch(FileEnvPrefix)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileSystemYaml)
-	err = fileutils.Touch(FileSystemYaml)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileBuildDateTxt)
-	err = fileutils.Touch(FileBuildDateTxt)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileCommitDateTxt)
-	err = fileutils.Touch(FileCommitDateTxt)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileTagDataTxt)
-	err = fileutils.Touch(FileTagDataTxt)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileTagCommitData)
-	err = fileutils.Touch(FileTagCommitData)
-	if err != nil {
-		return err
-	}
-
-	genlog.GenLogf("touch file %s\n", FileRandomData)
-	err = fileutils.Touch(FileRandomData)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func TouchReleaseFile() (err error) {
-	genlog.GenLogf("touch file %s\n", FileReleaseInfoMD)
-	err = fileutils.Touch(FileReleaseInfoMD)
-	if err != nil {
-		return err
-	}
-
-	return nil
+var GitIgnoreList = []string{
+	GitIgnoreIgnoreExt,
+	GitIgnorePatchExt,
+	GitIgnoreBuildMarkdownExt,
+	GitIgnoreBuildDataExt,
+	GitIgnoreBuildConfigFile,
 }

@@ -5,10 +5,10 @@
 package config
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configerror"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configoutputer"
 	"github.com/SongZihuan/BackendServerTemplate/src/config/configparser"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"os"
@@ -49,7 +49,7 @@ func (opt *ConfigOption) setDefault() (err error) {
 
 	if opt.ParserProvider == nil {
 		opt.ParserProvider, err = configparser.NewConfigParserProvider(opt.ConfigFilePath, &configparser.NewConfigParserProviderOption{
-			EnvPrefix:  global.EnvPrefix,
+			EnvPrefix:  runner.GetConfig().EnvPrefix,
 			AutoReload: opt.AutoReload,
 		})
 		if err != nil {

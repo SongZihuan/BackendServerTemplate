@@ -37,9 +37,6 @@ func (w *FileWriter) Write(data *logformat.LogData) chan any {
 		return res
 	}
 
-	w.mutex.Lock()
-	defer w.mutex.Unlock()
-
 	go func() {
 		w.write(data)
 		close(res)

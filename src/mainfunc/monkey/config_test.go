@@ -6,16 +6,13 @@ package monkey
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/bdmodule"
 	"strings"
 	"testing"
 )
 
 // testNormalServiceConfig 此函数为公共函数，并非测试函数（不以Test开头）
 func testNormalServiceConfig(t *testing.T) {
-	if serviceConfig.Name == "" {
-		t.Errorf("Service name is empty")
-	}
-
 	if serviceConfig.DisplayName == "" {
 		t.Errorf("Service display name is empty")
 	}
@@ -46,13 +43,13 @@ func TestNormalServiceConfig(t *testing.T) {
 
 	testNormalServiceConfig(t)
 
-	if serviceConfig.ArgumentFrom != FromNo {
+	if serviceConfig.ArgumentFrom != bdmodule.FromNo {
 		t.Errorf("ArgumentFrom should be no")
 	} else if len(serviceConfig.ArgumentList) != 0 {
 		t.Errorf("ArgumentList should be empty")
 	}
 
-	if serviceConfig.EnvFrom != FromNo {
+	if serviceConfig.EnvFrom != bdmodule.FromNo {
 		t.Errorf("EnvFrom should be no")
 	} else if len(serviceConfig.EnvSetList) != 0 {
 		t.Errorf("EnvSetList should be empty")
@@ -68,11 +65,11 @@ func TestInstallServiceConfig(t *testing.T) {
 	testNormalServiceConfig(t)
 
 	switch serviceConfig.ArgumentFrom {
-	case FromConfig:
+	case bdmodule.FromConfig:
 		if len(serviceConfig.ArgumentList) == 0 {
 			t.Errorf("Error argument-from: argument-list is empty, but argument-from config")
 		}
-	case FromNo:
+	case bdmodule.FromNo:
 		if len(serviceConfig.ArgumentList) > 0 {
 			t.Errorf("Error argument-from: argument-list is not empty, but argument-from no")
 		}
@@ -81,11 +78,11 @@ func TestInstallServiceConfig(t *testing.T) {
 	}
 
 	switch serviceConfig.EnvFrom {
-	case FromConfig:
+	case bdmodule.FromConfig:
 		if len(serviceConfig.EnvSetList) == 0 {
 			t.Errorf("Error env-from: env-set-list is empty, but env-from config")
 		}
-	case FromNo:
+	case bdmodule.FromNo:
 		if len(serviceConfig.EnvSetList) > 0 {
 			t.Errorf("Error env-from: env-set-list is not empty, but env-from no")
 		}

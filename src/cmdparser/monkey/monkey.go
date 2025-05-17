@@ -5,14 +5,15 @@
 package monkey
 
 import (
+	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/monkey"
-	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 const (
@@ -24,11 +25,10 @@ const (
 	args1Restart    = "restart"
 )
 
-var name string = global.Name
 var inputConfigFilePath string = "config.yaml"
 
 func GetMainCommand() *cobra.Command {
-	cmd := GetCommand(global.Name)
+	cmd := GetCommand(rtdata.GetName())
 	cmd.AddCommand(version.CMD, license.CMD, report.CMD, check.CMD)
 	return cmd
 }
@@ -43,14 +43,6 @@ func GetCommand(name string) *cobra.Command {
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
 			cmd.SilenceErrors = false
-
-			if name = cleanstringutils.GetStringOneLine(name); cmd.Flags().Changed("name") && name != "" {
-				global.Name = name
-				global.NameFlagChanged = true
-			} else {
-				global.NameFlagChanged = false
-			}
-
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -68,11 +60,12 @@ func GetCommand(name string) *cobra.Command {
 	cmd.Flags().StringVarP(&inputConfigFilePath, "config", "c", inputConfigFilePath, "the file path of the configuration file")
 
 	install := &cobra.Command{
-		Use:           args1Install,
-		Short:         "Install/Register the service",
-		Long:          "",
-		SilenceUsage:  false,
-		SilenceErrors: false,
+		Use:                args1Install,
+		Short:              "Install/Register the service",
+		Long:               "",
+		SilenceUsage:       false,
+		SilenceErrors:      false,
+		DisableFlagParsing: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
 			cmd.SilenceErrors = false
@@ -89,7 +82,6 @@ func GetCommand(name string) *cobra.Command {
 			return nil
 		},
 	}
-	install.FParseErrWhitelist.UnknownFlags = true
 
 	uninstall := &cobra.Command{
 		Use:           args1Uninstall1,

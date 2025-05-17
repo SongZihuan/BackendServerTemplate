@@ -11,6 +11,7 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -74,13 +75,19 @@ func _getWindowsTimeZone() (string, error) {
 		return "", err
 	}
 
-	windowsTZ := cleanstringutils.GetStringOneLine(string(out))
+	windowsTZ := removeDST(cleanstringutils.GetStringOneLine(string(out)))
 	_, ok := WindowsTimeZoneMap[windowsTZ]
 	if !ok {
 		return "", fmt.Errorf("unknown windows timezone: %s", windowsTZ)
 	}
 
 	return windowsTZ, nil
+}
+
+func removeDST(tz string) string { // 移除夏令时标志
+	tz = strings.TrimSuffix(tz, "_dstoff")
+	tz = strings.TrimSuffix(tz, "_dston")
+	return tz
 }
 
 func mapWindowsToIANA(windowsTZ string) string {

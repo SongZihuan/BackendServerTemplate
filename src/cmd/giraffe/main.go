@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	err := lifecycle.PreRun()
+	err := lifecycle.PreRun("giraffe")
 	defer lifecycle.PostRun() // 此处defer放在err之前（因为RPreRun包含启动东西太多，虽然返回err，但不代表全部操作没成功，因此defer设置在这个位置，确保清理函数被调用。清理函数可以判断当前是否需要清理）
 	if err != nil {
 		exitutils.ErrorToExit(err).ClampAttribute().Exit()

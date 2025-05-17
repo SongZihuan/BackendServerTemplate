@@ -11,17 +11,17 @@ import (
 type StopReason int
 
 const (
-	StopReasonStop StopReason = iota + 1
-	StopReasonStopAllTask
-	StopReasonFinish
-	StopReasonFinishAndStopAllTask
+	StopReasonStop                 StopReason = iota + 1 // 外部停止
+	StopReasonStopAllTask                                // 外部停止，并请求 controller 也停止
+	StopReasonFinish                                     // 内部停止
+	StopReasonFinishAndStopAllTask                       // 内部停止，并请求 controller 也停止
 )
 
 type ServerContext struct {
 	mutex    sync.Mutex
-	stopchan chan any
-	err      error
-	reason   StopReason
+	stopchan chan any   // 控制状态（若为close则表示停止运行）
+	err      error      // 运行错误
+	reason   StopReason // 停止原因
 }
 
 func NewServerContext() *ServerContext {

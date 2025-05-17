@@ -5,13 +5,18 @@
 package main
 
 import (
+	"errors"
+	resource "github.com/SongZihuan/BackendServerTemplate"
+	"github.com/SongZihuan/BackendServerTemplate/global"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/builder"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basic"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/builddate"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/exitreturn"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/git"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/mod"
-	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/random"
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/version"
 	"os"
 )
 
@@ -22,24 +27,44 @@ func main() {
 func command() (exitcode int) {
 	var err error
 
-	genlog.InitGenLog("generate build", nil)
+	genlog.InitGenLog("generate build", os.Stdout)
 
 	genlog.GenLog("start to run")
 	defer func() {
 		genlog.GenLogf("run stop [code: %d]", exitcode)
 	}()
 
-	_, err = mod.GetGoModuleName() // 提前一步帕胺的
+	err = global.GenerateBuildInit()
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = basefile.TouchBaseFile()
+	err = mod.InitGoModuleName() // 确定当前是否在 go.mod 同目录下运行
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
 	err = git.InitGitData()
+	if err != nil && !errors.Is(err, git.ErrWithoutGit) {
+		return exitreturn.ReturnError(err)
+	}
+
+	err = version.InitLongVersion()
+	if err != nil {
+		return exitreturn.ReturnError(err)
+	}
+
+	err = version.InitShortVersion()
+	if err != nil {
+		return exitreturn.ReturnError(err)
+	}
+
+	err = basic.WriteBasicData()
+	if err != nil {
+		return exitreturn.ReturnError(err)
+	}
+
+	err = mod.WriteModuleNameData()
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
@@ -54,12 +79,27 @@ func command() (exitcode int) {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = git.WriteGitIgnore()
+	err = version.WriteShortVersion()
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = random.WriteRandomData()
+	err = version.WriteLongVersion()
+	if err != nil {
+		return exitreturn.ReturnError(err)
+	}
+
+	err = builder.SetConfig(resource.BuildConfig)
+	if err != nil {
+		return exitreturn.ReturnError(err)
+	}
+
+	err = builder.SaveGlobalData(basefile.FileBuildDateGob)
+	if err != nil {
+		return exitreturn.ReturnError(err)
+	}
+
+	err = git.WriteGitIgnore()
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}

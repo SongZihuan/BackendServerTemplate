@@ -33,9 +33,9 @@ type Server struct {
 	core           ServerCore
 	controllerCore ControllerServerCore
 
-	stopWaitTimeUseSpecifiedValue    bool // 仅对controller有效
+	stopWaitTimeUseSpecifiedValue    bool // 仅对controller有效 （若为 false 则实际的 stopWaitTime 根据子服务的最大值和本 controller 的 stopWaitTime 共同决定）
 	stopWaitTime                     time.Duration
-	startupWaitTimeUseSpecifiedValue bool // 仅对于controller有效
+	startupWaitTimeUseSpecifiedValue bool // 仅对于controller有效 （若为false 则实际的 startupWaitTime 取值为本 controller 设置的 startupWaitTime）
 	startupWaitTime                  time.Duration
 }
 
@@ -107,14 +107,17 @@ func (s *Server) GetCtx() *servercontext.ServerContext {
 	return s.ctx
 }
 
-func (s *Server) Run(errchan chan error) {
+func (s *Server) Run(startupErr chan RunStartupError) {
 	defer logger.Recover()
+
+	startupErrWait := make(chan any)
+	defer close(startupErrWait)
 
 	if !s.status.CompareAndSwap(StatusWaitRun, StatusRunning) {
 		err := fmt.Errorf("server %s start run error: bad status %d", s.name, s.status.Load())
 		logger.Errorf("%s", err.Error())
-		errchan <- err
-		close(errchan)
+		startupErr <- NewRunStartupError(err, startupErrWait, 1*time.Second)
+		close(startupErr)
 		return
 	}
 	defer func() {
@@ -131,8 +134,8 @@ func (s *Server) Run(errchan chan error) {
 		err := goutils.LockOSThread()
 		if err != nil {
 			logger.Errorf("server %s lock os thread error: %s", s.name, err.Error())
-			errchan <- err
-			close(errchan)
+			startupErr <- NewRunStartupError(err, startupErrWait, 1*time.Second)
+			close(startupErr)
 			return
 		}
 	}
@@ -156,7 +159,7 @@ func (s *Server) Run(errchan chan error) {
 		}
 	}()
 
-	close(errchan)
+	close(startupErr)
 	coreRunErr := s.core.Run()
 	s.ctx.FinishError(coreRunErr) // 会自动判断 err != nil, 并且当 s.core.Run() 里面已经设置了退出，此处将会忽略
 }

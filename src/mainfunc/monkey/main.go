@@ -5,9 +5,13 @@
 package monkey
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
+	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/sliceutils"
 	"github.com/kardianos/service"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
@@ -20,7 +24,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCo
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
+		Name:        rtdata.GetName(),
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -47,11 +51,34 @@ func MainInstall(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
+		Name:        rtdata.GetName(),
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
 		EnvVars:     serviceConfig.EnvSetList,
+	}
+
+	if svcConfig.Name != svcConfig.DisplayName {
+		logger.Infof("Service Name: %s", svcConfig.Name)
+		logger.Infof("Service Display Name: %s", svcConfig.DisplayName)
+	} else {
+		logger.Infof("Service Name & Display Name: %s", svcConfig.Name)
+	}
+
+	if svcConfig.Description != "" {
+		logger.Infof("Service Description: %s", svcConfig.Description)
+	}
+
+	if len(svcConfig.Arguments) == 0 {
+		logger.Infof("Service Arguments List: <nil>")
+	} else {
+		logger.Infof("Service Arguments List: %s", strings.Join(svcConfig.Arguments, " "))
+	}
+
+	if len(svcConfig.EnvVars) == 0 {
+		logger.Infof("Service EnvVars List: <nil>")
+	} else {
+		logger.Infof("Service EnvVars List: %s", strings.Join(sliceutils.MapToSlice(svcConfig.EnvVars), " "))
 	}
 
 	prg := NewProgram()
@@ -79,7 +106,7 @@ func MainUnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
+		Name:        rtdata.GetName(),
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -111,7 +138,7 @@ func MainStart(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
+		Name:        rtdata.GetName(),
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -143,7 +170,7 @@ func MainStop(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
+		Name:        rtdata.GetName(),
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -175,7 +202,7 @@ func MainRestart(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
+		Name:        rtdata.GetName(),
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,

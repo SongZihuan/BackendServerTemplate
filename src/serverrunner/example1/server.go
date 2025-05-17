@@ -6,7 +6,7 @@ package example1
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/server"
 	"github.com/SongZihuan/BackendServerTemplate/src/serverrunner/servercontext"
@@ -51,11 +51,7 @@ func (sc *ServerExample1Core) Run() error {
 
 MainCycle:
 	for {
-		if global.GitTag == "" || global.GitTagCommitHash == "" {
-			fmt.Printf("Example1: I am running! BuildDate: '%s' Commit: '%s' Version: '%s' Now: '%s'\n", global.BuildTime.Format(time.DateTime), global.GitCommitHash, global.Version, time.Now().Format(time.DateTime))
-		} else {
-			fmt.Printf("Example1: I am running! BuildDate: '%s' Commit: '%s' Tag: '%s' Tag Commit: '%s' Version: '%s' Now: '%s'\n", global.BuildTime.Format(time.DateTime), global.GitCommitHash, global.GitTag, global.GitTagCommitHash, global.Version, time.Now().Format(time.DateTime))
-		}
+		fmt.Printf("Example1: I am running! BuildDate: '%s' Commit: '%s' Version: '%s' Now: '%s'\n", runner.GetBuildDate().Format(time.DateTime), runner.GetCommitHash(), runner.GetShortVersion(), time.Now().Format(time.DateTime))
 
 		select {
 		case <-sc.ctx.Listen():

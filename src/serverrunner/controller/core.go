@@ -32,6 +32,10 @@ type ControllerCore struct {
 	self  self
 }
 
+type RunContext struct {
+	core *ControllerCore
+}
+
 type ControllerCoreOption struct{}
 
 func NewControllerCore(opt *ControllerCoreOption) (*ControllerCore, error) {
@@ -140,7 +144,7 @@ func (cc *ControllerCore) Run() error {
 		}
 
 		logger.Infof("start to run server: %s", name)
-		err, timeout := server.RunWithWorkGroup(ser, &cc.child.wg)
+		err, timeout := server.RunByController(ser, cc.NewControllerContext())
 		if err != nil {
 			logger.Errorf("start server %s error: %s", ser.Name(), err.Error())
 		} else if timeout {
@@ -283,4 +287,22 @@ func (cc *ControllerCore) GetStartupWaitTime() time.Duration {
 		startupWaitTime = max(startupWaitTime, ser.StartupWaitTime())
 	}
 	return startupWaitTime
+}
+
+func (cc *ControllerCore) NewControllerContext() server.ControllerContext {
+	return &RunContext{
+		core: cc,
+	}
+}
+
+func (rc *RunContext) StartupRun() {
+	rc.core.child.wg.Add(1)
+}
+
+func (rc *RunContext) StartRun() {
+	// 无任务
+}
+
+func (rc *RunContext) FinishRun() {
+	rc.core.child.wg.Done()
 }

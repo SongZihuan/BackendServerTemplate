@@ -6,25 +6,23 @@ package lion
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/check"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/license"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/report"
 	"github.com/SongZihuan/BackendServerTemplate/src/cmdparser/version"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
 	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/lion"
 	"github.com/SongZihuan/BackendServerTemplate/src/mainfunc/restart"
 	restartinfo "github.com/SongZihuan/BackendServerTemplate/src/restart"
-	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/spf13/cobra"
 )
 
 var inputConfigFilePath string = "config.yaml"
-var name string = global.Name
 var reload bool = false
 var ppid int = 0
 
 func GetMainCommand() *cobra.Command {
-	cmd := GetCommand(global.Name)
+	cmd := GetCommand(rtdata.GetName())
 	cmd.AddCommand(version.CMD, license.CMD, report.CMD, check.CMD)
 	return cmd
 }
@@ -39,14 +37,6 @@ func GetCommand(name string) *cobra.Command {
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = false
 			cmd.SilenceErrors = false
-
-			if name = cleanstringutils.GetStringOneLine(name); cmd.Flags().Changed("name") && name != "" {
-				global.Name = name
-				global.NameFlagChanged = true
-			} else {
-				global.NameFlagChanged = false
-			}
-
 			return nil
 		},
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -83,8 +73,6 @@ func GetCommand(name string) *cobra.Command {
 			return nil
 		},
 	}
-
-	cmd.PersistentFlags().StringVarP(&name, "name", "n", global.Name, "the program display name")
 
 	cmd.Flags().BoolVar(&reload, "auto-reload", false, "auto reload config file when the file changed")
 	cmd.Flags().IntVar(&ppid, restartinfo.RestartFlag, 0, "restart mode, note: DO NOT SET THIS FLAG unless you know your purpose clearly.")

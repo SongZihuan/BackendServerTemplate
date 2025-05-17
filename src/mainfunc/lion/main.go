@@ -86,10 +86,11 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string, ppid in
 		return exitutils.InitFailed("Add Server Example2", err.Error())
 	}
 
-	logger.Infof("Start to run server %s", ctrl.Name())
+	logger.Infof("start to run server %s", ctrl.Name())
 	err, timeout := server.Run(ctrl)
 	if err != nil {
 		logger.Errorf("start server %s error: %s", ctrl.Name(), err.Error())
+		return exitutils.StartupError(err.Error())
 	} else if timeout {
 		logger.Warnf("start server %s run success. but check timeout", ctrl.Name())
 	} else {

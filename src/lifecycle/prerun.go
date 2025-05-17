@@ -5,7 +5,9 @@
 package lifecycle
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	"github.com/SongZihuan/BackendServerTemplate/global"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
+	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/utils/consoleutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
@@ -17,17 +19,22 @@ import (
 var _preRunOnce sync.Once
 var _preError error
 
-func PreRun() (exitCode error) {
+func PreRun(packageName string) (exitCode error) {
 	_preRunOnce.Do(func() {
-		_preError = preRun()
+		_preError = preRun(packageName)
 	})
 	return _preError
 }
 
-func preRun() (exitCode error) {
+func preRun(packageName string) (exitCode error) {
 	var err error
 
-	quiteMode := envutils.GetEnv(global.EnvPrefix, "QUITE")
+	err = global.ProgramInit(packageName)
+	if err != nil {
+		return exitutils.InitFailed("Global Data", err.Error())
+	}
+
+	quiteMode := envutils.GetEnv(runner.GetConfig().EnvPrefix, "QUITE")
 	if quiteMode != "" {
 		err = stdutils.QuiteMode()
 		if err != nil {
@@ -36,11 +43,11 @@ func preRun() (exitCode error) {
 		}
 	}
 
-	if global.UTCLocation == nil {
+	if rtdata.GetUTC() == nil {
 		return exitutils.InitFailed("Time Location", "can not get utc location")
 	}
 
-	if global.LocalLocation == nil {
+	if rtdata.GetLocalLocation() == nil {
 		return exitutils.InitFailed("Time Location", "can not get local location")
 	}
 

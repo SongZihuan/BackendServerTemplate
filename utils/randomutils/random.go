@@ -9,11 +9,9 @@ import (
 	"time"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
-
 func GenerateRandomString(length int, _charset string) string {
 	if _charset == "" {
-		_charset = charset
+		return ""
 	}
 
 	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))

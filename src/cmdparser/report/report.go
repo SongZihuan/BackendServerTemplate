@@ -6,7 +6,7 @@ package report
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
 	"github.com/SongZihuan/BackendServerTemplate/utils/formatutils"
 	"github.com/spf13/cobra"
 	"io"
@@ -23,6 +23,6 @@ var CMD = &cobra.Command{
 }
 
 func printReport(writer io.Writer) (int, error) {
-	report := formatutils.FormatTextToWidth(global.Report, formatutils.NormalConsoleWidth)
+	report := formatutils.FormatTextToWidth(runner.GetReport(), formatutils.NormalConsoleWidth)
 	return fmt.Fprint(writer, report)
 }

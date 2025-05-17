@@ -6,6 +6,7 @@ package mod
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/builder"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"os"
@@ -21,18 +22,19 @@ var validModuleNameRegex = regexp.MustCompile(`^[a-zA-Z0-9]+([./-]?[a-zA-Z0-9]+)
 
 var once sync.Once
 var goModuleName string = ""
+var onceErr error
+
+func InitGoModuleName() error {
+	_, err := GetGoModuleName()
+	return err
+}
 
 func GetGoModuleName() (string, error) {
-	var err error
-
 	once.Do(func() {
-		goModuleName, err = getGoModuleName()
+		goModuleName, onceErr = getGoModuleName()
 	})
-	if goModuleName == "" && err == nil {
-		err = fmt.Errorf("go module name not found")
-	}
 
-	return goModuleName, err
+	return goModuleName, onceErr
 }
 
 func getGoModuleName() (string, error) {
@@ -53,7 +55,7 @@ func getGoModuleName() (string, error) {
 	}
 
 	moduleName := cleanstringutils.GetStringOneLine(moduleLine[len(module):])
-	if !IsValidGoModuleName(moduleName) {
+	if !isValidGoModuleName(moduleName) {
 		return "", fmt.Errorf("go.mod error: '%s' is not a valid go module name", moduleName)
 	}
 
@@ -61,6 +63,21 @@ func getGoModuleName() (string, error) {
 	return moduleName, nil
 }
 
-func IsValidGoModuleName(name string) bool {
+func isValidGoModuleName(name string) bool {
 	return validModuleNameRegex.MatchString(name)
+}
+
+func WriteModuleNameData() (err error) {
+	genlog.GenLog("write go module name data")
+	defer genlog.GenLog("write go module nam finish")
+
+	moduleMame, err := GetGoModuleName()
+	if err != nil {
+		genlog.GenLog("get go module info failed")
+		return err
+	}
+
+	builder.SetModuleName(moduleMame)
+
+	return nil
 }

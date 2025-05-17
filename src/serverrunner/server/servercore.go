@@ -12,10 +12,10 @@ import (
 const ControllerName = "controller"
 
 type ServerCore interface {
-	Name() string
-	Init(server *Server, ctx *servercontext.ServerContext) error
-	Run() error
-	Stop()
+	Name() string                                                // 运行器的名称
+	Init(server *Server, ctx *servercontext.ServerContext) error // 初始化（传递本 Core 对应的 Server He Context）
+	Run() error                                                  // 运行
+	Stop()                                                       // 结束（由defer运行，在 Context 标记为停止后运行）
 }
 
 type ControllerServerCore interface {

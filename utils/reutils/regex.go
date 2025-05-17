@@ -6,11 +6,26 @@ package reutils
 
 import "regexp"
 
-const semVerRegexStr = `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$`
+const (
+	semVerRegexpStr      = `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$`
+	shortSemVerRegexpStr = `^((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*))`
+)
 
-var semVerRegex = regexp.MustCompile(semVerRegexStr)
+var semVerRegexp = regexp.MustCompile(semVerRegexpStr)
+var shortSemVerRegexp = regexp.MustCompile(shortSemVerRegexpStr)
 
 // IsSemanticVersion checks if the given string is a valid semantic version.
 func IsSemanticVersion(version string) bool {
-	return semVerRegex.MatchString(version)
+	return semVerRegexp.MatchString(version)
+}
+
+func GetShortSemanticVersion(version string) string {
+	return shortSemVerRegexp.FindString(version)
+}
+
+func CheckAndGetShortSemanticVersion(version string) string {
+	if !IsSemanticVersion(version) {
+		return ""
+	}
+	return GetShortSemanticVersion(version)
 }

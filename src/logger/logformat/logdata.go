@@ -5,7 +5,8 @@
 package logformat
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
+	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger/loglevel"
 	"github.com/SongZihuan/BackendServerTemplate/utils/osutils"
 	"os"
@@ -23,6 +24,7 @@ type LogData struct {
 	Exec          string               `json:"exec"`
 	Name          string               `json:"name"`
 	Version       string               `json:"version"`
+	LongVersion   string               `json:"long-version"`
 	User          *user.User           `json:"-"`
 	Uid           string               `json:"uid"`
 	Gid           string               `json:"gid"`
@@ -36,15 +38,16 @@ type LogData struct {
 func GetLogData(level loglevel.LoggerLevel, msg string, now time.Time) *LogData {
 	var res = new(LogData)
 
-	now = now.In(global.Location)
+	now = now.In(rtdata.GetLocation())
 
 	res.Level = level
 	res.Now = now
 	res.Date = now.Format(time.DateTime)
-	res.Zone = global.Location.String()
+	res.Zone = rtdata.GetLocation().String()
 	res.Timestamp = now.Unix()
-	res.Name = global.Name
-	res.Version = global.Version
+	res.Name = rtdata.GetName()
+	res.Version = runner.GetShortSemanticVersion()
+	res.LongVersion = runner.GetLongSemanticVersion()
 
 	u := getUser()
 	if u != nil {

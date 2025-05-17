@@ -7,7 +7,7 @@ package server
 import "time"
 
 type Runner interface {
-	Run(chan error)
+	Run(startupErr chan RunStartupError)
 	StartupWaitTime() time.Duration
 	Runner() // 用于标记该对象为一个Runner，无实际作用和调用
 }

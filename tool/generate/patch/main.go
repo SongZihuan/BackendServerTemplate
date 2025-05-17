@@ -5,6 +5,7 @@
 package main
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/global"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/exitreturn"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/patch"
@@ -18,7 +19,12 @@ func main() {
 func command() int {
 	var err error
 
-	genlog.InitGenLog("generate patch", nil)
+	genlog.InitGenLog("generate patch", os.Stdout)
+
+	err = global.GeneratePatchInit()
+	if err != nil {
+		return exitreturn.ReturnError(err)
+	}
 
 	err = patch.InitPatchData()
 	if err != nil {

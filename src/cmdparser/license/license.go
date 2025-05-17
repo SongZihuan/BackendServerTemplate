@@ -6,7 +6,7 @@ package license
 
 import (
 	"fmt"
-	"github.com/SongZihuan/BackendServerTemplate/src/global"
+	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
 	"github.com/SongZihuan/BackendServerTemplate/utils/formatutils"
 	"github.com/spf13/cobra"
 	"io"
@@ -23,6 +23,6 @@ var CMD = &cobra.Command{
 }
 
 func printLicense(writer io.Writer) (int, error) {
-	license := formatutils.FormatTextToWidth(global.License, formatutils.NormalConsoleWidth)
+	license := formatutils.FormatTextToWidth(runner.GetLicense(), formatutils.NormalConsoleWidth)
 	return fmt.Fprint(writer, license)
 }

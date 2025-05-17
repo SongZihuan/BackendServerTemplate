@@ -236,8 +236,8 @@ jobs:
 
       - name: Generate Release file
         run: |
-          go run github.com/SongZihuan/BackendServerTemplate/tool/generate/release
-          mv "${{ github.workspace }}/release_info.md.ignore" "${{ github.workspace }}/release_info.md"
+          go run github.com/SongZihuan/BackendServerTemplate/tool/generate/release normal
+          cat ${{ github.workspace }}/release.ot.md
 
       - name: List directory
         run: ls -l ${{ github.workspace }}/output
@@ -249,7 +249,7 @@ jobs:
           artifacts: "${{ github.workspace }}/output/linux_amd64_lion,${{ github.workspace }}/output/linux_amd64_tiger,${{ github.workspace }}/output/linux_amd64_monkey,${{ github.workspace }}/output/linux_amd64_giraffe,${{ github.workspace }}/output/windows_amd64_lion.exe,${{ github.workspace }}/output/windows_amd64_tiger.exe,${{ github.workspace }}/output/windows_amd64_monkey.exe,${{ github.workspace }}/output/windows_amd64_giraffe.exe"
           artifactErrorsFailBuild: true
           allowUpdates: false
-          bodyFile: "${{ github.workspace }}/release_info.md"
+          bodyFile: "${{ github.workspace }}/release.ot.md"
           generateReleaseNotes: false
           makeLatest: "legacy"
           tag: "${{  github.ref  }} "

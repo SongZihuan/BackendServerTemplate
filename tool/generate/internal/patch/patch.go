@@ -5,17 +5,18 @@
 package patch
 
 import (
+	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
-	"github.com/SongZihuan/BackendServerTemplate/tool/global"
 	"github.com/SongZihuan/BackendServerTemplate/utils/fileutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/gitutils"
 	"strings"
 	"sync"
 )
 
-const filePatchFile = "update.patch" + global.FileIgnoreExt
+const filePatchFile = "update" + basefile.PatchExt
 
 var oncePatchInfo sync.Once
+var oncePatchErr error
 var toCommit string = ""
 var fromCommit string = ""
 
@@ -27,7 +28,7 @@ var excludes = []string{
 	"LICENSE",
 	"ENV_PREFIX",
 	// 服务配置文件
-	"SERVICE.yaml",
+	"BUILD.yaml",
 	// 文档
 	"SECURITY.md",
 	"README.md",
@@ -39,11 +40,11 @@ var excludes = []string{
 	"dev-git-hooks/",
 }
 
-func InitPatchData() (err error) {
+func InitPatchData() error {
 	oncePatchInfo.Do(func() {
-		err = initPatchData()
+		oncePatchErr = initPatchData()
 	})
-	return err
+	return oncePatchErr
 }
 
 func initPatchData() (err error) {
@@ -120,7 +121,7 @@ func CreatePatch() error {
 	}
 
 	if !gitutils.HasGit() {
-		return nil
+		return fileutils.WriteEmpty(filePatchFile)
 	}
 
 	genlog.GenLog(" create patch file")

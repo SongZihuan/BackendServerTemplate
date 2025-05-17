@@ -77,10 +77,11 @@ func (p *Program) Start(s service.Service) error {
 		ServerCore:      sercore1,
 	})
 
-	logger.Infof("Start to run server %s", p.ser.Name())
+	logger.Infof("start to run server %s", p.ser.Name())
 	err, timeout := server.Run(p.ser)
 	if err != nil {
 		logger.Errorf("start server %s error: %s", p.ser.Name(), err.Error())
+		return exitutils.StartupError(err.Error())
 	} else if timeout {
 		logger.Warnf("start server %s run success. but check timeout", p.ser.Name())
 	} else {
