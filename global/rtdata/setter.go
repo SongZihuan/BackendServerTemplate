@@ -16,8 +16,14 @@ func SetName(cfgName *string, autoName *bool, packageName string) error {
 		return fmt.Errorf("package name is empty")
 	}
 
-	if autoName != nil && !(*autoName) { // 如果 AutoName 设置为 false, 则等同于没设置
-		autoName = nil
+	if autoName != nil {
+		if *autoName {
+			if cfgName == nil || *cfgName == "" {
+				cfgName = nil // 如果 AutoName 设置为 true, 且 cfgName 为空，则等用于没设置
+			}
+		} else { // 如果 AutoName 设置为 false, 则等同于没设置
+			autoName = nil
+		}
 	}
 
 	if autoName == nil && cfgName == nil { // 采用package name

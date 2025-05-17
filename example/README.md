@@ -10,7 +10,7 @@
 
 ## 使用
 
-以`lion`距离，假设编译出来的可执行文件位于`/path/of/lion.exe`，则：
+以`lion`举例，假设编译出来的可执行文件位于`/path/of/lion.exe`，则：
 
 ```shell
 $ cd /path/of/the/project # 移动到项目根目录

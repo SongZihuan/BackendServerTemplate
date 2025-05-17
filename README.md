@@ -48,21 +48,84 @@
 
 ## 编译
 
+### 必要文件
+
+#### 编译时配置
+
+编译时配置文件用于在编译期间就决定运行时程序的部分行为，并且不能在运行时被修改。该文件应放置在根目录下，命名为 `BUILD.yaml`。
+
+```yaml
+# 本项目存在共计4个应用程序，分别命名为：lion、tiger、monkey、giraffe。同时这些名字也被称为该程序的包名（作用见下文）。
+
+# 默认配置，当某个项目（例如：lion）的配置不存在时，则应用此配置。
+# 注意：仅当目标配置不存在时，会使用默认配置，当目标配置存在而某个配置项缺失时，配置项不会继承此处设置的默认配置，而是按系统内置的默认值除了。
+default:
+  name: ""
+  auto-name: false  # 若设置为true时，不能 `name` 选项（也不能设置为空，必须缺失该选项）
+  # name 和 auto-name 的关系“
+  # name: 直接指定程序的名称
+  # auto-name: 自动设置程序的名称（使用可执行文件的名称、若无法获取则使用包名）
+  # 当关闭了auto-name且设置了name时（不为空），程序将直接使用该名字。
+  # 当关闭了auto-name且没设置name时（缺失而非设置为空）使用包名。
+  # 当关闭了auto-name且设置name为空时（非确实）是不允许的。
+  # 当启用auto-name时且没设置name（缺失或者为空），将使用自动设置程序的名称（见上文）。
+  # 当启用auto-name且设置了name（不为空）是不允许的。
+
+lion:  # 包名
+  name: lion
+  env-prefix: LION  # 环境变量前缀。此时，获取环境变量 NAME 则实际上会获取 LION_NAME。
+
+tiger:
+  name: tiger
+
+monkey:
+  name: monkey
+  service:  # 作为注册服务的相关配置
+    display-name: Test Service  # 服务的显示名称（人类可读形式），若为空则和 name 一致
+    describe: 一个简单的Go测试服务  # 服务的秒数
+    
+    # 参数来源
+    #  no      无运行时参数（默认行为）
+    #  install 在安装时指定参数，例如：monkey install a b c，其中 a b c 作为参数
+    #  config  在本配置文件中的 argument-list 列表指定运行时参数
+    argument-from: install
+    # argument-from 为 config 时启用
+    argument-list: []
+    # 环境变量来源
+    #  no      无运行时环境变量（默认行为）
+    #  install 在安装时，根据 env-get-list 获取安装时的真实环境变量
+    #  config  在本配置文件中的 env-set-list 中指定环境变量
+    
+    env-from: no
+    # env-from 为 install 时启用
+    env-get-list:
+      - a  # 安装程序（monkey install）运行时，获取环境变量 a，并作为服务运行时的环境变量（例如安装时 a 的值为 b ，服务运行时也将得到环境变量 a 的值为 b）
+      - c
+    # env-from 为 config 时启用
+    env-set-list:
+      a: b  # 例如：映射环境变量 a 的值为 b
+      c: d
+
+
+giraffe:
+  name: giraffe
+
+```
+
+**注意：本配置文件是编译时配置文件，在编译后配置文件包含在二进制文件中，此后可移除和修改文件系统上的配置文件而不影响编译好的程序。**
+
+#### 构建信息文件
+
+构建信息文件是通过 `gob` 编码的二进制数据文件，应放置在 `buildinfo/build.otd` 目录。此文件具有时效性，不应该推送到 `git` 仓库。
+
+要生成此文件，需要使用 `go generate` 命令。请参见下文。
+
 ### 生成
 
-每次编译器请先运行`go generate`命令，生成编译所需要的文件。
-
-编译所需要的文件：
-
-* `build_data.dat.ignore` 构建日期（Unix 时间戳，单位：秒）
-* `commit_data.dat.ignore` 构建的`git`（若有）的`commit`所对应的`hash`值（完整）。
-* `tag_data.dat.ignore` 构建时最新的`git`（若有）的标签名（若有），用于作为语义化版本。可以以`v`或`V`开头，后接语义化版本号。若非语义化版本号，则标签数据会忽略（相当于无标签）。
-* `tag_commit_data.dat.ignore` 上述（`tag_data.txt`）对标签（若有）所指的`commit`的`hash`值（完整）。若该值与`commit_data.txt`不同，则版本号会加上`+dev`标识。
-* `random_data.dat.ignore` 一串随机数（40个字符，和`commit`的`hash`长度相同，由数字和小写字母组成）。
-* `release_info.md.ignore` 发行版文件。
-* `update.patch.ignore` 发行版的补丁。
+每次编译器请先运行`go generate`命令，生成编译所需要的文件（例如构建信息文件）。
 
 在项目根目录下执行 `go generate` 即可获取这些文件：
+
 ```shell
 $ go generate ./...
 ```
@@ -248,41 +311,6 @@ server:  # 系统执行服务所需要的参数
 后台服务采用Go的第三方库`github.com/kardianos/service`实现，主要目的是实现`Windows`上的服务注册。
 但是理论上来说，`MacOS`和`Linux`（`systemd`）也能使用。
 不过，在`Linux`上注册服务，可能自己编辑`systemd`配置文件，或者使用宝塔等辅助面板会更为灵活。
-
-### 配置
-
-服务的相关配置文件位于根目录的`SERVICE.yaml`中，具体如下：
-
-```yaml
-name: TestService  # 服务名称（大小写字母或数字）
-display-name: Test Service  # 服务的显示名称（人类可读形式），若为空则和 name 一致
-describe: 一个简单的Go测试服务  # 服务的秒数
-
-# 参数来源
-#  no      无运行时参数（默认行为）
-#  install 在安装时指定参数，例如：monkey install a b c，其中 a b c 作为参数
-#  config  在本配置文件中的 argument-list 列表指定运行时参数
-argument-from: install
-# argument-from 为 config 时启用
-argument-list: []
-# 环境变量来源
-#  no      无运行时环境变量（默认行为）
-#  install 在安装时，根据 env-get-list 获取安装时的真实环境变量
-#  config  在本配置文件中的 env-set-list 中指定环境变量
-
-env-from: no
-# env-from 为 install 时启用
-env-get-list: 
-  - a  # 安装程序（monkey install）运行时，获取环境变量 a，并作为服务运行时的环境变量（例如安装时 a 的值为 b ，服务运行时也将得到环境变量 a 的值为 b）
-  - c
-# env-from 为 config 时启用
-env-set-list: 
-  a: b  # 例如：映射环境变量 a 的值为 b
-  c: d
-
-```
-
-**注意：本配置文件是编译时配置文件，在编译后配置文件包含在二进制文件中，此时可移除和修改文件系统上的配置文件而不影响编译好的程序。**
 
 ### 安装
 

@@ -17,9 +17,7 @@ type BuildConfigData struct {
 	AutoName  *bool   `yaml:"auto-name"`
 	EnvPrefix string  `yaml:"env-prefix"`
 
-	Function   FunctionConfig   `yaml:"function"`
-	Components ComponentsConfig `yaml:"components"`
-	Service    *ServiceConfig   `yaml:"service"`
+	Service *ServiceConfig `yaml:"service"`
 }
 
 func (b *BuildConfigData) SetDefault(packageName string) error {
@@ -34,18 +32,8 @@ func (b *BuildConfigData) SetDefault(packageName string) error {
 		}
 	}
 
-	err := b.Function.SetDefault(b)
-	if err != nil {
-		return err
-	}
-
-	err = b.Components.SetDefault(b)
-	if err != nil {
-		return err
-	}
-
 	if b.Service != nil {
-		err = b.Service.SetDefault(b)
+		err := b.Service.SetDefault(b)
 		if err != nil {
 			return err
 		}
@@ -54,49 +42,25 @@ func (b *BuildConfigData) SetDefault(packageName string) error {
 	return nil
 }
 
-type FunctionConfig struct {
-	LongVersionInfo  *bool `yaml:"long-version-info"`
-	LongVersion      *bool `yaml:"long-version"`
-	ShortVersionInfo *bool `yaml:"short-version-info"`
-	ShortVersion     *bool `yaml:"short-version"`
+//type FunctionConfig struct {
+//	LongVersionInfo  *bool `yaml:"long-version-info"`
+//	LongVersion      *bool `yaml:"long-version"`
+//	ShortVersionInfo *bool `yaml:"short-version-info"`
+//	ShortVersion     *bool `yaml:"short-version"`
+//
+//	License     *bool `yaml:"license"`
+//	Report      *bool `yaml:"report"`
+//	ConfigCheck *bool `yaml:"config-check"`
+//	Reload      *bool `yaml:"reload"`
+//}
 
-	License     *bool `yaml:"license"`
-	Report      *bool `yaml:"report"`
-	ConfigCheck *bool `yaml:"config-check"`
-	Reload      *bool `yaml:"reload"`
-}
-
-func (f *FunctionConfig) SetDefault(*BuildConfigData) error {
-	setDefault(f.LongVersionInfo, true)
-	setDefault(f.LongVersion, true)
-	setDefault(f.ShortVersionInfo, true)
-	setDefault(f.ShortVersion, true)
-
-	setDefault(f.License, true)
-	setDefault(f.Report, true)
-	setDefault(f.ConfigCheck, true)
-	setDefault(f.Reload, true)
-
-	return nil
-}
-
-type ComponentsConfig struct {
-	Logger              *bool `yaml:"logger"`
-	ConfigWarn2Error    *bool `yaml:"config-warn-to-error"`
-	ConfigWatcher       *bool `yaml:"component-watcher"`
-	SignalWatcher       *bool `yaml:"signal-watcher"`
-	ConsoleEventWatcher *bool `yaml:"console-event-watcher"`
-}
-
-func (c *ComponentsConfig) SetDefault(*BuildConfigData) error {
-	setDefault(c.Logger, true)
-	setDefault(c.ConfigWarn2Error, false)
-	setDefault(c.ConfigWatcher, true)
-	setDefault(c.SignalWatcher, true)
-	setDefault(c.ConsoleEventWatcher, true)
-
-	return nil
-}
+//type ComponentsConfig struct {
+//	Logger              *bool `yaml:"logger"`
+//	ConfigWarn2Error    *bool `yaml:"config-warn-to-error"`
+//	ConfigWatcher       *bool `yaml:"component-watcher"`
+//	SignalWatcher       *bool `yaml:"signal-watcher"`
+//	ConsoleEventWatcher *bool `yaml:"console-event-watcher"`
+//}
 
 const (
 	FromNo      = "no"
