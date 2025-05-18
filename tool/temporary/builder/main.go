@@ -21,6 +21,7 @@ var targetPackage string
 
 var packageMap map[string]string
 var gomod string
+var goprogram string = "go"
 
 var rootCommand = &cobra.Command{
 	Use:   "builder",
@@ -39,6 +40,7 @@ func init() {
 		targetArch = envArch
 	}
 
+	rootCommand.PersistentFlags().StringVar(&goprogram, "go", "go", "go compiler path")
 	rootCommand.Flags().StringVar(&targetOS, "os", targetOS, "target platform operating system")
 	rootCommand.Flags().StringVar(&targetArch, "arch", targetArch, "target platform architecture")
 	rootCommand.Flags().StringVar(&targetPackage, "target", targetPackage, "target name")

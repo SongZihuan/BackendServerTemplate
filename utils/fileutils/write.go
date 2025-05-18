@@ -105,7 +105,7 @@ func Copy(dest string, src string) (int64, error) {
 		_ = srcFile.Close()
 	}()
 
-	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	destFile, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return 0, err
 	}
