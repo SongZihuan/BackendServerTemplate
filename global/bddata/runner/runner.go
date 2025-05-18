@@ -34,11 +34,6 @@ func ReadGlobalData(dat []byte, packageName string) (err error) {
 
 	config = cfg
 
-	err = config.SetDefault(packageName)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -78,6 +73,50 @@ func GetBuildDate() time.Time {
 	return data.BuildDate
 }
 
-func GetConfig() *bdmodule.BuildConfigData {
-	return config
+func GetConfigName() string {
+	if config.Name == nil {
+		return ""
+	}
+	return *(config.Name)
+}
+
+func GetConfigNamePointer() *string {
+	if config.Name == nil {
+		return nil
+	}
+
+	var tmp = *(config.Name)
+	return &tmp
+}
+
+func GetConfigAutoName() bool {
+	if config.AutoName == nil {
+		return false
+	}
+	return *(config.AutoName)
+}
+
+func GetConfigAutoNamePointer() *bool {
+	if config.AutoName == nil {
+		return nil
+	}
+
+	var tmp = *(config.AutoName)
+	return &tmp
+}
+
+func GetConfigEnvPrefix() string {
+	return config.EnvPrefix
+}
+
+func GetConfigService() (*bdmodule.ServiceConfig, error) {
+	return config.Service.Copy()
+}
+
+func GetConfigServiceMust() *bdmodule.ServiceConfig {
+	res, err := config.Service.Copy()
+	if err != nil {
+		return nil
+	}
+	return res
 }

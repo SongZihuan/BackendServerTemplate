@@ -34,7 +34,7 @@ func preRun(packageName string) (exitCode error) {
 		return exitutils.InitFailed("Global Data", err.Error())
 	}
 
-	quiteMode := envutils.GetEnv(runner.GetConfig().EnvPrefix, "QUITE")
+	quiteMode := envutils.GetEnv(runner.GetConfigEnvPrefix(), "QUITE")
 	if quiteMode != "" {
 		err = stdutils.QuiteMode()
 		if err != nil {

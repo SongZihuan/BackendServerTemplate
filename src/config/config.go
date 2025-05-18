@@ -49,7 +49,7 @@ func (opt *ConfigOption) setDefault() (err error) {
 
 	if opt.ParserProvider == nil {
 		opt.ParserProvider, err = configparser.NewConfigParserProvider(opt.ConfigFilePath, &configparser.NewConfigParserProviderOption{
-			EnvPrefix:  runner.GetConfig().EnvPrefix,
+			EnvPrefix:  runner.GetConfigEnvPrefix(),
 			AutoReload: opt.AutoReload,
 		})
 		if err != nil {

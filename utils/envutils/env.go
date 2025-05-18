@@ -6,6 +6,7 @@ package envutils
 
 import (
 	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"os"
 	"strings"
 )
@@ -25,7 +26,7 @@ func init() {
 }
 
 func ToEnvName(input string) string {
-	return EnvReplacer.Replace(input)
+	return strings.TrimRight(EnvReplacer.Replace(cleanstringutils.GetName(input)), "_")
 }
 
 func GetSysEnv(name string) string {

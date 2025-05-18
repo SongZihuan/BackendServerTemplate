@@ -24,7 +24,7 @@ func ProgramInit(packageName string) error {
 		return err
 	}
 
-	err = rtdata.SetName(runner.GetConfig().Name, runner.GetConfig().AutoName, packageName)
+	err = rtdata.SetName(runner.GetConfigNamePointer(), runner.GetConfigAutoNamePointer(), packageName)
 	if err != nil {
 		return err
 	}

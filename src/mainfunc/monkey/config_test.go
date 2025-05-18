@@ -12,81 +12,80 @@ import (
 )
 
 // testNormalServiceConfig 此函数为公共函数，并非测试函数（不以Test开头）
-func testNormalServiceConfig(t *testing.T) {
-	if serviceConfig.DisplayName == "" {
+func testNormalServiceConfig(t *testing.T, cfg *bdmodule.ServiceConfig) {
+	if cfg.DisplayName == "" {
 		t.Errorf("Service display name is empty")
 	}
 
-	if strings.Contains(serviceConfig.Describe, "\n") {
+	if strings.Contains(cfg.Describe, "\n") {
 		t.Errorf("Service describe has LF")
 	}
 
-	if strings.Contains(serviceConfig.Describe, "\r") {
+	if strings.Contains(cfg.Describe, "\r") {
 		t.Errorf("Service describe has CR")
 	}
 
-	if len(serviceConfig.Describe) > 1 && serviceConfig.Describe[0] == ' ' {
+	if len(cfg.Describe) > 1 && cfg.Describe[0] == ' ' {
 		t.Errorf("Service describe start with space")
 	}
 
-	if len(serviceConfig.Describe) > 2 && serviceConfig.Describe[len(serviceConfig.Describe)-1] == ' ' {
+	if len(cfg.Describe) > 2 && cfg.Describe[len(cfg.Describe)-1] == ' ' {
 		t.Errorf("Service describe end with space")
 	}
 }
 
 func TestNormalServiceConfig(t *testing.T) {
-	err := initServiceConfig()
-
+	cfg, err := getRunConfig()
 	if err != nil {
 		t.Fatalf("Init service error: %s", err.Error())
 	}
 
-	testNormalServiceConfig(t)
+	testNormalServiceConfig(t, cfg)
 
-	if serviceConfig.ArgumentFrom != bdmodule.FromNo {
+	if cfg.ArgumentFrom != bdmodule.FromNo {
 		t.Errorf("ArgumentFrom should be no")
-	} else if len(serviceConfig.ArgumentList) != 0 {
+	} else if len(cfg.ArgumentList) != 0 {
 		t.Errorf("ArgumentList should be empty")
 	}
 
-	if serviceConfig.EnvFrom != bdmodule.FromNo {
+	if cfg.EnvFrom != bdmodule.FromNo {
 		t.Errorf("EnvFrom should be no")
-	} else if len(serviceConfig.EnvSetList) != 0 {
+	} else if len(cfg.EnvSetList) != 0 {
 		t.Errorf("EnvSetList should be empty")
 	}
 }
 
 func TestInstallServiceConfig(t *testing.T) {
-	err := initServiceConfig()
+	cfg, err := getRunConfig()
 	if err != nil {
 		t.Fatalf("Init service error: %s", err.Error())
 	}
 
-	testNormalServiceConfig(t)
+	testNormalServiceConfig(t, cfg)
 
-	switch serviceConfig.ArgumentFrom {
+	switch cfg.ArgumentFrom {
 	case bdmodule.FromConfig:
-		if len(serviceConfig.ArgumentList) == 0 {
+		if len(cfg.ArgumentList) == 0 {
 			t.Errorf("Error argument-from: argument-list is empty, but argument-from config")
 		}
 	case bdmodule.FromNo:
-		if len(serviceConfig.ArgumentList) > 0 {
+		if len(cfg.ArgumentList) > 0 {
 			t.Errorf("Error argument-from: argument-list is not empty, but argument-from no")
 		}
 	default:
-		t.Errorf(fmt.Sprintf("Error argument-from: %s", serviceConfig.ArgumentFrom))
+		t.Errorf(fmt.Sprintf("Error argument-from: %s", cfg.ArgumentFrom))
 	}
 
-	switch serviceConfig.EnvFrom {
+	switch cfg.EnvFrom {
 	case bdmodule.FromConfig:
-		if len(serviceConfig.EnvSetList) == 0 {
+		if len(cfg.EnvSetList) == 0 {
 			t.Errorf("Error env-from: env-set-list is empty, but env-from config")
 		}
 	case bdmodule.FromNo:
-		if len(serviceConfig.EnvSetList) > 0 {
+		if len(cfg.EnvSetList) > 0 {
 			t.Errorf("Error env-from: env-set-list is not empty, but env-from no")
 		}
 	default:
-		t.Errorf(fmt.Sprintf("Error argument-from: %s", serviceConfig.EnvFrom))
+		t.Errorf(fmt.Sprintf("Error argument-from: %s", cfg.EnvFrom))
 	}
 }

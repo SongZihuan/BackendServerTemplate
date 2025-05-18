@@ -9,110 +9,73 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/global/bddata/bdmodule"
 	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
 	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
-	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/sliceutils"
 )
 
-var serviceConfig *bdmodule.ServiceConfig
-
-func initInstallServiceConfig(args []string) error {
-	serviceConfig = runner.GetConfig().Service
-	if serviceConfig == nil {
-		return fmt.Errorf("not service config")
+func getInstallConfig(args []string) (*bdmodule.ServiceConfig, error) {
+	cfg, err := runner.GetConfigService()
+	if err != nil {
+		return nil, err
+	} else if cfg == nil {
+		return nil, fmt.Errorf("not service config")
 	}
 
-	if serviceConfig.Name == "" {
-		serviceConfig.Name = rtdata.GetName()
-	} else if newName := cleanstringutils.GetName(serviceConfig.Name); newName != serviceConfig.Name {
-		return fmt.Errorf("service name is invalid: use %s please", newName)
+	if cfg.Name == "" {
+		cfg.Name = rtdata.GetName()
 	}
 
-	if serviceConfig.DisplayName == "" {
-		serviceConfig.DisplayName = serviceConfig.Name
+	if cfg.DisplayName == "" {
+		cfg.DisplayName = cfg.Name
 	}
 
-	serviceConfig.Describe = cleanstringutils.GetStringOneLine(serviceConfig.Describe)
-
-	switch serviceConfig.ArgumentFrom {
-	case bdmodule.FromInstall:
+	if cfg.ArgumentFrom == bdmodule.FromInstall {
 		if len(args) > 0 {
-			serviceConfig.ArgumentFrom = bdmodule.FromConfig
-			serviceConfig.ArgumentList = sliceutils.CopySlice(args)
+			cfg.ArgumentFrom = bdmodule.FromConfig
+			cfg.ArgumentList = sliceutils.CopySlice(args)
 		} else {
-			serviceConfig.ArgumentFrom = bdmodule.FromNo
-			serviceConfig.ArgumentList = nil
+			cfg.ArgumentFrom = bdmodule.FromNo
+			cfg.ArgumentList = nil
 		}
-	case bdmodule.FromConfig:
-		if len(args) > 0 {
-			return fmt.Errorf("no parameters are allowed: %v", args)
-		}
-
-		if len(serviceConfig.ArgumentList) == 0 {
-			serviceConfig.ArgumentFrom = bdmodule.FromNo
-			serviceConfig.ArgumentList = nil
-		}
-	default:
-		if len(args) > 0 {
-			return fmt.Errorf("no parameters are allowed: %v", args)
-		}
-
-		serviceConfig.ArgumentFrom = bdmodule.FromNo
-		serviceConfig.ArgumentList = nil
+	} else if len(args) > 0 {
+		return nil, fmt.Errorf("no parameters are allowed: %v", args)
 	}
 
-	switch serviceConfig.EnvFrom {
-	case bdmodule.FromInstall:
-		if len(serviceConfig.EnvGetList) == 0 {
-			serviceConfig.EnvFrom = bdmodule.FromNo
-			serviceConfig.EnvGetList = nil
-			serviceConfig.EnvSetList = nil
-			break
+	if cfg.EnvFrom == bdmodule.FromInstall {
+		cfg.EnvSetList = make(map[string]string, len(cfg.EnvGetList))
+		for _, e := range cfg.EnvGetList {
+			cfg.EnvSetList[e] = envutils.GetEnv(runner.GetConfigEnvPrefix(), e)
 		}
 
-		serviceConfig.EnvSetList = make(map[string]string, len(serviceConfig.EnvGetList))
-		for _, e := range serviceConfig.EnvGetList {
-			serviceConfig.EnvSetList[e] = envutils.GetSysEnv(e)
-		}
-	case bdmodule.FromConfig:
-		serviceConfig.EnvGetList = nil
-		if len(serviceConfig.EnvSetList) == 0 {
-			serviceConfig.EnvFrom = bdmodule.FromNo
-			serviceConfig.EnvSetList = nil
-		}
-	default:
-		serviceConfig.EnvFrom = bdmodule.FromNo
-		serviceConfig.EnvGetList = nil
-		serviceConfig.EnvSetList = nil
+		cfg.EnvFrom = bdmodule.FromConfig
+		cfg.EnvGetList = nil
 	}
 
-	return nil
+	return cfg, nil
 }
 
-func initServiceConfig() error {
-	serviceConfig = runner.GetConfig().Service
-	if serviceConfig == nil {
-		return fmt.Errorf("not service config")
+func getRunConfig() (*bdmodule.ServiceConfig, error) {
+	cfg, err := runner.GetConfigService()
+	if err != nil {
+		return nil, err
+	} else if cfg == nil {
+		return nil, fmt.Errorf("not service config")
 	}
 
-	if serviceConfig.Name == "" {
-		serviceConfig.Name = rtdata.GetName()
-	} else if newName := cleanstringutils.GetName(serviceConfig.Name); newName != serviceConfig.Name {
-		return fmt.Errorf("service name is invalid: use %s please", newName)
+	if cfg.Name == "" {
+		cfg.Name = rtdata.GetName()
 	}
 
-	if serviceConfig.DisplayName == "" {
-		serviceConfig.DisplayName = serviceConfig.Name
+	if cfg.DisplayName == "" {
+		cfg.DisplayName = cfg.Name
 	}
 
-	serviceConfig.Describe = cleanstringutils.GetStringOneLine(serviceConfig.Describe)
+	cfg.ArgumentFrom = bdmodule.FromNo
+	cfg.ArgumentList = nil
 
-	serviceConfig.ArgumentFrom = bdmodule.FromNo
-	serviceConfig.ArgumentList = nil
+	cfg.EnvFrom = bdmodule.FromNo
+	cfg.EnvGetList = nil
+	cfg.EnvSetList = nil
 
-	serviceConfig.EnvFrom = bdmodule.FromNo
-	serviceConfig.EnvGetList = nil
-	serviceConfig.EnvSetList = nil
-
-	return nil
+	return cfg, nil
 }

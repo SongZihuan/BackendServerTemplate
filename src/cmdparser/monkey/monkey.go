@@ -15,6 +15,7 @@ import (
 )
 
 const (
+	args1Info       = "info"
 	args1Install    = "install"
 	args1Uninstall1 = "uninstall"
 	args1Uninstall2 = "remove"
@@ -56,6 +57,29 @@ func GetCommand(name string) *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&inputConfigFilePath, "config", "c", inputConfigFilePath, "the file path of the configuration file")
+
+	info := &cobra.Command{
+		Use:           args1Info,
+		Short:         "Show the info about the service",
+		Long:          "",
+		SilenceUsage:  false,
+		SilenceErrors: false,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = true
+			cmd.SilenceErrors = true
+			return monkey.MainInfo(cmd, args)
+		},
+		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = false
+			cmd.SilenceErrors = false
+			return nil
+		},
+	}
 
 	install := &cobra.Command{
 		Use:                args1Install,
@@ -174,6 +198,6 @@ func GetCommand(name string) *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(install, uninstall, start, stop, restart)
+	cmd.AddCommand(info, install, uninstall, start, stop, restart)
 	return cmd
 }

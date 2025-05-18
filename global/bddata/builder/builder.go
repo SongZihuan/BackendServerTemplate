@@ -61,9 +61,18 @@ func SetBuildDate(date time.Time) {
 }
 
 func SetConfig(dat []byte) error {
-	err := yaml.Unmarshal(dat, &data.ConfigSet)
+	var dest bdmodule.BuildConfigSet
+	err := yaml.Unmarshal(dat, &dest)
 	if err != nil {
 		return err
 	}
+
+	err = dest.CheckAndSetDefault()
+	if err != nil {
+		return err
+	}
+
+	data.ConfigSet = dest
+
 	return nil
 }

@@ -7,10 +7,22 @@ package bdmodule
 import (
 	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
+	"github.com/SongZihuan/BackendServerTemplate/utils/copyutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 )
 
 type BuildConfigSet map[string]*BuildConfigData
+
+func (b BuildConfigSet) CheckAndSetDefault() error {
+	for _, cfg := range b {
+		err := cfg.CheckAndSetDefault()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 type BuildConfigData struct {
 	Name      *string `yaml:"name,omitempty"`
@@ -20,20 +32,20 @@ type BuildConfigData struct {
 	Service *ServiceConfig `yaml:"service,omitempty"`
 }
 
-func (b *BuildConfigData) SetDefault(packageName string) error {
+func (b *BuildConfigData) CheckAndSetDefault() error {
 	if b.AutoName != nil && b.Name != nil {
 		return fmt.Errorf("cannot specify a name and use AutoName at the same time")
 	}
 
 	if b.EnvPrefix != "" {
-		newEnvPrefix := envutils.ToEnvName(cleanstringutils.GetName(b.EnvPrefix))
+		newEnvPrefix := envutils.ToEnvName(b.EnvPrefix)
 		if newEnvPrefix != b.EnvPrefix {
 			return fmt.Errorf("env prefix error: use %s please", newEnvPrefix)
 		}
 	}
 
 	if b.Service != nil {
-		err := b.Service.SetDefault(b)
+		err := b.Service.CheckAndSetDefault()
 		if err != nil {
 			return err
 		}
@@ -79,7 +91,38 @@ type ServiceConfig struct {
 	EnvSetList   map[string]string `yaml:"env-set-list,omitempty"`
 }
 
-func (s *ServiceConfig) SetDefault(*BuildConfigData) error {
+func (s *ServiceConfig) Copy() (*ServiceConfig, error) {
+	return copyutils.DeepCopy(s)
+}
+
+func (s *ServiceConfig) CheckAndSetDefault() error {
+	if s.Name != "" {
+		if newName := cleanstringutils.GetName(s.Name); newName != s.Name {
+			return fmt.Errorf("service name is invalid: use %s please", newName)
+		}
+	}
+
+	if s.DisplayName == "" {
+		s.DisplayName = s.Name
+	}
+
+	s.Describe = cleanstringutils.GetStringOneLine(s.Describe)
+
+	if s.ArgumentFrom == "" || (s.ArgumentFrom == FromConfig && len(s.ArgumentList) == 0) {
+		s.ArgumentFrom = FromNo
+		s.ArgumentList = nil
+	}
+
+	if s.EnvFrom == "" || (s.EnvFrom == FromInstall && len(s.EnvGetList) == 0) || (s.EnvFrom == FromConfig && len(s.EnvSetList) == 0) {
+		s.EnvFrom = FromNo
+		s.EnvSetList = nil
+		s.EnvGetList = nil
+	}
+
+	if s.EnvFrom != FromInstall {
+		s.EnvGetList = nil
+	}
+
 	return nil
 }
 

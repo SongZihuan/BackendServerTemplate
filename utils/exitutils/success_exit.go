@@ -28,3 +28,7 @@ func SuccessExit(reason string, exitCode ...int) ExitCode {
 
 	return ec // ec 不再受 logger 的 ready 问题影响
 }
+
+func SuccessExitQuite(exitCode ...int) ExitCode {
+	return getExitCode(exitCodeDefaultSuccess, exitCode...) // ec 不再受 logger 的 ready 问题影响
+}

@@ -5,29 +5,31 @@
 package monkey
 
 import (
+	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/sliceutils"
 	"github.com/kardianos/service"
 	"github.com/spf13/cobra"
+	"os"
 	"strings"
 )
 
 func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCode error) {
 	var err error
 
-	err = initServiceConfig()
+	cfg, err := getRunConfig()
 	if err != nil {
 		return exitutils.InitFailed("service config", err.Error())
 	}
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
-		DisplayName: serviceConfig.DisplayName,
-		Description: serviceConfig.Describe,
-		Arguments:   serviceConfig.ArgumentList,
-		EnvVars:     serviceConfig.EnvSetList,
+		Name:        cfg.Name,
+		DisplayName: cfg.DisplayName,
+		Description: cfg.Describe,
+		Arguments:   cfg.ArgumentList,
+		EnvVars:     cfg.EnvSetList,
 	}
 
 	prg := NewRunProgram(inputConfigFilePath)
@@ -40,21 +42,45 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCo
 	return prg.ExitCode()
 }
 
+func MainInfo(cmd *cobra.Command, args []string) (exitCode error) {
+	var err error
+
+	cfg, err := getRunConfig()
+	if err != nil {
+		return exitutils.InitFailed("service config", err.Error())
+	}
+
+	if cfg.Name != cfg.DisplayName {
+		_, _ = fmt.Fprintf(os.Stdout, "Service Name: %s\n", cfg.Name)
+		_, _ = fmt.Fprintf(os.Stdout, "Service Display Name: %s\n", cfg.DisplayName)
+	} else {
+		_, _ = fmt.Fprintf(os.Stdout, "Service Name & Display Name: %s\n", cfg.Name)
+	}
+
+	if cfg.Describe != "" {
+		_, _ = fmt.Fprintf(os.Stdout, "Service Description: %s\n", cfg.Describe)
+	} else {
+		_, _ = fmt.Fprintf(os.Stdout, "Service Description: <nil>\n")
+	}
+
+	return exitutils.SuccessExitQuite()
+}
+
 func MainInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = initInstallServiceConfig(args)
+	cfg, err := getInstallConfig(args)
 	if err != nil {
 		return exitutils.InitFailed("service config", err.Error())
 	}
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
-		DisplayName: serviceConfig.DisplayName,
-		Description: serviceConfig.Describe,
-		Arguments:   serviceConfig.ArgumentList,
-		EnvVars:     serviceConfig.EnvSetList,
+		Name:        cfg.Name,
+		DisplayName: cfg.DisplayName,
+		Description: cfg.Describe,
+		Arguments:   cfg.ArgumentList,
+		EnvVars:     cfg.EnvSetList,
 	}
 
 	if svcConfig.Name != svcConfig.DisplayName {
@@ -98,18 +124,18 @@ func MainInstall(cmd *cobra.Command, args []string) (exitCode error) {
 func MainUnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = initServiceConfig()
+	cfg, err := getRunConfig()
 	if err != nil {
 		return exitutils.InitFailed("service config", err.Error())
 	}
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
-		DisplayName: serviceConfig.DisplayName,
-		Description: serviceConfig.Describe,
-		Arguments:   serviceConfig.ArgumentList,
-		EnvVars:     serviceConfig.EnvSetList,
+		Name:        cfg.Name,
+		DisplayName: cfg.DisplayName,
+		Description: cfg.Describe,
+		Arguments:   cfg.ArgumentList,
+		EnvVars:     cfg.EnvSetList,
 	}
 
 	prg := NewProgram()
@@ -130,18 +156,18 @@ func MainUnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 func MainStart(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = initServiceConfig()
+	cfg, err := getRunConfig()
 	if err != nil {
 		return exitutils.InitFailed("service config", err.Error())
 	}
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
-		DisplayName: serviceConfig.DisplayName,
-		Description: serviceConfig.Describe,
-		Arguments:   serviceConfig.ArgumentList,
-		EnvVars:     serviceConfig.EnvSetList,
+		Name:        cfg.Name,
+		DisplayName: cfg.DisplayName,
+		Description: cfg.Describe,
+		Arguments:   cfg.ArgumentList,
+		EnvVars:     cfg.EnvSetList,
 	}
 
 	prg := NewProgram()
@@ -162,18 +188,18 @@ func MainStart(cmd *cobra.Command, args []string) (exitCode error) {
 func MainStop(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = initServiceConfig()
+	cfg, err := getRunConfig()
 	if err != nil {
 		return exitutils.InitFailed("service config", err.Error())
 	}
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
-		DisplayName: serviceConfig.DisplayName,
-		Description: serviceConfig.Describe,
-		Arguments:   serviceConfig.ArgumentList,
-		EnvVars:     serviceConfig.EnvSetList,
+		Name:        cfg.Name,
+		DisplayName: cfg.DisplayName,
+		Description: cfg.Describe,
+		Arguments:   cfg.ArgumentList,
+		EnvVars:     cfg.EnvSetList,
 	}
 
 	prg := NewProgram()
@@ -194,18 +220,18 @@ func MainStop(cmd *cobra.Command, args []string) (exitCode error) {
 func MainRestart(cmd *cobra.Command, args []string) (exitCode error) {
 	var err error
 
-	err = initServiceConfig()
+	cfg, err := getRunConfig()
 	if err != nil {
 		return exitutils.InitFailed("service config", err.Error())
 	}
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        serviceConfig.Name,
-		DisplayName: serviceConfig.DisplayName,
-		Description: serviceConfig.Describe,
-		Arguments:   serviceConfig.ArgumentList,
-		EnvVars:     serviceConfig.EnvSetList,
+		Name:        cfg.Name,
+		DisplayName: cfg.DisplayName,
+		Description: cfg.Describe,
+		Arguments:   cfg.ArgumentList,
+		EnvVars:     cfg.EnvSetList,
 	}
 
 	prg := NewProgram()

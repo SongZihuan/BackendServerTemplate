@@ -10,12 +10,15 @@ default:
 
 lion:
   name: lion
+  env-prefix: LION
 
 tiger:
   name: tiger
+  env-prefix: TIGER
 
 monkey:
   name: monkey
+  env-prefix: MONKEY
   service:
     name: HuanBackendService
     display-name: Huan Backend 简单后端服务
@@ -25,3 +28,5 @@ monkey:
 
 giraffe:
   name: giraffe
+  env-prefix: GIRAFFE
+  env-prefix: GIRAFFE
