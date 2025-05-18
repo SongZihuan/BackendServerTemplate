@@ -13,11 +13,11 @@ import (
 type BuildConfigSet map[string]*BuildConfigData
 
 type BuildConfigData struct {
-	Name      *string `yaml:"name"`
-	AutoName  *bool   `yaml:"auto-name"`
-	EnvPrefix string  `yaml:"env-prefix"`
+	Name      *string `yaml:"name,omitempty"`
+	AutoName  *bool   `yaml:"auto-name,omitempty"`
+	EnvPrefix string  `yaml:"env-prefix,omitempty"`
 
-	Service *ServiceConfig `yaml:"service"`
+	Service *ServiceConfig `yaml:"service,omitempty"`
 }
 
 func (b *BuildConfigData) SetDefault(packageName string) error {
@@ -69,6 +69,7 @@ const (
 )
 
 type ServiceConfig struct {
+	Name         string            `yaml:"name,omitempty"`
 	DisplayName  string            `yaml:"display-name,omitempty"`
 	Describe     string            `yaml:"describe,omitempty"`
 	ArgumentFrom string            `yaml:"argument-from,omitempty"`

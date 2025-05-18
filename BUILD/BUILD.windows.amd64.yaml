@@ -1,0 +1,27 @@
+# Copyright 2025 BackendServerTemplate Authors. All rights reserved.
+# Use of this source code is governed by a MIT-style
+# license that can be found in the LICENSE file.
+
+# GOOS=windows
+# GOARCH=amd64
+
+default:
+  auto-name: false  # 使用 package name
+
+lion:
+  name: lion.exe
+
+tiger:
+  name: tiger.exe
+
+monkey:
+  name: monkey.exe
+  service:
+    name: HuanBackendService
+    display-name: Huan Backend 简单后端服务
+    describe: 简单的后台服务程序，基于Golang。
+    argument-from: install
+    env-from: no
+
+giraffe:
+  name: giraffe.exe

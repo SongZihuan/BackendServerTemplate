@@ -1,0 +1,8 @@
+# 根据后缀（用于Windows）
+.exe
+
+# 根据文件名（用于Linux）
+lion
+tiger
+monkey
+giraffe

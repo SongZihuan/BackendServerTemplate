@@ -81,6 +81,7 @@ tiger:
 monkey:
   name: monkey
   service:  # 作为注册服务的相关配置
+    name: TestService  # 服务名称 若为空则使用程序名称（例如，在此处为：monkey）
     display-name: Test Service  # 服务的显示名称（人类可读形式），若为空则和 name 一致
     describe: 一个简单的Go测试服务  # 服务的秒数
     

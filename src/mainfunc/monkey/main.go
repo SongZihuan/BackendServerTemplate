@@ -5,7 +5,6 @@
 package monkey
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
 	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/sliceutils"
@@ -24,7 +23,7 @@ func Main(cmd *cobra.Command, args []string, inputConfigFilePath string) (exitCo
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        rtdata.GetName(),
+		Name:        serviceConfig.Name,
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -51,7 +50,7 @@ func MainInstall(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        rtdata.GetName(),
+		Name:        serviceConfig.Name,
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -106,7 +105,7 @@ func MainUnInstall(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        rtdata.GetName(),
+		Name:        serviceConfig.Name,
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -138,7 +137,7 @@ func MainStart(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        rtdata.GetName(),
+		Name:        serviceConfig.Name,
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -170,7 +169,7 @@ func MainStop(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        rtdata.GetName(),
+		Name:        serviceConfig.Name,
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,
@@ -202,7 +201,7 @@ func MainRestart(cmd *cobra.Command, args []string) (exitCode error) {
 
 	// 定义服务配置
 	svcConfig := &service.Config{
-		Name:        rtdata.GetName(),
+		Name:        serviceConfig.Name,
 		DisplayName: serviceConfig.DisplayName,
 		Description: serviceConfig.Describe,
 		Arguments:   serviceConfig.ArgumentList,

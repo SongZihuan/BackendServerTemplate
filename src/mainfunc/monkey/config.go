@@ -22,8 +22,14 @@ func initInstallServiceConfig(args []string) error {
 		return fmt.Errorf("not service config")
 	}
 
+	if serviceConfig.Name == "" {
+		serviceConfig.Name = rtdata.GetName()
+	} else if newName := cleanstringutils.GetName(serviceConfig.Name); newName != serviceConfig.Name {
+		return fmt.Errorf("service name is invalid: use %s please", newName)
+	}
+
 	if serviceConfig.DisplayName == "" {
-		serviceConfig.DisplayName = rtdata.GetName()
+		serviceConfig.DisplayName = serviceConfig.Name
 	}
 
 	serviceConfig.Describe = cleanstringutils.GetStringOneLine(serviceConfig.Describe)
@@ -89,8 +95,14 @@ func initServiceConfig() error {
 		return fmt.Errorf("not service config")
 	}
 
+	if serviceConfig.Name == "" {
+		serviceConfig.Name = rtdata.GetName()
+	} else if newName := cleanstringutils.GetName(serviceConfig.Name); newName != serviceConfig.Name {
+		return fmt.Errorf("service name is invalid: use %s please", newName)
+	}
+
 	if serviceConfig.DisplayName == "" {
-		serviceConfig.DisplayName = rtdata.GetName()
+		serviceConfig.DisplayName = serviceConfig.Name
 	}
 
 	serviceConfig.Describe = cleanstringutils.GetStringOneLine(serviceConfig.Describe)
