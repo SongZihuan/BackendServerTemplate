@@ -41,6 +41,18 @@ func TouchBaseFile() (err error) {
 		return err
 	}
 
+	genlog.GenLogf("touch file %s\n", basefile.FileBuildDevConfig)
+	err = fileutils.Touch(basefile.FileBuildDevConfig)
+	if err != nil {
+		return err
+	}
+
+	genlog.GenLogf("touch file %s\n", basefile.FileBuildProdConfig)
+	err = fileutils.Touch(basefile.FileBuildProdConfig)
+	if err != nil {
+		return err
+	}
+
 	genlog.GenLogf("touch file %s\n", basefile.FileBuildDateGob)
 	err = fileutils.Touch(basefile.FileBuildDateGob)
 	if err != nil {

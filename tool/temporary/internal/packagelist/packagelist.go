@@ -14,22 +14,24 @@ import (
 
 var once sync.Once
 var getErr error
-var packageList []string
+var packageMap map[string]string
 
-func GetPackageList() ([]string, error) {
+const cmdPackage = "/src/cmd"
+
+func GetPackageList(gomod string) (map[string]string, error) {
 	once.Do(func() {
-		packageList, getErr = getPackageList()
+		packageMap, getErr = getPackageList(gomod)
 	})
 
-	return packageList, getErr
+	return packageMap, getErr
 }
 
-func getPackageList() ([]string, error) {
-	res := make([]string, 0, 5)
-	src := "./src/cmd"
+func getPackageList(gomod string) (map[string]string, error) {
+	res := make(map[string]string, 5)
+	cmdPackagePath := "." + cmdPackage
 
 	count := 0
-	err := filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(cmdPackagePath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			templog.TempLogf("walk error: %s, skip %s\n", err.Error(), path)
 			return nil
@@ -45,11 +47,11 @@ func getPackageList() ([]string, error) {
 
 		count++
 
-		res = append(res, name)
+		res[name] = gomod + cmdPackage + "/" + name
 		return filepath.SkipDir
 	})
 	if err != nil {
-		return nil, fmt.Errorf("walk %s error: %v\n", src, err)
+		return nil, fmt.Errorf("walk %s error: %v\n", cmdPackagePath, err)
 	}
 
 	return res, nil

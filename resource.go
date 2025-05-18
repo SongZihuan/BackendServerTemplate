@@ -15,9 +15,6 @@ var License string
 //go:embed REPORT
 var Report string
 
-//go:embed BUILD.yaml
-var BuildConfig []byte
-
 var once sync.Once
 
 func InitVar() {

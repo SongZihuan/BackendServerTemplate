@@ -6,6 +6,7 @@ package fileutils
 
 import (
 	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
+	"io"
 	"os"
 	"strings"
 )
@@ -93,4 +94,30 @@ func ForEachLine(filePath string, fn func(string)) error {
 	}
 
 	return nil
+}
+
+func Copy(dest string, src string) (int64, error) {
+	srcFile, err := os.OpenFile(src, os.O_RDONLY, 0644)
+	if err != nil {
+		return 0, err
+	}
+	defer func() {
+		_ = srcFile.Close()
+	}()
+
+	destFile, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return 0, err
+	}
+	defer func() {
+		_ = destFile.Close()
+	}()
+
+	// 使用 io.Copy 来复制内容
+	nBytes, err := io.Copy(destFile, srcFile)
+	if err != nil {
+		return 0, err
+	}
+
+	return nBytes, nil
 }

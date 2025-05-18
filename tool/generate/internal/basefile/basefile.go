@@ -8,10 +8,13 @@ import "strings"
 
 // 资源文件（仅touch，不输出）
 const (
-	FileVersion     = "./VERSION"
-	FileLicense     = "./LICENSE"
-	FileReport      = "./REPORT"
-	FileBuildConfig = "./BUILD.yaml"
+	FileVersion         = "./VERSION"
+	FileLicense         = "./LICENSE"
+	FileReport          = "./REPORT"
+	FileBuildConfig     = "./BUILD.yaml"
+	FileBuildDevConfig  = "./BUILD.DEV.yaml"
+	FileBuildProdConfig = "./BUILD.PROD.yaml"
+	DirOutput           = "./OUTPUT"
 )
 
 // 生成文件
@@ -34,11 +37,14 @@ const (
 const GitIgnoreStar = "*"
 
 var (
-	GitIgnoreIgnoreExt        = GitIgnoreStar + IgnoreExt
-	GitIgnorePatchExt         = GitIgnoreStar + PatchExt
-	GitIgnoreBuildMarkdownExt = GitIgnoreStar + BuildMarkdownExt
-	GitIgnoreBuildDataExt     = GitIgnoreStar + BuildDataExt
-	GitIgnoreBuildConfigFile  = strings.TrimPrefix(FileBuildConfig, "./")
+	GitIgnoreIgnoreExt           = GitIgnoreStar + IgnoreExt
+	GitIgnorePatchExt            = GitIgnoreStar + PatchExt
+	GitIgnoreBuildMarkdownExt    = GitIgnoreStar + BuildMarkdownExt
+	GitIgnoreBuildDataExt        = GitIgnoreStar + BuildDataExt
+	GitIgnoreBuildConfigFile     = strings.TrimPrefix(FileBuildConfig, "./")
+	GitIgnoreBuildDevConfigFile  = strings.TrimPrefix(FileBuildDevConfig, "./")
+	GitIgnoreBuildProdConfigFile = strings.TrimPrefix(FileBuildProdConfig, "./")
+	GitIgnoreOutputDir           = strings.TrimPrefix(DirOutput, "./")
 )
 
 var GitIgnoreList = []string{
@@ -47,4 +53,7 @@ var GitIgnoreList = []string{
 	GitIgnoreBuildMarkdownExt,
 	GitIgnoreBuildDataExt,
 	GitIgnoreBuildConfigFile,
+	GitIgnoreBuildDevConfigFile,
+	GitIgnoreBuildProdConfigFile,
+	GitIgnoreOutputDir,
 }

@@ -11,19 +11,20 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/temporary/internal/templog"
 	"github.com/SongZihuan/BackendServerTemplate/utils/filesystemutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/runtimeutils"
+	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-// 必须运行在项目跟目录
-func main() {
-	os.Exit(command())
+func runCommand(cmd *cobra.Command, args []string) error {
+	exitreturn.SaveExitCode(command())
+	return nil
 }
 
 func command() (exitcode int) {
 	templog.InitTempLog("release makedir", os.Stdout)
-	pkgList, err := packagelist.GetPackageList()
+	pkgList, err := packagelist.GetPackageList("") // 无需传递 gomod , 因为实际不关心模块路径
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
