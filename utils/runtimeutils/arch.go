@@ -5,9 +5,9 @@
 package runtimeutils
 
 const (
-	I386     = "i386"
+	I386     = "386"
 	AMD64    = "amd64" // x86_64
-	ARM      = "arm32"
+	ARM      = "arm"
 	ARM64    = "arm64"    // AArch64
 	PPC64    = "ppc64"    // PowerPC 64位
 	PPC64le  = "ppc64le"  // PowerPC 64位 小端序
