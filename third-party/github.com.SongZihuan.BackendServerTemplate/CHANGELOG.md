@@ -4,7 +4,7 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
-## [未发布]
+## [0.19.0] 2025/05/20 Asia/Shanghai
 
 ### 新增
 
@@ -13,7 +13,8 @@
 - 新增编译时配置文件，该配置文件（`BUILD.yaml`）将会在编译时写入 `gob` 编码的构建信息中。
 - 添加特定模式 `release` 文件生成，用于非正常的 `release` 发布。例如：手动触发 `Github Action` 生成的 `release`。
 - 新增编译标签，可以切换 `BUILD.yaml` 文件（标记 `dev` 对应 `BUILD.DEV.yaml`，`prod` 对应 `BUILD.PROD.yaml`）。
-- 添加自动化编译、分发系统。
+- 添加自动化编译、分发、发布系统。
+- 为`Windows`的可执行文件添加`manifest`数据，以表示需要使用管理员身份运行。
 
 ### 修复
 
@@ -22,6 +23,11 @@
 ### 重构
 
 - 调整构建信息生成策略。在 `go generate` 阶段将信息生成，并存储到 `gob` 编码的构建信息中。
+
+### 其他
+
+- 调整 `Github Action` 的发布机制。
+- 一般推送只执行测试任务，标签推送则执行发布任务。
 
 ## [0.18.0] 2025/05/11 Asia/Shanghai
 

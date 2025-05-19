@@ -1,0 +1,153 @@
+name: Build And Publish
+permissions:
+  contents: read
+
+on:
+  push:
+    tags:
+      - 'v*'   # 匹配 'v' 开头的标签
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Check build
+        run: echo "Build for the ${{ github.ref }}"
+
+  build-linux:
+    runs-on: ubuntu-latest
+    needs: build-check
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.4' # 根据需要指定Go版本
+
+      - name: Go download dependencies
+        run: go mod tidy
+
+      - name: Go generate
+        run: go generate ./...
+
+      - name: Go build on linux
+        run: go run github.com/SongZihuan/BackendServerTemplate/tool/temporary/builder linux -go go
+
+      - name: List build output directory
+        run: |
+          ls -l "${{ github.workspace }}/OUTPUT"
+
+      - name: Upload linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux_release_files
+          path: "${{ github.workspace }}/OUTPUT"
+          if-no-files-found: error
+
+  build-windows:
+    runs-on: windows-latest
+    needs: build-check
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.4' # 根据需要指定Go版本
+
+      - uses: ChristopheLav/windows-sdk-install@v1
+        with:
+          version-sdk: '10.0.26100.3916'
+          features: 'OptionId.WindowsPerformanceToolkit,OptionId.WindowsDesktopDebuggers'
+
+      - name: Go download dependencies
+        run: go.exe mod tidy
+
+      - name: Go generate
+        run: go.exe generate ./...
+
+      - name: Go build on windows
+        run: go.exe run github.com/SongZihuan/BackendServerTemplate/tool/temporary/builder windows --go go.exe --mt mt.exe
+
+      - name: List build output directory
+        run: |
+          ls -l "${{ github.workspace }}\OUTPUT\"
+
+      - name: Upload windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows_relese_files
+          path: ${{ github.workspace }}\OUTPUT\
+          if-no-files-found: error
+
+  create_release:
+    runs-on: ubuntu-latest
+    needs:
+      - build-linux
+      - build-windows
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取所有历史记录以便能够创建标签
+
+      - name: Extract tag name
+        id: extract_tag
+        run: |
+          # 提取标签名
+          TAG_NAME=$(echo "${GITHUB_REF}" | sed 's/refs\/tags\///')
+          echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Download ubuntu artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux_release_files
+          path: ${{ github.workspace }}/OUTPUT
+
+      - name: Download windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows_relese_files
+          path: ${{ github.workspace }}/OUTPUT
+
+      - name: List directory
+        run: ls -l ${{ github.workspace }}/OUTPUT
+
+      - name: Generate Release file
+        run: |
+          go run github.com/SongZihuan/BackendServerTemplate/tool/generate/release normal
+          cat ${{ github.workspace }}/release.ot.md
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ github.workspace }}/OUTPUT"
+          artifactErrorsFailBuild: true
+          allowUpdates: false
+          bodyFile: "${{ github.workspace }}/release.ot.md"
+          generateReleaseNotes: false
+          makeLatest: "legacy"
+          tag: "${{  github.ref  }} "
+          name: "版本 ${{  steps.extract_tag.outputs.tag  }} 发布！"
+
+      - name: Output the URL of the new release
+        run: echo "The release is available at ${{ steps.create_release.outputs.html_url }}"
+
+    outputs:
+      tag: "${{  steps.extract_tag.outputs.tag  }}"
+      release: "${{ steps.create_release.outputs.html_url }}"
