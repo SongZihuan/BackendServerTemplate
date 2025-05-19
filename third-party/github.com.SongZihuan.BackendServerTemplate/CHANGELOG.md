@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [0.19.4] 2025/05/20 Asia/Shanghai
+
+### 其他
+
+- 完善 `Github Action` 删除部分无用作业。
+
 ## [0.19.3] 2025/05/20 Asia/Shanghai
 
 ### 其他

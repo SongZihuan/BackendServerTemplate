@@ -66,15 +66,6 @@ jobs:
         with:
           go-version: '1.23.4' # 根据需要指定Go版本
 
-      - name: Print Windows SDK Path
-        run: |
-          echo "Windows SDK Path: ${{ env.WINDOWS_SDK_PATH }}""
-
-      - name: List SDK Directory
-        run: |
-          dir "C:\Program Files (x86)\Windows Kits\10"
-          dir "C:\Program Files\Windows Kits\10"
-
       - name: Go download dependencies
         run: go.exe mod tidy
 
