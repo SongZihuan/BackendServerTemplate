@@ -4,6 +4,16 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [未发布]
+
+### 修改
+
+- 删除 `./src/mainfunc/monkey/config_test.go` 以达到修复测试错误的问题。
+
+### 修复
+
+- 修复 `go test ./...` 时的错误。
+
 ## [0.19.0] 2025/05/20 Asia/Shanghai
 
 ### 新增
