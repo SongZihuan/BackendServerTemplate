@@ -66,10 +66,10 @@ jobs:
         with:
           go-version: '1.23.4' # 根据需要指定Go版本
 
-      - uses: ChristopheLav/windows-sdk-install@v1
+      - name: Set up Windows SDK
+        uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
         with:
-          version-sdk: 26100
-          features: 'OptionId.WindowsPerformanceToolkit,OptionId.WindowsDesktopDebuggers'
+          sdk-version: 26100
 
       - name: Go download dependencies
         run: go.exe mod tidy
