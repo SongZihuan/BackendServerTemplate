@@ -18,6 +18,7 @@
 ### 其他
 
 - 修复 `Github Action` 中，`runner` 的问题。
+- 修复 `Github Action` 中，对 `Windows SDK` 版本号的问题。
 
 ## [0.19.0] 2025/05/20 Asia/Shanghai
 
