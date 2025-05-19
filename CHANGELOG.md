@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [0.19.3] 2025/05/20 Asia/Shanghai
+
+### 其他
+
+- 完善 `Github Action` 在打包发布的功能。
+
 ## [0.19.2] 2025/05/20 Asia/Shanghai
 
 ### 其他
