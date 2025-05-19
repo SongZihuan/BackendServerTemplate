@@ -29,4 +29,3 @@ monkey:
 giraffe:
   name: giraffe
   env-prefix: GIRAFFE
-  env-prefix: GIRAFFE

@@ -7,6 +7,7 @@ package main
 import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/temporary/internal/exitreturn"
 	"github.com/SongZihuan/BackendServerTemplate/tool/temporary/internal/packagelist"
+	"github.com/SongZihuan/BackendServerTemplate/tool/temporary/internal/platformlist"
 	"github.com/SongZihuan/BackendServerTemplate/tool/temporary/internal/templog"
 	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/modutils"
@@ -20,14 +21,34 @@ var targetArch = runtime.GOARCH
 var targetPackage string
 
 var packageMap map[string]string
+var platformMap map[string]map[string]bool
+
 var gomod string
 var goprogram string = "go"
+var mtptogram string = ""
 
 var rootCommand = &cobra.Command{
 	Use:   "builder",
 	Short: "build the project",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runBuild(cmd, args, targetOS, targetArch, targetPackage)
+	},
+}
+
+var winCommand = &cobra.Command{
+	Use:     "windows",
+	Aliases: []string{"win"},
+	Short:   "build the all of windows project",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return runWinBuildAll(cmd, args)
+	},
+}
+
+var linuxCommand = &cobra.Command{
+	Use:   "linux",
+	Short: "build the all of linux project",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return runLinuxBuildAll(cmd, args)
 	},
 }
 
@@ -40,10 +61,14 @@ func init() {
 		targetArch = envArch
 	}
 
-	rootCommand.PersistentFlags().StringVar(&goprogram, "go", "go", "go compiler path")
+	rootCommand.PersistentFlags().StringVar(&goprogram, "go", goprogram, "go compiler path")
+	rootCommand.PersistentFlags().StringVar(&mtptogram, "mt", mtptogram, "mt.exe (windows sdk)")
+
 	rootCommand.Flags().StringVar(&targetOS, "os", targetOS, "target platform operating system")
 	rootCommand.Flags().StringVar(&targetArch, "arch", targetArch, "target platform architecture")
 	rootCommand.Flags().StringVar(&targetPackage, "target", targetPackage, "target name")
+
+	rootCommand.AddCommand(winCommand, linuxCommand)
 }
 
 func Init() error {
@@ -59,10 +84,16 @@ func Init() error {
 		return err
 	}
 
+	_, _, pfList, err := platformlist.GetPlatformList()
+	if err != nil {
+		return err
+	}
+
 	for pkg, path := range pkgList {
 		templog.TempLogf("Package [%s]: %s", pkg, path)
 	}
 
+	platformMap = pfList
 	packageMap = pkgList
 	gomod = mod
 	return nil

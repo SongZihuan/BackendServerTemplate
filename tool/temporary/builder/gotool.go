@@ -13,7 +13,7 @@ import (
 )
 
 func goGenerate() error {
-	_, err := executils.Run("go", "generate", "./...")
+	_, err := executils.Run(goprogram, "generate", "./...")
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func goBuild(goos string, goarch string, target string, output string) error {
 	}
 
 	cmd := exec.Command(
-		"go",
+		goprogram,
 		"build",
 		"-o",
 		output,

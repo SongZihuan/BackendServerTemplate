@@ -12,6 +12,7 @@ import (
 const GoModFile = "./go.mod"
 const BuildConfigFile = "./BUILD.yaml"
 const OutputDir = "./OUTPUT"
+const WinAdminManifestFile = "./admin.manifest"
 
 func TargetReleaseOutputFile(goos string, goarch string, target string) string {
 	return fmt.Sprintf("./OUTPUT/%s_%s_%s.tar.gz", goos, goarch, target)

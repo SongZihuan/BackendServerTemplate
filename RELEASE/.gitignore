@@ -1,5 +1,6 @@
 # 根据后缀（用于Windows）
 .exe
+.manifest
 
 # 根据文件名（用于Linux）
 lion

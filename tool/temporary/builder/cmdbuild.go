@@ -17,7 +17,7 @@ func runBuild(cmd *cobra.Command, args []string, goos string, goarch string, tar
 
 func buildAndRelease(cmd *cobra.Command, args []string, goos string, goarch string, target string) (exitcode int) {
 	templog.TempLogf("environment preparation")
-	err := environmentPreparation(goos, goarch, target)
+	err := environmentPreparation(goos)
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}

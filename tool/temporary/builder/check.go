@@ -53,7 +53,7 @@ func parameterCheck(goos string, goarch string, target string) error {
 		return fmt.Errorf("os [%s] or arch [%s] is no support", goos, goarch)
 	}
 
-	if goos != runtimeutils.Windows {
+	if goos == runtimeutils.Windows {
 		if !filesystemutils.IsFile(buildpath.AdminTargetBuildFileName(goos, goarch)) {
 			return fmt.Errorf("os [%s] or arch [%s] is no support", goos, goarch)
 		}
@@ -82,16 +82,13 @@ func parameterAdminCheck(goos string, goarch string, target string) error {
 	return nil
 }
 
-func environmentPreparation(goos string, goarch string, target string) error {
+func environmentPreparation(goos string) error {
 	if !filesystemutils.IsFile(buildpath.GoModFile) {
 		return fmt.Errorf("please run in the root path (which has the file go.mod)")
 	}
 
-	if filesystemutils.IsFile(buildpath.BuildConfigFile) {
-		err := os.Remove(buildpath.BuildConfigFile)
-		if err != nil {
-			return err
-		}
+	if goos == runtimeutils.Windows && !filesystemutils.IsFile(buildpath.WinAdminManifestFile) {
+		return fmt.Errorf("file [%s] not found", buildpath.WinAdminManifestFile)
 	}
 
 	if filesystemutils.IsFile(buildpath.OutputDir) {
@@ -113,7 +110,7 @@ func copyBuildConfigFile(goos string, goarch string) error {
 
 func copyAdminBuildConfigFile(goos string, goarch string) error {
 	if goos != runtimeutils.Windows {
-		return fmt.Errorf("os [%s] is not support", goos)
+		return fmt.Errorf("os [%s] is no support", goos)
 	}
 
 	_, err := fileutils.Copy(buildpath.BuildConfigFile, buildpath.AdminTargetBuildFileName(goos, goarch))

@@ -6,8 +6,10 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/SongZihuan/BackendServerTemplate/tool/temporary/internal/buildpath"
 	"github.com/SongZihuan/BackendServerTemplate/tool/temporary/internal/templog"
+	"github.com/SongZihuan/BackendServerTemplate/utils/runtimeutils"
 )
 
 // 编译（虽然可以通过协程提高速度，但程序本身依赖文件系统上的数据，因此无法并发编译，因为无法在同一时刻为程序准备多个不同的编译环境）
@@ -85,22 +87,12 @@ func buildBase(goos string, goarch string, target string) error {
 }
 
 func buildAdmin(goos string, goarch string, target string) error {
-	templog.TempLogf("check the admin parameter")
-	err := parameterAdminCheck(goos, goarch, target)
-	if err != nil {
-		return err
+	if goos != runtimeutils.Windows {
+		return fmt.Errorf("os [%s] no support", goos)
 	}
-	templog.TempLogf("check the admin parameter success")
-
-	templog.TempLogf("environment preparation")
-	err = environmentPreparation(goos, goarch, target)
-	if err != nil {
-		return err
-	}
-	templog.TempLogf("environment preparation success")
 
 	templog.TempLogf("copy BUILD.yaml")
-	err = copyAdminBuildConfigFile(goos, goarch)
+	err := copyAdminBuildConfigFile(goos, goarch)
 	if err != nil {
 		return err
 	}
@@ -121,6 +113,18 @@ func buildAdmin(goos string, goarch string, target string) error {
 		return err
 	}
 	templog.TempLogf("go build: %s-%s-%s -> %s success", goos, goarch, target, output)
+
+	if mtptogram == "" {
+		templog.TempLogf("set windows manifest by copy: %s", output)
+		err = winCopyManifest(output, buildpath.WinAdminManifestFile)
+	} else {
+		templog.TempLogf("set windows manifest by mt.exe: %s", output)
+		err = winMTManifest(output, buildpath.WinAdminManifestFile)
+	}
+	if err != nil {
+		return err
+	}
+	templog.TempLogf("set windows manifest: %s success", output)
 
 	return nil
 }

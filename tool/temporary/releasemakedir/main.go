@@ -30,7 +30,7 @@ func command() (exitcode int) {
 	templog.TempLogf("get package list success")
 
 	templog.TempLogf("get platform list")
-	_, _, platformList, err := platformlist.GetPlatformList() // 无需传递 gomod , 因为实际不关心模块路径
+	_, _, platformList, err := platformlist.GetPlatformList()
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
