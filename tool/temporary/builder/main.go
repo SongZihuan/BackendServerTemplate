@@ -16,6 +16,11 @@ import (
 	"runtime"
 )
 
+// 冗余导入此包，该包包含必须导入的全部信息
+import (
+	_ "github.com/SongZihuan/BackendServerTemplate/global/pkgimport"
+)
+
 var targetOS = runtime.GOOS
 var targetArch = runtime.GOARCH
 var targetPackage string
@@ -23,7 +28,6 @@ var targetPackage string
 var packageMap map[string]string
 var platformMap map[string]map[string]bool
 
-var gomod string
 var goprogram string = "go"
 var mtptogram string = ""
 
@@ -95,7 +99,6 @@ func Init() error {
 
 	platformMap = pfList
 	packageMap = pkgList
-	gomod = mod
 	return nil
 }
 

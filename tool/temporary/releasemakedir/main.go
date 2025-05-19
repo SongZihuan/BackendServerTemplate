@@ -15,6 +15,11 @@ import (
 	"path/filepath"
 )
 
+// 冗余导入此包，该包包含必须导入的全部信息
+import (
+	_ "github.com/SongZihuan/BackendServerTemplate/global/pkgimport"
+)
+
 func main() {
 	os.Exit(command())
 }
@@ -39,7 +44,7 @@ func command() (exitcode int) {
 	dest := "./RELEASE"
 
 	for goos, goarchList := range platformList {
-		for goarch, _ := range goarchList {
+		for goarch := range goarchList {
 			for pkgName := range pkgList {
 				dirPath := filepath.Join(dest, fmt.Sprintf("%s_%s_%s", goos, goarch, pkgName))
 

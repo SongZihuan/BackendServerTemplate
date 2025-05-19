@@ -10,6 +10,11 @@ import (
 	"os"
 )
 
+// 冗余导入此包，该包包含必须导入的全部信息
+import (
+	_ "github.com/SongZihuan/BackendServerTemplate/global/pkgimport"
+)
+
 func main() {
 	os.Exit(command())
 }

@@ -5,15 +5,22 @@
 package lifecycle
 
 import (
-	"github.com/SongZihuan/BackendServerTemplate/global"
+	"fmt"
+	"github.com/SongZihuan/BackendServerTemplate/buildinfo"
 	"github.com/SongZihuan/BackendServerTemplate/global/bddata/runner"
 	"github.com/SongZihuan/BackendServerTemplate/global/rtdata"
 	"github.com/SongZihuan/BackendServerTemplate/src/logger"
+	"github.com/SongZihuan/BackendServerTemplate/utils/cleanstringutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/consoleutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/envutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/exitutils"
 	"github.com/SongZihuan/BackendServerTemplate/utils/stdutils"
 	"sync"
+)
+
+// 冗余导入此包，该包包含必须导入的全部信息
+import (
+	_ "github.com/SongZihuan/BackendServerTemplate/global/pkgimport"
 )
 
 var _preRunOnce sync.Once
@@ -29,7 +36,18 @@ func PreRun(packageName string) (exitCode error) {
 func preRun(packageName string) (exitCode error) {
 	var err error
 
-	err = global.ProgramInit(packageName)
+	if packageName == "" {
+		return exitutils.InitFailed("Global Data", "package is empty")
+	} else if newPackageName := cleanstringutils.GetString(packageName); packageName != newPackageName {
+		return exitutils.InitFailed("Global Data", fmt.Sprintf("package is invalid, use %s please", newPackageName))
+	}
+
+	err = runner.ReadGlobalData(buildinfo.BuildData, packageName)
+	if err != nil {
+		return exitutils.InitFailed("Global Data", err.Error())
+	}
+
+	err = rtdata.SetName(runner.GetConfigNamePointer(), runner.GetConfigAutoNamePointer(), packageName)
 	if err != nil {
 		return exitutils.InitFailed("Global Data", err.Error())
 	}

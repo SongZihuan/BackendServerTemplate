@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [0.19.5] 2025/05/20 Asia/Shanghai
+
+### 修改
+
+- 修复了一些对 `global` 包及其依赖包的循环有引入、循环依赖问题。
+
 ## [0.19.4] 2025/05/20 Asia/Shanghai
 
 ### 其他

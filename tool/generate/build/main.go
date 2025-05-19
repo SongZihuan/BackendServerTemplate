@@ -7,7 +7,6 @@ package main
 import (
 	"errors"
 	resource "github.com/SongZihuan/BackendServerTemplate"
-	"github.com/SongZihuan/BackendServerTemplate/global"
 	"github.com/SongZihuan/BackendServerTemplate/global/bddata/builder"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basefile"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/basic"
@@ -18,6 +17,11 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/mod"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/version"
 	"os"
+)
+
+// 冗余导入此包，该包包含必须导入的全部信息
+import (
+	_ "github.com/SongZihuan/BackendServerTemplate/global/pkgimport"
 )
 
 func main() {
@@ -33,11 +37,6 @@ func command() (exitcode int) {
 	defer func() {
 		genlog.GenLogf("run stop [code: %d]", exitcode)
 	}()
-
-	err = global.GenerateBuildInit()
-	if err != nil {
-		return exitreturn.ReturnError(err)
-	}
 
 	err = mod.InitGoModuleName() // 确定当前是否在 go.mod 同目录下运行
 	if err != nil {
