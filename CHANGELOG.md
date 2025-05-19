@@ -15,6 +15,10 @@
 - 修复 `go test ./...` 时的错误。
 - 修复了 `go generate ./...` 的调用错误。
 
+### 其他
+
+- 修复 `Github Action` 中，`runner` 的问题。
+
 ## [0.19.0] 2025/05/20 Asia/Shanghai
 
 ### 新增
