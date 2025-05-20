@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [0.19.7] 2025/05/20 Asia/Shanghai
+
+### 其他
+
+- 完善 `Github Action` 生成 `Release` 时文件列表的问题。
+
 ## [0.19.6] 2025/05/20 Asia/Shanghai
 
 ### 修改
@@ -196,7 +202,7 @@
 ### 重构
 
 - 完善时区系统，获取本地时间时可以读取到`IANA`时区信息。
-- 重构了退出机制。将`main`程序移到`command`程序，将原本的`os.Exit`替换成`return`一个`ExitCode`，最后在`main`函数在使用`os.Exit`退出程序。有效的解决了以前直接在`main`使用`os.Exit`导致`defer`函数无法释放。
+- 重构了退出机制。将`main`程序移到`command`程序，将原本的`os.Exit`替换成`return`一个`ExitCode`，最后在`main`函数在使用`os.Exit`退出程序。有效地解决了以前直接在`main`使用`os.Exit`导致`defer`函数无法释放。
 - 将 `go generate` 从原本的 `Shell` 脚本（`.sh`和`.ps1`）换成由 `go run` 直接执行的 `.go` 程序。 同时，数据文件以 `.dat` 作为文件后缀（除特殊的 `VERSION`，`NAME`，`REPORT`，`LICENSE`，`ENV_PREFIX`），并且需要忽略的文件以 `.ignore`  作为后缀。
 
 ### 文档

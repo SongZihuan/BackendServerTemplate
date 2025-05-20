@@ -120,7 +120,15 @@ jobs:
           path: ${{ github.workspace }}/OUTPUT
 
       - name: List directory
-        run: ls -l ${{ github.workspace }}/OUTPUT
+        id: list_artifacts
+        run: |
+          ls -l ${{ github.workspace }}/OUTPUT
+          
+          files=$(find ${{ github.workspace }}/OUTPUT -type f -printf "${{ github.workspace }}/OUTPUT%P,")
+          artifacts=$(echo "$files" | sed 's/,$//')
+          
+          echo "artifacts = $artifacts"
+          echo "artifacts=$artifacts" >> $GITHUB_OUTPUT
 
       - name: Generate Release file
         run: |
@@ -132,7 +140,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "${{ github.workspace }}/OUTPUT"
+          artifacts: ${{ steps.list_artifacts.outputs.list_artifacts }}
           artifactErrorsFailBuild: true
           allowUpdates: false
           bodyFile: "${{ github.workspace }}/release.ot.md"
