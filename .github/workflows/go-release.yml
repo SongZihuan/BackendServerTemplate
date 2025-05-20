@@ -140,7 +140,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ steps.list_artifacts.outputs.list_artifacts }}
+          artifacts: ${{ steps.list_artifacts.outputs.artifacts }}
           artifactErrorsFailBuild: true
           allowUpdates: false
           bodyFile: "${{ github.workspace }}/release.ot.md"
