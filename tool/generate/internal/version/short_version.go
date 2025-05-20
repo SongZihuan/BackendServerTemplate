@@ -7,7 +7,6 @@ package version
 import (
 	"errors"
 	"fmt"
-	resource "github.com/SongZihuan/BackendServerTemplate"
 	"github.com/SongZihuan/BackendServerTemplate/global/bddata/builder"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/git"
@@ -21,15 +20,15 @@ var shortOnceErr error
 var shortSemanticVersion = ""
 var shortVersion = ""
 
-func InitShortVersion() error {
+func InitShortVersion(defVer string) error {
 	shortInitOnce.Do(func() {
-		shortOnceErr = initShortVersion()
+		shortOnceErr = initShortVersion(defVer)
 	})
 
 	return shortOnceErr
 }
 
-func initShortVersion() error {
+func initShortVersion(defVer string) error {
 	genlog.GenLog("get short version info")
 	defer genlog.GenLog("get short version info finish")
 
@@ -55,7 +54,7 @@ func initShortVersion() error {
 	}
 
 	genlog.GenLog("try to get short version info from file VERSION")
-	ver = getDefaultVersion()
+	ver = getDefaultVersion(defVer)
 	if ver != "" {
 		shortSemanticVersion = ver
 		shortVersion = "v" + shortSemanticVersion
@@ -79,8 +78,13 @@ func initShortVersion() error {
 	return fmt.Errorf("get short version failed")
 }
 
-func getDefaultVersion() (defVer string) {
-	defVer = strings.TrimPrefix(strings.ToLower(resource.Version), "v")
+func getDefaultVersion(defVer string) string {
+	defVer = strings.TrimPrefix(strings.ToLower(defVer), "v")
+	if defVer == "" {
+		return ""
+	}
+
+	defVer = strings.SplitN(defVer, "-", 2)[0]
 	if defVer == "" || !reutils.IsSemanticVersion(defVer) {
 		return ""
 	}
@@ -104,11 +108,11 @@ func getShortPseudoVersion() (randVer string) {
 	return "0.0.0"
 }
 
-func WriteShortVersion() error {
+func WriteShortVersion(defVer string) error {
 	genlog.GenLog("write short version data")
 	defer genlog.GenLog("write short version data finish")
 
-	err := InitShortVersion()
+	err := InitShortVersion(defVer)
 	if err != nil {
 		genlog.GenLogf("get version failed: %s", err.Error())
 		return nil
@@ -119,10 +123,22 @@ func WriteShortVersion() error {
 	return nil
 }
 
-func GetShortVersion() string {
+func GetShortVersion(defVer string) string {
+	err := InitShortVersion(defVer)
+	if err != nil {
+		genlog.GenLogf("get version failed: %s", err.Error())
+		return ""
+	}
+
 	return shortVersion
 }
 
-func GetShortSemanticVersion() string {
+func GetShortSemanticVersion(defVer string) string {
+	err := InitShortVersion(defVer)
+	if err != nil {
+		genlog.GenLogf("get version failed: %s", err.Error())
+		return ""
+	}
+
 	return shortSemanticVersion
 }

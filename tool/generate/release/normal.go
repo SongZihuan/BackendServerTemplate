@@ -5,6 +5,7 @@
 package main
 
 import (
+	resource "github.com/SongZihuan/BackendServerTemplate"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/exitreturn"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/git"
@@ -13,6 +14,10 @@ import (
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/touch"
 	"github.com/spf13/cobra"
 )
+
+func init() {
+	resource.Init()
+}
 
 var normalCommand = &cobra.Command{
 	Use:   "normal",
@@ -48,7 +53,7 @@ func normal() (exitcode int) {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = releaseinfo.WriteReleaseData()
+	err = releaseinfo.WriteReleaseData(resource.Version)
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}

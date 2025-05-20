@@ -17,7 +17,7 @@ var Report string
 
 var once sync.Once
 
-func InitVar() {
+func Init() {
 	once.Do(func() {
 		License = cleanstringutils.GetString(cleanstringutils.CheckAndRemoveBOM(License))
 		Report = cleanstringutils.GetString(cleanstringutils.CheckAndRemoveBOM(Report))

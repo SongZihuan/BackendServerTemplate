@@ -7,7 +7,6 @@ package version
 import (
 	"errors"
 	"fmt"
-	resource "github.com/SongZihuan/BackendServerTemplate"
 	"github.com/SongZihuan/BackendServerTemplate/global/bddata/builder"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/builddate"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
@@ -23,15 +22,15 @@ var longOnceErr error
 var longSemanticVersion = ""
 var longVersion = ""
 
-func InitLongVersion() error {
+func InitLongVersion(defVer string) error {
 	longInitOnce.Do(func() {
-		longOnceErr = initLongVersion()
+		longOnceErr = initLongVersion(defVer)
 	})
 
 	return longOnceErr
 }
 
-func initLongVersion() error {
+func initLongVersion(defVer string) error {
 	genlog.GenLog("get version info")
 	defer genlog.GenLog("get version info finish")
 
@@ -57,7 +56,7 @@ func initLongVersion() error {
 	}
 
 	genlog.GenLog("try to get version info from file VERSION")
-	ver = getLongDefaultVersion()
+	ver = getLongDefaultVersion(defVer)
 	if ver != "" {
 		longSemanticVersion = ver
 		longVersion = "v" + longSemanticVersion
@@ -81,8 +80,8 @@ func initLongVersion() error {
 	return fmt.Errorf("get long version failed")
 }
 
-func getLongDefaultVersion() (defVer string) {
-	defVer = strings.TrimPrefix(strings.ToLower(resource.Version), "v")
+func getLongDefaultVersion(defVer string) string {
+	defVer = strings.TrimPrefix(strings.ToLower(defVer), "v")
 	if defVer == "" || !reutils.IsSemanticVersion(defVer) {
 		return ""
 	}
@@ -108,11 +107,11 @@ func getLongPseudoVersion() (randVer string) {
 	return fmt.Sprintf("0.0.0+dev.%d.%s", builddate.GetBuildTime().Unix(), random.GetPseudoCommitHash())
 }
 
-func WriteLongVersion() error {
+func WriteLongVersion(defVer string) error {
 	genlog.GenLog("write long version data")
 	defer genlog.GenLog("write long version data finish")
 
-	err := InitLongVersion()
+	err := InitLongVersion(defVer)
 	if err != nil {
 		genlog.GenLogf("get version failed: %s", err.Error())
 		return nil
@@ -123,10 +122,28 @@ func WriteLongVersion() error {
 	return nil
 }
 
-func GetLongVersion() string {
+func GetLongVersion(defVer string) string {
+	genlog.GenLog("write long version data")
+	defer genlog.GenLog("write long version data finish")
+
+	err := InitLongVersion(defVer)
+	if err != nil {
+		genlog.GenLogf("get version failed: %s", err.Error())
+		return ""
+	}
+
 	return longVersion
 }
 
-func GetLongSemanticVersion() string {
+func GetLongSemanticVersion(defVer string) string {
+	genlog.GenLog("write long version data")
+	defer genlog.GenLog("write long version data finish")
+
+	err := InitLongVersion(defVer)
+	if err != nil {
+		genlog.GenLogf("get version failed: %s", err.Error())
+		return ""
+	}
+
 	return longSemanticVersion
 }

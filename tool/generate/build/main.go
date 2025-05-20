@@ -24,6 +24,10 @@ import (
 	_ "github.com/SongZihuan/BackendServerTemplate/global/pkgimport"
 )
 
+func init() {
+	resource.Init()
+}
+
 func main() {
 	os.Exit(command())
 }
@@ -48,17 +52,17 @@ func command() (exitcode int) {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = version.InitLongVersion()
+	err = version.InitLongVersion(resource.Version)
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = version.InitShortVersion()
+	err = version.InitShortVersion(resource.Version)
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = basic.WriteBasicData()
+	err = basic.WriteBasicData(resource.License, resource.Report)
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
@@ -78,12 +82,12 @@ func command() (exitcode int) {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = version.WriteShortVersion()
+	err = version.WriteShortVersion(resource.Version)
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}
 
-	err = version.WriteLongVersion()
+	err = version.WriteLongVersion(resource.Version)
 	if err != nil {
 		return exitreturn.ReturnError(err)
 	}

@@ -5,20 +5,15 @@
 package basic
 
 import (
-	resource "github.com/SongZihuan/BackendServerTemplate"
 	"github.com/SongZihuan/BackendServerTemplate/global/bddata/builder"
 	"github.com/SongZihuan/BackendServerTemplate/tool/generate/internal/genlog"
 )
 
-func init() {
-	resource.InitVar()
-}
-
-func WriteBasicData() error {
+func WriteBasicData(license string, report string) error {
 	genlog.GenLog("write basic data")
 	defer genlog.GenLog("write basic data finish")
 
-	builder.SetBasicInfo(resource.License, resource.Report)
+	builder.SetBasicInfo(license, report)
 
 	return nil
 }

@@ -4,6 +4,16 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [0.19.6] 2025/05/20 Asia/Shanghai
+
+### 修改
+
+- 修复了一些对 `resource` 包引入、依赖的问题。
+
+### 其他
+
+- 修复 `Github Action` 在生成 `Release` 文档时的错误（缺失 `BUILD.yaml` 文件，现使用 `BUILD/BUILD.linux.amd64.yaml` 作为替代）。
+
 ## [0.19.5] 2025/05/20 Asia/Shanghai
 
 ### 修改

@@ -124,8 +124,9 @@ jobs:
 
       - name: Generate Release file
         run: |
+          cp -f "${{ github.workspace }}/BUILD/BUILD.linux.amd64.yaml" "${{ github.workspace }}/BUILD.yaml"
           go run github.com/SongZihuan/BackendServerTemplate/tool/generate/release normal
-          cat ${{ github.workspace }}/release.ot.md
+          cat "${{ github.workspace }}/release.ot.md"
 
       - name: Create GitHub Release
         id: create_release

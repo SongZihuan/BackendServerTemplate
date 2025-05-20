@@ -50,7 +50,7 @@ func init() {
 	}
 }
 
-func WriteReleaseData() error {
+func WriteReleaseData(defVer string) error {
 	genlog.GenLog("write release info data data")
 	defer genlog.GenLog("write write release info data finish")
 
@@ -62,9 +62,9 @@ func WriteReleaseData() error {
 		_ = file.Close()
 	}()
 
-	v := version.GetShortVersion()
+	v := version.GetShortVersion(defVer)
 
-	cl := changelog.GetLastChangLog()
+	cl := changelog.GetLastChangLog(defVer)
 
 	gcl := git.GetGitHubCompareMD()
 

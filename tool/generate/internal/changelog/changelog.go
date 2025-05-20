@@ -19,14 +19,14 @@ const FileChangelog = "./CHANGELOG.md"
 var lastChangeLog = ""
 var once sync.Once
 
-func GetLastChangLog() string {
+func GetLastChangLog(defVer string) string {
 	once.Do(func() {
-		lastChangeLog = getLastChangLog()
+		lastChangeLog = getLastChangLog(defVer)
 	})
 	return lastChangeLog
 }
 
-func getLastChangLog() string {
+func getLastChangLog(defVer string) string {
 	genlog.GenLogf("get %s data\n", FileChangelog)
 	defer genlog.GenLogf("get %s data finish\n", FileChangelog)
 
@@ -53,7 +53,7 @@ FindVersionCycle:
 		if strings.HasPrefix(s, "## [") && !strings.HasPrefix(s, "## [未") {
 			genlog.GenLogf("read file %s title [index: %d]: %s\n", FileChangelog, index, s)
 			res.WriteString("\n\n---\n\n") // 前一个\n\n是用于与前者空开一行以上（使用双\n放在前者写完后没空行。后面\n\n双恐慌可以实现后者直接写内容就与前面保存空行。
-			res.WriteString(fmt.Sprintf("### **%s** 更新内容\n", version.GetShortVersion()))
+			res.WriteString(fmt.Sprintf("### **%s** 更新内容\n", version.GetShortVersion(defVer)))
 			break FindVersionCycle
 		}
 	}
