@@ -124,7 +124,7 @@ jobs:
         run: |
           ls -l ${{ github.workspace }}/OUTPUT
           
-          files=$(find ${{ github.workspace }}/OUTPUT -type f -printf "${{ github.workspace }}/OUTPUT%P,")
+          files=$(find ${{ github.workspace }}/OUTPUT -type f -printf "${{ github.workspace }}/OUTPUT/%P,")
           artifacts=$(echo "$files" | sed 's/,$//')
           
           echo "artifacts = $artifacts"

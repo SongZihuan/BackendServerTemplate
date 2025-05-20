@@ -4,6 +4,12 @@
 
 其格式基于 [CHANGELOG 准则](./CHANGELOG_SPECIFICATION.md) 。
 
+## [0.19.9] 2025/05/20 Asia/Shanghai
+
+### 其他
+
+- 完善 `Github Action` 生成 `Release` 时文件列表的问题（3）。
+
 ## [0.19.8] 2025/05/20 Asia/Shanghai
 
 ### 其他
