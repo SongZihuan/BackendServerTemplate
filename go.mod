@@ -9,14 +9,14 @@ require (
 	github.com/gofrs/flock v0.12.1
 	github.com/kardianos/service v1.2.2
 	github.com/mattn/go-isatty v0.0.20
-	github.com/shirou/gopsutil/v4 v4.25.4
+	github.com/shirou/gopsutil/v4 v4.25.8
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/ebitengine/purego v0.8.3 // indirect
+	github.com/ebitengine/purego v0.8.4 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -33,6 +33,6 @@ require (
 	github.com/tklauser/numcpus v0.10.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
 )
